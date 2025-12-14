@@ -3,10 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 
 import '../theme_mode_notifier.dart';
 import '../app_locale.dart';
 import '../localized_strings.dart';
+import 'ui_helpers.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -128,12 +130,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           setState(() {
                             _notificationsEnabled = !value;
                           });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Could not update notification preference. Please try again.',
-                              ),
-                            ),
+                          UIHelpers.showSnack(
+                            context,
+                            'Could not update notification preference. Please try again.',
                           );
                         }
                       },
@@ -172,6 +171,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       await AppLocale.setLocale(newLocale);
                     },
                   );
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: Text(L10n.termsTitle()),
+                subtitle: const Text('Read app terms & conditions'),
+                onTap: () {
+                  context.push('/terms');
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: Text(L10n.privacyTitle()),
+                subtitle: const Text('View privacy policy'),
+                onTap: () {
+                  context.push('/privacy');
                 },
               ),
               const Divider(height: 1),

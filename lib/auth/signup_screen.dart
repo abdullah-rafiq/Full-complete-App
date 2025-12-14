@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_application_1/common/ui_helpers.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -113,13 +114,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         message = 'Password is too weak.';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      UIHelpers.showSnack(context, message);
     } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Something went wrong, please try again later')),
+      UIHelpers.showSnack(
+        context,
+        'Something went wrong, please try again later',
       );
     }
   }

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/services/auth_service.dart';
+import 'package:flutter_application_1/common/ui_helpers.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
@@ -69,12 +70,9 @@ class RoleSelectionScreen extends StatelessWidget {
                           onPressed: () async {
                             final user = FirebaseAuth.instance.currentUser;
                             if (user == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'No logged-in user found. Please log in again.',
-                                  ),
-                                ),
+                              UIHelpers.showSnack(
+                                context,
+                                'No logged-in user found. Please log in again.',
                               );
                               return;
                             }
@@ -90,12 +88,9 @@ class RoleSelectionScreen extends StatelessWidget {
                               context.go('/home');
                             } catch (e) {
                               if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to save your profile: $e',
-                                  ),
-                                ),
+                              UIHelpers.showSnack(
+                                context,
+                                'Failed to save your profile: $e',
                               );
                             }
                           },
@@ -122,12 +117,9 @@ class RoleSelectionScreen extends StatelessWidget {
                           onPressed: () async {
                             final user = FirebaseAuth.instance.currentUser;
                             if (user == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'No logged-in user found. Please log in again.',
-                                  ),
-                                ),
+                              UIHelpers.showSnack(
+                                context,
+                                'No logged-in user found. Please log in again.',
                               );
                               return;
                             }
@@ -143,12 +135,9 @@ class RoleSelectionScreen extends StatelessWidget {
                               context.go('/worker');
                             } catch (e) {
                               if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to save your profile: $e',
-                                  ),
-                                ),
+                              UIHelpers.showSnack(
+                                context,
+                                'Failed to save your profile: $e',
                               );
                             }
                           },

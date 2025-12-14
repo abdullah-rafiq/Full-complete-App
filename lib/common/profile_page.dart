@@ -86,8 +86,29 @@ class _ProfilePageState extends State<ProfilePage> {
               print('PROFILE_ROLE: ${profile.role.name}');
             }
 
-            final displayName =
-                profile?.name ?? current.displayName ?? 'User';
+            final bool isAdmin =
+                profile?.role == UserRole.admin ||
+                    (current.email?.toLowerCase() == 'firebase@fire.com');
+
+            // Prefer Firestore profile name; then auth displayName; then email prefix
+            String displayName = 'User';
+            String? rawName = profile?.name?.trim();
+            if (rawName == null || rawName.isEmpty) {
+              final authName = current.displayName?.trim();
+              if (authName != null && authName.isNotEmpty) {
+                rawName = authName;
+              }
+            }
+            if (rawName == null || rawName.isEmpty) {
+              final email = current.email?.trim();
+              if (email != null && email.isNotEmpty) {
+                rawName = email.split('@').first;
+              }
+            }
+
+            if (rawName != null && rawName.isNotEmpty) {
+              displayName = rawName;
+            }
             final profileImageUrl = profile?.profileImageUrl;
 
             ImageProvider avatarImage;
@@ -141,56 +162,58 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        if (profile != null) ...[
-                          if (profile.role != UserRole.admin) ...[
-                            InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: profile.verified
-                                  ? null
-                                  : () {
-                                      if (profile.role == UserRole.provider) {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const WorkerVerificationPage(),
-                                          ),
-                                        );
-                                      } else {
-                                        ProfileController.startPhoneVerification(
-                                          context,
-                                          profile,
-                                        );
-                                      }
-                                    },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    profile.verified
-                                        ? Icons.verified
-                                        : Icons.error_outline,
-                                    size: 16,
-                                    color: profile.verified
+                        if (!isAdmin) ...[
+                          InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              final currentProfile = profile;
+                              if (currentProfile == null ||
+                                  currentProfile.verified) {
+                                return;
+                              }
+
+                              if (currentProfile.role == UserRole.provider) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const WorkerVerificationPage(),
+                                  ),
+                                );
+                              } else {
+                                ProfileController.startPhoneVerification(
+                                  context,
+                                  currentProfile,
+                                );
+                              }
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  (profile?.verified ?? false)
+                                      ? Icons.verified
+                                      : Icons.error_outline,
+                                  size: 16,
+                                  color: (profile?.verified ?? false)
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  (profile?.verified ?? false)
+                                      ? 'Verified account'
+                                      : 'Not verified (tap to verify)',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: (profile?.verified ?? false)
                                         ? Colors.green
                                         : Colors.red,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    profile.verified
-                                        ? 'Verified account'
-                                        : 'Not verified (tap to verify)',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: profile.verified
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ],
                       ],
                     ),
@@ -242,18 +265,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  if (profile != null && profile.role != UserRole.admin) ...[
+                  if (!isAdmin) ...[
                     ListTile(
                       title: Text(L10n.profileEditTitle()),
                       subtitle: Text(
-                        profile.name == null || profile.name!.isEmpty
+                        (profile?.name ?? '').isEmpty
                             ? 'Add your name and phone number'
                             : 'Update your name or phone number',
                       ),
                       leading: const Icon(Icons.person_outline),
                       trailing:
                           const Icon(Icons.chevron_right, color: accentBlue),
-                      onTap: () => _showEditProfileDialog(context, profile),
+                      onTap: () {
+                        final effectiveProfile = profile ?? AppUser(
+                          id: current.uid,
+                          name: current.displayName ?? current.email,
+                          phone: current.phoneNumber,
+                          email: current.email,
+                          role: UserRole.customer,
+                        );
+                        _showEditProfileDialog(context, effectiveProfile);
+                      },
                     ),
                     const Divider(),
                   ],
@@ -334,28 +366,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                     const Divider(),
-                    ListTile(
-                      title: Text(L10n.termsTitle()),
-                      subtitle: const Text('Read app terms & conditions'),
-                      leading: const Icon(Icons.description_outlined),
-                      trailing:
-                          const Icon(Icons.chevron_right, color: accentBlue),
-                      onTap: () {
-                        context.push('/terms');
-                      },
-                    ),
-                    const Divider(),
-                    ListTile(
-                      title: Text(L10n.privacyTitle()),
-                      subtitle: const Text('View privacy policy'),
-                      leading: const Icon(Icons.privacy_tip_outlined),
-                      trailing:
-                          const Icon(Icons.chevron_right, color: accentBlue),
-                      onTap: () {
-                        context.push('/privacy');
-                      },
-                    ),
-                    const Divider(),
                   ],
                   ListTile(
                     title: Text(L10n.profileLogoutTitle()),
@@ -383,7 +393,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
 Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async {
   final nameController = TextEditingController(text: profile.name ?? '');
-  final phoneController = TextEditingController(text: profile.phone ?? '');
+
+  // Pre-fill phone with the latest known phone number: prefer profile.phone,
+  // but fall back to the current authenticated user's phoneNumber.
+  final authPhone = FirebaseAuth.instance.currentUser?.phoneNumber;
+  final profilePhone = profile.phone?.trim();
+  final initialPhone = (profilePhone != null && profilePhone.isNotEmpty)
+      ? profilePhone
+      : (authPhone ?? '');
+  final phoneController = TextEditingController(text: initialPhone);
   final addressController =
       TextEditingController(text: profile.addressLine1 ?? '');
   final townController = TextEditingController(text: profile.town ?? '');

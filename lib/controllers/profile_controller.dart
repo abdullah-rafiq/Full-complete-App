@@ -371,8 +371,6 @@ class ProfileController {
         }
       } catch (_) {
         // Ignore reverse geocoding failures; still save raw location.
-        // ignore: avoid_print
-        print('LOCATION_GEOCODE_FAILED for lat=${position.latitude}, lng=${position.longitude}');
       }
 
       final update = <String, dynamic>{

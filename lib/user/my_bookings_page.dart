@@ -35,7 +35,8 @@ class MyBookingsPage extends StatelessWidget {
       body: StreamBuilder<List<BookingModel>>(
         stream: BookingService.instance.watchCustomerBookings(user.uid),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 

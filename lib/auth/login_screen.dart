@@ -9,6 +9,7 @@ import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/services/auth_service.dart';
 import 'package:flutter_application_1/localized_strings.dart';
 import 'package:flutter_application_1/app_locale.dart';
+import 'package:flutter_application_1/common/ui_helpers.dart';
 
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
@@ -112,13 +113,11 @@ class _AuthScreenState extends State<AuthScreen> {
         message = L10n.authInvalidEmail();
       }
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      UIHelpers.showSnack(context, message);
     } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(L10n.authSomethingWentWrong()),
-        ),
+      UIHelpers.showSnack(
+        context,
+        L10n.authSomethingWentWrong(),
       );
     }
   }
@@ -175,14 +174,14 @@ class _AuthScreenState extends State<AuthScreen> {
           context.go('/home');
       }
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? L10n.authGoogleFailed())),
+      UIHelpers.showSnack(
+        context,
+        e.message ?? L10n.authGoogleFailed(),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${L10n.authGoogleFailed()}: $e'),
-        ),
+      UIHelpers.showSnack(
+        context,
+        '${L10n.authGoogleFailed()}: $e',
       );
     }
   }

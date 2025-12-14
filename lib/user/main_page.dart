@@ -162,18 +162,23 @@ class _MainPageState extends State<MainPage> {
                     )
                   else
                     StreamBuilder<AppUser?>(
-                      stream:
-                          CurrentUserController.watchCurrentUser(),
+                      stream: CurrentUserController.watchCurrentUser(),
                       builder: (context, snapshot) {
                         final user = snapshot.data;
                         String effectiveName = _displayName ?? 'User';
 
-                        // Prefer Firestore profile name; fall back to auth displayName
+                        // Prefer Firestore profile name; then auth displayName; then email prefix
                         String? rawName = user?.name?.trim();
                         if (rawName == null || rawName.isEmpty) {
                           final authName = current.displayName?.trim();
                           if (authName != null && authName.isNotEmpty) {
                             rawName = authName;
+                          }
+                        }
+                        if (rawName == null || rawName.isEmpty) {
+                          final email = current.email?.trim();
+                          if (email != null && email.isNotEmpty) {
+                            rawName = email.split('@').first;
                           }
                         }
 
