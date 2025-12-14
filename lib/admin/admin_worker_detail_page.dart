@@ -343,7 +343,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
 
         final total = bookings.fold<num>(
           0,
-          (sum, b) => sum + (b.price),
+          (totalSoFar, booking) => totalSoFar + booking.price,
         );
 
         return _sectionCard(
@@ -648,7 +648,8 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: reviews.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (separatorContext, separatorIndex) =>
+                    const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final r = reviews[index];
                   return Container(

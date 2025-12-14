@@ -65,7 +65,8 @@ class CategoryServicesPage extends StatelessWidget {
                     final s = services[index];
                     return _CategoryServiceTile(service: s);
                   },
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (separatorContext, separatorIndex) =>
+                      const SizedBox(height: 12),
                   itemCount: services.length,
                 );
               }
@@ -87,7 +88,8 @@ class CategoryServicesPage extends StatelessWidget {
                     distanceKm: item.distanceKm,
                   );
                 },
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (separatorContext, separatorIndex) =>
+                    const SizedBox(height: 12),
                 itemCount: items.length,
               );
             },

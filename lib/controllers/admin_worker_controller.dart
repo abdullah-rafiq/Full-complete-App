@@ -18,8 +18,10 @@ class AdminWorkerController {
         'verificationStatus': 'approved',
       });
 
+      if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Worker approved successfully.');
     } catch (e) {
+      if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Could not approve worker: $e');
     }
   }
@@ -71,8 +73,10 @@ class AdminWorkerController {
             : reason.trim(),
       });
 
+      if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Worker rejected.');
     } catch (e) {
+      if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Could not reject worker: $e');
     }
   }
@@ -121,6 +125,7 @@ class AdminWorkerController {
           .doc(workerId)
           .update(updates);
 
+      if (!context.mounted) return;
       UIHelpers.showSnack(
         context,
         newStatus == 'approved'
@@ -128,6 +133,7 @@ class AdminWorkerController {
             : 'Document marked for resubmission.',
       );
     } catch (e) {
+      if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Could not update status: $e');
     }
   }

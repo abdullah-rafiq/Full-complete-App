@@ -170,18 +170,19 @@ class FeaturedProvidersSection extends StatelessWidget {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () async {
-                            try {
-                              await AnalyticsService.instance.logEvent(
-                                'featured_click',
-                                <String, dynamic>{
-                                  'providerId': user.id,
-                                  'avgPrice': item.avgPrice,
-                                  'completedJobs': item.completedJobs,
-                                  'avgRating': item.avgRating,
-                                },
-                              );
-                            } catch (_) {}
+                          onPressed: () {
+                            AnalyticsService.instance
+                                .logEvent(
+                                  'featured_click',
+                                  <String, dynamic>{
+                                    'providerId': user.id,
+                                    'avgPrice': item.avgPrice,
+                                    'completedJobs': item.completedJobs,
+                                    'avgRating': item.avgRating,
+                                  },
+                                )
+                                .catchError((_) {});
+
                             final service = ServiceModel(
                               id: 'featured_${user.id}',
                               name: 'Service with $name',
@@ -214,7 +215,8 @@ class FeaturedProvidersSection extends StatelessWidget {
                 ),
               );
             },
-            separatorBuilder: (_, __) => const SizedBox(width: 14),
+            separatorBuilder: (separatorContext, separatorIndex) =>
+                const SizedBox(width: 14),
             itemCount: providers.length,
           );
         },

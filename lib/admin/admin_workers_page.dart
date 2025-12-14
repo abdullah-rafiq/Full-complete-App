@@ -113,7 +113,8 @@ class AdminWorkersPage extends StatelessWidget {
                   return ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (separatorContext, separatorIndex) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final worker = item.user;
@@ -263,7 +264,9 @@ class AdminWorkersPage extends StatelessWidget {
                                         onPressed: () async {
                                           final reason = await AdminWorkerController
                                               .promptRejectReason(context);
-                                          if (reason == null) return;
+                                          if (!context.mounted || reason == null) {
+                                            return;
+                                          }
                                           await AdminWorkerController.rejectWorker(
                                             context,
                                             worker.id,

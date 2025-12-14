@@ -108,7 +108,7 @@ class MainApp extends StatelessWidget {
       builder: (context, themeMode, _) {
         return ValueListenableBuilder<Locale>(
           valueListenable: AppLocale.locale,
-          builder: (context, locale, __) {
+          builder: (context, locale, child) {
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'Assist',

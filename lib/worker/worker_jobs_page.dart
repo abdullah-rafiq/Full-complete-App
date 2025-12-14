@@ -306,8 +306,9 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                               ),
                             );
                           },
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 12),
+                          separatorBuilder:
+                              (separatorContext, separatorIndex) =>
+                                  const SizedBox(height: 12),
                           itemCount: bookings.length,
                         );
                       },

@@ -357,8 +357,6 @@ class AdminAnalyticsPage extends StatelessWidget {
             return const Center(child: Text('No analytics data available.'));
           }
 
-          final onSurface = theme.colorScheme.onSurface;
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -1117,7 +1115,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                         }
                         final city = data.topCitiesByBookings[index].city;
                         return SideTitleWidget(
-                          axisSide: meta.axisSide,
+                          meta: meta,
                           space: 8,
                           child: Text(
                             city,
@@ -1216,7 +1214,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                                 last7Start.add(Duration(days: index));
                             final label = '${day.day}/${day.month}';
                             return SideTitleWidget(
-                              axisSide: meta.axisSide,
+                              meta: meta,
                               space: 8,
                               child: Text(
                                 label,
@@ -1432,7 +1430,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                         }
                         final name = data.topProviders[index].name;
                         return SideTitleWidget(
-                          axisSide: meta.axisSide,
+                          meta: meta,
                           space: 8,
                           child: Text(
                             name,

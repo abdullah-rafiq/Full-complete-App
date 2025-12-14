@@ -293,12 +293,14 @@ Future<void> _openChatForBooking(
 
   final otherId = current.uid == customerId ? providerId : customerId;
   final other = await UserService.instance.getById(otherId);
+  if (!context.mounted) return;
   if (other == null) {
-    UIHelpers.showSnack(context, 'Could not load user for chat.');
+    if (context.mounted) {
+      UIHelpers.showSnack(context, 'Could not load user for chat.');
+    }
     return;
   }
 
-  if (!context.mounted) return;
   Navigator.of(context).push(
     MaterialPageRoute(
       builder: (_) => chat_page.ChatPage(
@@ -308,4 +310,3 @@ Future<void> _openChatForBooking(
     ),
   );
 }
-

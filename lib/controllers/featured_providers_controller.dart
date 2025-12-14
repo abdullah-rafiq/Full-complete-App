@@ -109,8 +109,8 @@ class FeaturedProvidersController {
       double? avgPrice;
       if (bookings.isNotEmpty) {
         final total = bookings
-            .map((b) => b.price.toDouble())
-            .fold<double>(0, (sum, v) => sum + v);
+            .map((booking) => booking.price.toDouble())
+            .fold<double>(0, (runningTotal, value) => runningTotal + value);
         avgPrice = total / bookings.length;
       }
 
@@ -140,8 +140,8 @@ class FeaturedProvidersController {
       double avgRating = 0.0;
       if (reviews.isNotEmpty) {
         final total = reviews
-            .map((r) => r.rating.toDouble())
-            .fold<double>(0, (sum, v) => sum + v);
+            .map((review) => review.rating.toDouble())
+            .fold<double>(0, (runningTotal, value) => runningTotal + value);
         avgRating = total / reviews.length;
       }
 

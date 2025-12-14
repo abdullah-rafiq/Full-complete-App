@@ -124,18 +124,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           );
                         } catch (_) {
                           // Revert on failure
+                          if (!context.mounted) return;
                           setState(() {
                             _notificationsEnabled = !value;
                           });
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Could not update notification preference. Please try again.',
-                                ),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Could not update notification preference. Please try again.',
                               ),
-                            );
-                          }
+                            ),
+                          );
                         }
                       },
               ),

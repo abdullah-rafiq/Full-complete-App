@@ -52,7 +52,7 @@ class WorkerEarningsPage extends StatelessWidget {
           final bookings = snapshot.data ?? [];
           final total = bookings.fold<num>(
             0,
-            (sum, b) => sum + (b.price),
+            (totalSoFar, booking) => totalSoFar + booking.price,
           );
 
           return Padding(
@@ -110,7 +110,9 @@ class WorkerEarningsPage extends StatelessWidget {
                         )
                       : ListView.separated(
                           itemCount: bookings.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 8),
+                          separatorBuilder:
+                              (separatorContext, separatorIndex) =>
+                                  const SizedBox(height: 8),
                           itemBuilder: (context, index) {
                             final b = bookings[index];
                             return Container(

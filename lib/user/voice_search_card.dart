@@ -27,14 +27,17 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
       final available = await _speech.initialize(
         onStatus: (status) {},
         onError: (error) {
+          if (!mounted) return;
           UIHelpers.showSnack(
             context,
             'Speech error: ${error.errorMsg}',
           );
         },
       );
+      if (!mounted) return;
 
       if (!available) {
+        if (!mounted) return;
         UIHelpers.showSnack(context, 'Speech recognition not available');
         return;
       }
@@ -45,12 +48,14 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
         onResult: (result) {
           if (!result.finalResult) return;
           final text = result.recognizedWords.trim();
+          if (!mounted) return;
           setState(() {
             _isListening = false;
           });
 
           if (text.isEmpty) return;
 
+          if (!mounted) return;
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => CategorySearchPage(initialQuery: text),
@@ -59,6 +64,7 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
         },
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isListening = false);
       UIHelpers.showSnack(context, 'Could not start voice search: $e');
     }

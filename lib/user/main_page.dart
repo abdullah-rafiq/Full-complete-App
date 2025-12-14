@@ -72,9 +72,6 @@ class _MainPageState extends State<MainPage> {
       );
       return;
     }
-    final token = await current.getIdToken(true);
-
-    print('ID TOKEN: $token');
     final result = await ProfileController.updateLocationFromCurrentPosition(
       context,
       current.uid,

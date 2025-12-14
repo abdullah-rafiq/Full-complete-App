@@ -274,7 +274,8 @@ class WalletPage extends StatelessWidget {
                             ),
                           );
                         },
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        separatorBuilder: (separatorContext, separatorIndex) =>
+                            const SizedBox(height: 8),
                         itemCount: unpaid.length,
                       );
                     },

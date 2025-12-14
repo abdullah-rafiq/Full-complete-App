@@ -555,12 +555,14 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                                 'town': town.isEmpty ? null : town,
                               });
 
+                              if (!context.mounted) return;
                               Navigator.of(context).pop();
                               UIHelpers.showSnack(
                                 context,
                                 'Profile updated successfully.',
                               );
                             } catch (e) {
+                              if (!context.mounted) return;
                               UIHelpers.showSnack(
                                 context,
                                 'Failed to update profile: $e',

@@ -89,7 +89,8 @@ class MessagesPage extends StatelessWidget {
 
           return ListView.separated(
             itemCount: docs.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
+            separatorBuilder: (separatorContext, separatorIndex) =>
+                const Divider(height: 1),
             itemBuilder: (context, index) {
               final chatDoc = docs[index];
               final data = chatDoc.data();

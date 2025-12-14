@@ -36,13 +36,13 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       firstDate: now,
       lastDate: now.add(const Duration(days: 30)),
     );
-    if (date == null) return;
+    if (!mounted || date == null) return;
 
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(now.add(const Duration(hours: 1))),
     );
-    if (time == null) return;
+    if (!mounted || time == null) return;
 
     setState(() {
       _selectedDateTime = DateTime(

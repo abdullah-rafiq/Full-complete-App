@@ -88,7 +88,8 @@ class AdminPendingWorkersPage extends StatelessWidget {
               return ListView.separated(
                 padding: const EdgeInsets.all(16),
                 itemCount: docs.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (separatorContext, separatorIndex) =>
+                    const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final doc = docs[index];
                   final worker = AppUser.fromMap(doc.id, doc.data());
@@ -156,7 +157,9 @@ class AdminPendingWorkersPage extends StatelessWidget {
                                 onPressed: () async {
                                   final reason = await AdminWorkerController
                                       .promptRejectReason(context);
-                                  if (reason == null) return;
+                                  if (!context.mounted || reason == null) {
+                                    return;
+                                  }
                                   await AdminWorkerController.rejectWorker(
                                     context,
                                     worker.id,

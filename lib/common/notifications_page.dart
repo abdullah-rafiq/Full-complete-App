@@ -92,7 +92,8 @@ class NotificationsPage extends StatelessWidget {
                       ),
                     );
                   },
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (separatorContext, separatorIndex) =>
+                      const SizedBox(height: 12),
                   itemCount: docs.length,
                 );
               },
