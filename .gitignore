@@ -28,7 +28,6 @@ windows/
 # Firebase / Secrets
 .env
 firebase_service_account.json
-firebase_options.dart
 google-services.json
 GoogleService-Info.plist
 # Misc
