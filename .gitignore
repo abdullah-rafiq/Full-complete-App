@@ -1,0 +1,37 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.build/
+pubspec.lock
+
+# IDE / OS files
+.idea/
+.vscode/
+*.iml
+*.DS_Store
+*.log
+*.tmp
+
+# Build outputs (except web if you want to deploy it)
+build/
+!build/web/
+
+# Platform folders (optional to ignore if only targeting web)
+android/
+ios/
+linux/
+macos/
+windows/
+
+# Firebase / Secrets
+.env
+firebase_service_account.json
+firebase_options.dart
+google-services.json
+GoogleService-Info.plist
+# Misc
+.rule.txt
+devtools_options.yaml
+firebase.json

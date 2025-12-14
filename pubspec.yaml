@@ -1,0 +1,68 @@
+name: flutter_application_1
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  firebase_auth: ^6.1.2
+  cupertino_icons: ^1.0.5  
+  flutter_staggered_grid_view: ^0.6.2
+  rubber: ^1.0.1
+  pin_code_text_field: ^1.8.0
+  http: ^1.2.2
+  flutter_rating_bar: ^4.0.0
+  intl: ^0.20.2
+  numberpicker: ^2.1.1
+  flutter_svg: ^2.0.2
+  json_annotation: ^4.9.0
+  firebase_core: ^4.2.1
+  google_sign_in: ^6.2.1
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
+  image_picker: ^1.1.2
+  go_router: ^14.2.0
+  shared_preferences: ^2.2.2
+  url_launcher: ^6.3.0
+  path_provider: ^2.1.5
+  geolocator: ^12.0.0
+  geocoding: ^2.1.0
+  speech_to_text: ^7.3.0
+  fl_chart: ^0.69.0
+  permission_handler: ^12.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
+  build_runner: ^2.0.4
+  json_serializable: ^6.6.1
+  flutter_native_splash: ^2.4.0
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/icon.png"
+
+flutter_native_splash:
+  color: "#4FC3F7"
+  image: assets/icons/icon.png
+  android_12:
+    color: "#4FC3F7"
+    image: assets/icons/icon.png
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/login_main.jpg
+    - assets/categories/
+    - assets/carsoual/

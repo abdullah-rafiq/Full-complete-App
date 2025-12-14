@@ -1,0 +1,76 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+
+class SupportService {
+  SupportService._();
+
+  static final SupportService instance = SupportService._();
+
+  static const String _baseUrl = 'https://ai-backend-aoab.onrender.com';
+
+  /// Send a support message to the backend AI and return the reply text.
+  ///
+  /// This method includes the current user's Firebase ID token in the
+  /// Authorization header as `Bearer <token>`.
+  Future<String> askSupport(String message) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw StateError('User not logged in');
+    }
+
+    final uri = Uri.parse('$_baseUrl/ai/support/ask');
+
+    Future<http.Response> sendWithToken(String token) {
+      return http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'message': message,
+        }),
+      );
+    }
+
+    // First try with the current (possibly cached) ID token. The Firebase SDK
+    // automatically refreshes expired tokens in most cases, but we also
+    // handle 401/403 from the backend by forcing a refresh and retrying once.
+    String? token = await user.getIdToken();
+    token ??= await user.getIdToken(true);
+    if (token == null) {
+      throw StateError('Could not obtain ID token');
+    }
+
+    http.Response response = await sendWithToken(token);
+
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      // Force-refresh the ID token and retry once.
+      token = await user.getIdToken(true);
+      if (token == null) {
+        throw StateError('Could not refresh ID token');
+      }
+      response = await sendWithToken(token);
+    }
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Support API error (${response.statusCode}): ${response.body}',
+      );
+    }
+
+    final dynamic decoded = jsonDecode(response.body);
+    if (decoded is Map<String, dynamic>) {
+      final dynamic replyField =
+          decoded['reply'] ?? decoded['answer'] ?? decoded['message'];
+      if (replyField != null && replyField.toString().trim().isNotEmpty) {
+        return replyField.toString();
+      }
+    }
+
+    // Fallback: return raw body if the structure is unexpected.
+    return 'Support replied: ${response.body}';
+  }
+}
