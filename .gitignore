@@ -35,3 +35,4 @@ GoogleService-Info.plist
 .rule.txt
 devtools_options.yaml
 firebase.json
+.env
