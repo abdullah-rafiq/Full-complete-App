@@ -210,7 +210,7 @@ class _AuthScreenState extends State<AuthScreen> {
         height: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/login_main.jpg'),
+            image: AssetImage('assets/login_main.png'),
             fit: BoxFit.cover,
           ),
         ),

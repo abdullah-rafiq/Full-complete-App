@@ -38,9 +38,16 @@ class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
   String? _displayName;
   String? _currentCity;
+  late final List<Widget?> _pages;
   
   // Speech-to-text
   final PageController _promoController = PageController(viewportFraction: 0.9);
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = List<Widget?>.filled(5, null);
+  }
 
   @override
   void dispose() {
@@ -490,92 +497,123 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final pages = <Widget>[
-      // Home
-      ScrollConfiguration(
-        behavior: const ScrollBehavior(),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildGradientAppBar(context),
-                _buildPromoCarousel(),
-                _buildSearchCard(context),
-                const SizedBox(height: 6),
-                _buildSectionHeader(L10n.mainCategoriesTitle()),
-                _buildCategories(),
-                const SizedBox(height: 12),
-                _buildSectionHeader(L10n.mainFeaturedProvidersTitle()),
-                const FeaturedProvidersSection(),
-                const SizedBox(height: 16),
-                const TopWorkersSection(),
-                const SizedBox(height: 16),
-                _buildSectionHeader(L10n.mainUpcomingBookingsTitle()),
-                _buildUpcomingBookingsCard(),
-                const SizedBox(height: 24),
-              ],
-            ),
+  Widget _buildHomeTab(BuildContext context) {
+    return ScrollConfiguration(
+      behavior: const ScrollBehavior(),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildGradientAppBar(context),
+              _buildPromoCarousel(),
+              _buildSearchCard(context),
+              const SizedBox(height: 6),
+              _buildSectionHeader(L10n.mainCategoriesTitle()),
+              _buildCategories(),
+              const SizedBox(height: 12),
+              _buildSectionHeader(L10n.mainFeaturedProvidersTitle()),
+              const FeaturedProvidersSection(),
+              const SizedBox(height: 16),
+              const TopWorkersSection(),
+              const SizedBox(height: 16),
+              _buildSectionHeader(L10n.mainUpcomingBookingsTitle()),
+              _buildUpcomingBookingsCard(),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),
-      // Categories tab - show categories as a vertical list
-      Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor:
-              Theme.of(context).appBarTheme.backgroundColor,
-          foregroundColor:
-              Theme.of(context).appBarTheme.foregroundColor,
-          elevation: 4,
-          title: Text(L10n.mainCategoriesTitle()),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: primaryDarkBlue.withOpacity(0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12),
-                  child: Text(
-                    L10n.mainAllCategoriesTitle(),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.1,
-                    ),
+    );
+  }
+
+  Widget _buildCategoriesTab(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        elevation: 4,
+        title: Text(L10n.mainCategoriesTitle()),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: primaryDarkBlue.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 18.0, vertical: 12),
+                child: Text(
+                  L10n.mainAllCategoriesTitle(),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.1,
                   ),
                 ),
-                const Divider(height: 1),
-                Expanded(child: _buildCategoriesList()),
-              ],
-            ),
+              ),
+              const Divider(height: 1),
+              Expanded(child: _buildCategoriesList()),
+            ],
           ),
         ),
       ),
-      // Bookings tab
-      const MyBookingsPage(),
-      // Messages tab
-      const MessagesPage(),
-      // Profile tab
-      const ProfilePage(),
-    ];
+    );
+  }
+
+  Widget _createPageForIndex(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        return _buildHomeTab(context);
+      case 1:
+        return _buildCategoriesTab(context);
+      case 2:
+        return const MyBookingsPage();
+      case 3:
+        return const MessagesPage();
+      case 4:
+        return const ProfilePage();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  List<Widget> _buildIndexedStackChildren(BuildContext context) {
+    final children = <Widget>[];
+    for (var i = 0; i < _pages.length; i++) {
+      final cached = _pages[i];
+      if (cached != null) {
+        children.add(cached);
+        continue;
+      }
+      if (i != _currentIndex) {
+        children.add(const SizedBox.shrink());
+        continue;
+      }
+      final page = _createPageForIndex(context, i);
+      _pages[i] = page;
+      children.add(page);
+    }
+    return children;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = _buildIndexedStackChildren(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,

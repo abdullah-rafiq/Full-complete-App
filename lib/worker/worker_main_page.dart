@@ -19,16 +19,57 @@ class WorkerMainPage extends StatefulWidget {
 
 class _WorkerMainPageState extends State<WorkerMainPage> {
   int _currentIndex = 0;
+  late final List<Widget?> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = List<Widget?>.filled(5, null);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final pages = <Widget>[
-      const WorkerHomeScreen(),
-      const WorkerJobsPage(),
-      const WorkerEarningsPage(),
-      const MessagesPage(),
-      const ProfilePage(),
-    ];
+    List<Widget> _buildPages() {
+      final children = <Widget>[];
+      for (var i = 0; i < _pages.length; i++) {
+        final cached = _pages[i];
+        if (cached != null) {
+          children.add(cached);
+          continue;
+        }
+        if (i != _currentIndex) {
+          children.add(const SizedBox.shrink());
+          continue;
+        }
+
+        Widget page;
+        switch (i) {
+          case 0:
+            page = const WorkerHomeScreen();
+            break;
+          case 1:
+            page = const WorkerJobsPage();
+            break;
+          case 2:
+            page = const WorkerEarningsPage();
+            break;
+          case 3:
+            page = const MessagesPage();
+            break;
+          case 4:
+            page = const ProfilePage();
+            break;
+          default:
+            page = const SizedBox.shrink();
+        }
+
+        _pages[i] = page;
+        children.add(page);
+      }
+      return children;
+    }
+
+    final pages = _buildPages();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,

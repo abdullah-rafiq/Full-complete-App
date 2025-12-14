@@ -7,9 +7,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/services/user_service.dart';
 import 'package:flutter_application_1/controllers/current_user_controller.dart';
-import 'package:flutter_application_1/user/main_page.dart';
-import 'package:flutter_application_1/worker/worker_main_page.dart';
-import 'package:flutter_application_1/admin/admin_main_page.dart';
+import 'package:flutter_application_1/user/main_page.dart' deferred as user_main;
+import 'package:flutter_application_1/worker/worker_main_page.dart' deferred as worker_main;
+import 'package:flutter_application_1/admin/admin_main_page.dart' deferred as admin_main;
 
 class RoleHomePage extends StatelessWidget {
   const RoleHomePage({super.key});
@@ -68,14 +68,113 @@ class RoleHomePage extends StatelessWidget {
 
         switch (profile.role) {
           case UserRole.customer:
-            return const MainPage();
+            return const _UserMainHost();
           case UserRole.provider:
-            return const WorkerMainPage();
+            return const _WorkerMainHost();
           case UserRole.admin:
-            return const AdminMainPage();
+            return const _AdminMainHost();
         }
       },
     );
+  }
+}
+
+class _UserMainHost extends StatefulWidget {
+  const _UserMainHost();
+
+  @override
+  State<_UserMainHost> createState() => _UserMainHostState();
+}
+
+class _UserMainHostState extends State<_UserMainHost> {
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    user_main.loadLibrary().then((_) {
+      if (!mounted) return;
+      setState(() {
+        _loaded = true;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return user_main.MainPage();
+  }
+}
+
+class _WorkerMainHost extends StatefulWidget {
+  const _WorkerMainHost();
+
+  @override
+  State<_WorkerMainHost> createState() => _WorkerMainHostState();
+}
+
+class _WorkerMainHostState extends State<_WorkerMainHost> {
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    worker_main.loadLibrary().then((_) {
+      if (!mounted) return;
+      setState(() {
+        _loaded = true;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return worker_main.WorkerMainPage();
+  }
+}
+
+class _AdminMainHost extends StatefulWidget {
+  const _AdminMainHost();
+
+  @override
+  State<_AdminMainHost> createState() => _AdminMainHostState();
+}
+
+class _AdminMainHostState extends State<_AdminMainHost> {
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    admin_main.loadLibrary().then((_) {
+      if (!mounted) return;
+      setState(() {
+        _loaded = true;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return admin_main.AdminMainPage();
   }
 }
 
