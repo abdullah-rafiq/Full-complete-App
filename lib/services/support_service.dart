@@ -20,11 +20,20 @@ class SupportService {
       throw StateError('User not logged in');
     }
 
-    final candidatePaths = <String>[
-      '/ai/support/ask',
-      '/api/support/ask',
-      '/support/ask',
-    ];
+    final uri = Uri.parse('$_baseUrl/ai/support/ask');
+
+    Future<http.Response> sendWithToken(String token) {
+      return http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'message': message,
+        }),
+      );
+    }
 
     // First try with the current (possibly cached) ID token. The Firebase SDK
     // automatically refreshes expired tokens in most cases, but we also
@@ -35,72 +44,38 @@ class SupportService {
       throw StateError('Could not obtain ID token');
     }
 
-    var tokenValue = token;
-
     // Debug: print the Firebase ID token so it can be used for backend tests.
     // Remove this in production if you do not want tokens in logs.
     // ignore: avoid_print
-    print('FIREBASE_ID_TOKEN: $tokenValue');
+    print('FIREBASE_ID_TOKEN: $token');
 
-    Exception? lastError;
+    http.Response response = await sendWithToken(token);
 
-    for (final path in candidatePaths) {
-      final uri = Uri.parse('$_baseUrl$path');
-
-      Future<http.Response> sendWithToken(String token) {
-        return http.post(
-          uri,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode(<String, dynamic>{
-            'message': message,
-          }),
-        );
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      // Force-refresh the ID token and retry once.
+      token = await user.getIdToken(true);
+      if (token == null) {
+        throw StateError('Could not refresh ID token');
       }
-
-      http.Response response;
-      try {
-        response = await sendWithToken(tokenValue);
-      } catch (e) {
-        lastError = Exception('Support request failed ($path): $e');
-        continue;
-      }
-
-      if (response.statusCode == 404) {
-        lastError = Exception('Support API not found ($path): ${response.body}');
-        continue;
-      }
-
-      if (response.statusCode == 401 || response.statusCode == 403) {
-        token = await user.getIdToken(true);
-        if (token == null) {
-          throw StateError('Could not refresh ID token');
-        }
-        tokenValue = token;
-        response = await sendWithToken(tokenValue);
-      }
-
-      if (response.statusCode != 200) {
-        lastError = Exception(
-          'Support API error (${response.statusCode}) ($path): ${response.body}',
-        );
-        continue;
-      }
-
-      final dynamic decoded = jsonDecode(response.body);
-      if (decoded is Map<String, dynamic>) {
-        final dynamic replyField =
-            decoded['reply'] ?? decoded['answer'] ?? decoded['message'];
-        if (replyField != null && replyField.toString().trim().isNotEmpty) {
-          return replyField.toString();
-        }
-      }
-
-      return 'Support replied: ${response.body}';
+      response = await sendWithToken(token);
     }
 
-    throw lastError ?? Exception('Support API request failed');
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Support API error (${response.statusCode}): ${response.body}',
+      );
+    }
+
+    final dynamic decoded = jsonDecode(response.body);
+    if (decoded is Map<String, dynamic>) {
+      final dynamic replyField =
+          decoded['reply'] ?? decoded['answer'] ?? decoded['message'];
+      if (replyField != null && replyField.toString().trim().isNotEmpty) {
+        return replyField.toString();
+      }
+    }
+
+    // Fallback: return raw body if the structure is unexpected.
+    return 'Support replied: ${response.body}';
   }
 }

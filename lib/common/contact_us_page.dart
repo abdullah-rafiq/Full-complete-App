@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import '../localized_strings.dart';
 import '../services/support_service.dart';
 
@@ -61,16 +60,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
         );
         _isSending = false;
       });
-    } catch (e) {
-      debugPrint('SUPPORT_CHAT_ERROR: $e');
+    } catch (_) {
       if (!mounted) return;
       setState(() {
         _messages.add(
           _ChatMessage(
             fromUser: false,
-            text: kDebugMode
-                ? 'Support error: $e'
-                : L10n.contactSupportReplyGeneric(),
+            text: L10n.contactSupportReplyGeneric(),
             timestampLabel: 'now',
           ),
         );
