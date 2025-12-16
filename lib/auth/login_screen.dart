@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_application_1/models/app_user.dart';
+import 'package:flutter_application_1/controllers/current_user_controller.dart';
 import 'package:flutter_application_1/services/auth_service.dart';
 import 'package:flutter_application_1/localized_strings.dart';
 import 'package:flutter_application_1/app_locale.dart';
@@ -91,6 +92,8 @@ class _AuthScreenState extends State<AuthScreen> {
         password: password,
       );
 
+      CurrentUserController.reset();
+
       // Simple analytics/logging
       // ignore: avoid_print
       print('LOGIN_EMAIL_SUCCESS user=${cred.user?.uid}');
@@ -100,6 +103,13 @@ class _AuthScreenState extends State<AuthScreen> {
       }
 
       final profile = await AuthService.instance.getCurrentUserProfile();
+
+      final url = profile?.profileImageUrl;
+      if (url != null && url.isNotEmpty) {
+        try {
+          precacheImage(NetworkImage(url), context);
+        } catch (_) {}
+      }
 
       if (!mounted) return;
 
@@ -137,6 +147,8 @@ class _AuthScreenState extends State<AuthScreen> {
       final userCred =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
+      CurrentUserController.reset();
+
       final firebaseUser = userCred.user;
       if (firebaseUser != null) {
         await AuthService.instance.ensureUserDocument(
@@ -146,6 +158,14 @@ class _AuthScreenState extends State<AuthScreen> {
       }
 
       final profile = await AuthService.instance.getCurrentUserProfile();
+
+      final url = profile?.profileImageUrl;
+      if (url != null && url.isNotEmpty) {
+        try {
+          precacheImage(NetworkImage(url), context);
+        } catch (_) {}
+      }
+
       if (!mounted) return;
 
       _navigateByRole(profile);

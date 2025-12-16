@@ -117,24 +117,20 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         ListTile(
                           leading: Icon(Icons.email_outlined),
                           title: Text('Email'),
-                          subtitle: Text('support@example.com'),
+                          subtitle: Text('support@assist.com'),
                         ),
                         Divider(height: 1),
                         ListTile(
                           leading: Icon(Icons.phone_outlined),
                           title: Text('Phone'),
-                          subtitle: Text('+1 234 567 890 (dummy)'),
+                          subtitle: Text('+92 334 567 890'),
                         ),
                         Divider(height: 1),
                         ListTile(
                           leading: Icon(Icons.access_time),
                           title: Text('Support hours'),
                           subtitle:
-                              Text('Mon - Fri, 9:00 AM - 6:00 PM (local time)'),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'The contact details above are dummy placeholders. Replace them with your real support email and phone when you are ready to go live.',
+                              Text('Mon - Fri, 9:00 AM - 6:00 PM '),
                         ),
                       ],
                     ),

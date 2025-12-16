@@ -118,6 +118,10 @@ class _ProfilePageState extends State<ProfilePage> {
             }
             final profileImageUrl = profile?.profileImageUrl;
 
+            if (profileImageUrl != null) {
+              debugPrint('PROFILE_IMAGE_URL: $profileImageUrl');
+            }
+
             ImageProvider avatarImage;
             if (profileImageUrl != null && profileImageUrl.isNotEmpty) {
               avatarImage = NetworkImage(profileImageUrl);
@@ -141,6 +145,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               key: ValueKey(profileImageUrl ?? 'no_image'),
                               radius: 40,
                               backgroundImage: avatarImage,
+                              onBackgroundImageError: (exception, stackTrace) {
+                                debugPrint(
+                                  'PROFILE_AVATAR_LOAD_ERROR: $exception',
+                                );
+                              },
                             ),
                             Container(
                               decoration: BoxDecoration(
