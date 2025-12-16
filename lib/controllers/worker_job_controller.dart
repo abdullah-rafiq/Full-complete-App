@@ -24,7 +24,7 @@ class WorkerJobController {
 
     final provider = await UserService.instance.getById(current.uid);
     if (!context.mounted) return;
-    if (provider == null || !provider.verified) {
+    if (provider == null || provider.verificationStatus != 'approved') {
       UIHelpers.showSnack(
         context,
         'Your account is not verified yet. Complete verification before accepting or starting jobs.',

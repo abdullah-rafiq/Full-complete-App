@@ -57,7 +57,7 @@ class FeaturedProvidersController {
     final providersSnap = await FirebaseFirestore.instance
         .collection('users')
         .where('role', isEqualTo: 'provider')
-        .where('verified', isEqualTo: true)
+        .where('verificationStatus', isEqualTo: 'approved')
         .get();
 
     final items = <FeaturedProviderItem>[];

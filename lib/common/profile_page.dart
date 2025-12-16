@@ -17,6 +17,7 @@ import 'section_card.dart';
 import '../user/my_bookings_page.dart';
 import '../localized_strings.dart';
 import '../dev_seed.dart';
+import '../worker/worker_verification_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -41,6 +42,14 @@ class _ProfilePageState extends State<ProfilePage> {
           _verificationSub = UserService.instance
               .watchUser(refreshed.uid)
               .listen((profile) async {
+            if (profile == null) {
+              return;
+            }
+
+            if (profile.role == UserRole.provider) {
+              return;
+            }
+
             await UserService.instance
                 .updateUser(refreshed.uid, {'verified': true});
 
@@ -84,8 +93,10 @@ class _ProfilePageState extends State<ProfilePage> {
             final profile = snapshot.data;
             final bool profileVerified = profile?.verified ?? false;
             final bool authEmailVerified = current.emailVerified;
-            final bool isVerified =
-                _localVerifiedOverride || profileVerified || authEmailVerified;
+            final bool isWorker = profile?.role == UserRole.provider;
+            final bool isVerified = isWorker
+                ? (profile?.verificationStatus == 'approved')
+                : (_localVerifiedOverride || profileVerified || authEmailVerified);
 
             // Debug: log the loaded role (if any) for this profile
             if (profile != null) {
@@ -179,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        if (!isAdmin) ...[
+                        if (!isAdmin && !isWorker) ...[
                           InkWell(
                             borderRadius: BorderRadius.circular(12),
                             onTap: () async {
@@ -289,6 +300,57 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                        ],
+                        if (!isAdmin && isWorker) ...[
+                          InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const WorkerVerificationPage(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isVerified
+                                    ? Colors.green.withOpacity(0.10)
+                                    : Colors.orange.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    isVerified
+                                        ? Icons.verified
+                                        : Icons.hourglass_bottom,
+                                    size: 16,
+                                    color: isVerified
+                                        ? Colors.green
+                                        : Colors.orange,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    isVerified
+                                        ? 'Verified (documents approved)'
+                                        : 'Complete verification (tap)',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: isVerified
+                                          ? Colors.green
+                                          : Colors.orange,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

@@ -11,6 +11,7 @@ class AppUser {
   final String status; // Active | Suspended
   final String? profileImageUrl;
   final bool verified;
+  final String verificationStatus;
   final num walletBalance;
   final DateTime? createdAt;
   final DateTime? lastSeen;
@@ -29,6 +30,7 @@ class AppUser {
     this.status = 'Active',
     this.profileImageUrl,
     this.verified = false,
+    this.verificationStatus = 'none',
     this.walletBalance = 0,
     this.createdAt,
     this.lastSeen,
@@ -59,6 +61,7 @@ class AppUser {
       status: data['status'] as String? ?? 'Active',
       profileImageUrl: data['profileImageUrl'] as String?,
       verified: (data['verified'] as bool?) ?? false,
+      verificationStatus: (data['verificationStatus'] as String?) ?? 'none',
       walletBalance: (data['walletBalance'] as num?) ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       lastSeen: (data['lastSeen'] as Timestamp?)?.toDate(),
@@ -79,6 +82,7 @@ class AppUser {
       'status': status,
       'profileImageUrl': profileImageUrl,
       'verified': verified,
+      'verificationStatus': verificationStatus,
       'walletBalance': walletBalance,
       'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
       'lastSeen': lastSeen == null ? null : Timestamp.fromDate(lastSeen!),

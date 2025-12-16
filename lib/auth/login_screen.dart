@@ -26,6 +26,10 @@ class _AuthScreenState extends State<AuthScreen> {
   String? _emailError;
   String? _passwordError;
 
+  static const String _googleServerClientId =
+      '367355369302-ne1rtv1fidied34iqehu7kmhm20i1ufs.apps.googleusercontent.com';
+  static Future<void>? _googleInitFuture;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -150,32 +154,37 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Future<void> _signInWithGoogle() async {
     try {
+      _googleInitFuture ??= GoogleSignIn.instance
+          .initialize(serverClientId: _googleServerClientId);
+      await _googleInitFuture;
+
       final googleUser = await GoogleSignIn.instance.authenticate();
 
       final googleAuth = googleUser.authentication;
 
+      final idToken = googleAuth.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw StateError('Google sign-in did not return an idToken');
+      }
+
       final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
+        idToken: idToken,
       );
 
-      final userCred =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
       CurrentUserController.reset();
-
-      final firebaseUser = userCred.user;
-      if (firebaseUser != null) {
-        await AuthService.instance.ensureUserDocument(
-          firebaseUser: firebaseUser,
-          role: UserRole.customer,
-        );
-      }
 
       final profile = await AuthService.instance.getCurrentUserProfile();
 
       if (!mounted) return;
 
-      final url = profile?.profileImageUrl;
+      if (profile == null) {
+        context.go('/role');
+        return;
+      }
+
+      final url = profile.profileImageUrl;
       if (url != null && url.isNotEmpty) {
         try {
           precacheImage(NetworkImage(url), context);

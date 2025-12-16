@@ -18,7 +18,15 @@ class AuthService {
     if (user == null) return null;
     final doc = await _db.collection('users').doc(user.uid).get();
     if (!doc.exists) return null;
-    return AppUser.fromMap(doc.id, doc.data()!);
+    final data = doc.data();
+    if (data == null) return null;
+
+    final dynamic roleRaw = data['role'];
+    if (roleRaw is! String || roleRaw.trim().isEmpty) {
+      return null;
+    }
+
+    return AppUser.fromMap(doc.id, data);
   }
 
   Future<UserCredential> signInWithEmail(String email, String password) {
@@ -40,7 +48,23 @@ class AuthService {
   }) async {
     final userRef = _db.collection('users').doc(firebaseUser.uid);
     final snapshot = await userRef.get();
-    if (snapshot.exists) return;
+    if (snapshot.exists) {
+      final data = snapshot.data();
+      final dynamic roleRaw = data?['role'];
+      final bool hasRole = roleRaw is String && roleRaw.trim().isNotEmpty;
+      if (hasRole) return;
+
+      await userRef.set(
+        {
+          'role': role.name,
+          'email': firebaseUser.email,
+          'name': firebaseUser.displayName,
+          'phone': firebaseUser.phoneNumber,
+        },
+        SetOptions(merge: true),
+      );
+      return;
+    }
 
     final appUser = AppUser(
       id: firebaseUser.uid,

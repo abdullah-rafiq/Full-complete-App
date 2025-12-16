@@ -366,7 +366,8 @@ class _WorkerVerificationBanner extends StatelessWidget {
 
       builder: (context, snapshot) {
         final user = snapshot.data;
-        if (user == null || user.role != UserRole.provider || user.verified) {
+        final bool isDocApproved = user?.verificationStatus == 'approved';
+        if (user == null || user.role != UserRole.provider || isDocApproved) {
           return const SizedBox.shrink();
         }
 
@@ -411,7 +412,7 @@ class _WorkerVerificationBanner extends StatelessWidget {
 
                     const SizedBox(height: 4),
                     Text(
-                      'Verify your account (phone / details) so you can start accepting and completing jobs.',
+                      'Upload CNIC, live picture, and shop/tools photo so you can start accepting and completing jobs.',
                       style: TextStyle(
                         fontSize: 12,
                         color: descColor,
