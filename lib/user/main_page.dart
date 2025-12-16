@@ -34,7 +34,7 @@ class _MainPageState extends State<MainPage> {
   final Color primaryLightBlue = const Color(0xFF4FC3F7);
   final Color primaryBlue = const Color(0xFF29B6F6);
   final Color primaryDarkBlue = const Color(0xFF0288D1);
-  late final Color surfaceWhite = Colors.white.withOpacity(0.95);
+  late final Color surfaceWhite = Colors.white.withValues(alpha: 0.95);
   int _currentIndex = 0;
   String? _displayName;
   String? _currentCity;
@@ -136,7 +136,7 @@ class _MainPageState extends State<MainPage> {
           fit: BoxFit.fitWidth,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: primaryLightBlue.withOpacity(0.2),
+              color: primaryLightBlue.withValues(alpha: 0.2),
               alignment: Alignment.center,
               child: const Icon(Icons.broken_image_outlined),
             );
@@ -165,7 +165,7 @@ class _MainPageState extends State<MainPage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: primaryDarkBlue.withOpacity(0.15),
+            color: primaryDarkBlue.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -321,7 +321,7 @@ class _MainPageState extends State<MainPage> {
                       backgroundImage: AssetImage(cat.iconUrl!),
                     )
                   : CircleAvatar(
-                      backgroundColor: primaryLightBlue.withOpacity(0.2),
+                      backgroundColor: primaryLightBlue.withValues(alpha: 0.2),
                       child: Text(
                         cat.name.isNotEmpty
                             ? cat.name[0].toUpperCase()
@@ -404,8 +404,8 @@ class _MainPageState extends State<MainPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            primaryLightBlue.withOpacity(0.9 - index * 0.08),
-                            primaryBlue.withOpacity(0.85 - index * 0.08),
+                            primaryLightBlue.withValues(alpha: 0.9 - index * 0.08),
+                            primaryBlue.withValues(alpha: 0.85 - index * 0.08),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -413,7 +413,7 @@ class _MainPageState extends State<MainPage> {
                         borderRadius: BorderRadius.circular(18),
                         boxShadow: [
                           BoxShadow(
-                            color: primaryDarkBlue.withOpacity(0.12),
+                            color: primaryDarkBlue.withValues(alpha: 0.12),
                             blurRadius: 8,
                             offset: const Offset(0, 6),
                           ),
@@ -584,7 +584,7 @@ class _MainPageState extends State<MainPage> {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: primaryDarkBlue.withOpacity(0.08),
+                color: primaryDarkBlue.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),

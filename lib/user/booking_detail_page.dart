@@ -67,7 +67,7 @@ class BookingDetailPage extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color:
-                              _statusColor(booking.status).withOpacity(0.12),
+                              _statusColor(booking.status).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -156,8 +156,8 @@ class BookingDetailPage extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: booking.paymentStatus == PaymentStatus.pending
-                              ? Colors.redAccent.withOpacity(0.12)
-                              : Colors.green.withOpacity(0.12),
+                              ? Colors.redAccent.withValues(alpha: 0.12)
+                              : Colors.green.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(

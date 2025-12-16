@@ -68,14 +68,14 @@ class WorkerJobDetailPage extends StatelessWidget {
                                   Icon(
                                     Icons.phone_outlined,
                                     size: 16,
-                                    color: onSurface.withOpacity(0.7),
+                                    color: onSurface.withValues(alpha: 0.7),
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     phone,
                                     style: TextStyle(
                                       fontSize: 13,
-                                      color: onSurface.withOpacity(0.7),
+                                      color: onSurface.withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ],
@@ -104,7 +104,8 @@ class WorkerJobDetailPage extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: _statusColor(booking.status).withOpacity(0.12),
+                          color: _statusColor(booking.status)
+                              .withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -125,7 +126,7 @@ class WorkerJobDetailPage extends StatelessWidget {
                       Icon(
                         Icons.calendar_today_outlined,
                         size: 18,
-                        color: onSurface.withOpacity(0.7),
+                        color: onSurface.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -145,7 +146,7 @@ class WorkerJobDetailPage extends StatelessWidget {
                       Icon(
                         Icons.place_outlined,
                         size: 18,
-                        color: onSurface.withOpacity(0.7),
+                        color: onSurface.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -164,7 +165,7 @@ class WorkerJobDetailPage extends StatelessWidget {
                       Icon(
                         Icons.attach_money,
                         size: 18,
-                        color: onSurface.withOpacity(0.7),
+                        color: onSurface.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -182,7 +183,7 @@ class WorkerJobDetailPage extends StatelessWidget {
                       Icon(
                         Icons.payment_outlined,
                         size: 18,
-                        color: onSurface.withOpacity(0.7),
+                        color: onSurface.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 8),
                       Text(

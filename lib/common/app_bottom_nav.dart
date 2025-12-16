@@ -19,17 +19,15 @@ class AppBottomNav extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final Color selectedColor =
         isDark ? Colors.white : colorScheme.primary;
-    // ignore: deprecated_member_use
     final Color unselectedColor = isDark
         ? Colors.white70
-        : colorScheme.onSurface.withOpacity(0.6);
+        : colorScheme.onSurface.withValues(alpha: 0.6);
 
     return BottomNavigationBar(
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
       backgroundColor: colorScheme.surface,
       selectedItemColor: selectedColor,
-      // ignore: deprecated_member_use
       unselectedItemColor: unselectedColor,
       onTap: onTap,
       items: items,

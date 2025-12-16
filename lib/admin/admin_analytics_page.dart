@@ -246,7 +246,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -560,7 +560,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -671,7 +671,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -764,7 +764,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -809,7 +809,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                   Text(
                     'Last 30 days',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: onSurface.withOpacity(0.8),
+                      color: onSurface.withValues(alpha: 0.8),
                     ),
                   ),
                   Text(
@@ -880,7 +880,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -958,7 +958,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -1069,7 +1069,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -1198,7 +1198,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -1276,7 +1276,7 @@ class AdminAnalyticsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.08),
+                color: theme.shadowColor.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 8),
               ),
@@ -1484,7 +1484,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.08),
+            color: theme.shadowColor.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 8),
           ),
@@ -1506,12 +1506,12 @@ class _StatCard extends StatelessWidget {
                       CircularProgressIndicator(
                         value: percentage!.clamp(0.0, 1.0).toDouble(),
                         strokeWidth: 3,
-                        backgroundColor: color.withOpacity(0.12),
+                        backgroundColor: color.withValues(alpha: 0.12),
                         valueColor: AlwaysStoppedAnimation<Color>(color),
                       ),
                     CircleAvatar(
                       radius: 16,
-                      backgroundColor: color.withOpacity(0.12),
+                      backgroundColor: color.withValues(alpha: 0.12),
                       child: Icon(
                         icon,
                         size: 18,
@@ -1528,7 +1528,7 @@ class _StatCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: onSurface.withOpacity(0.7),
+                    color: onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -1546,7 +1546,7 @@ class _StatCard extends StatelessWidget {
             Text(
               subtitle!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: onSurface.withOpacity(0.6),
+                color: onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -1618,7 +1618,7 @@ class _BookingsBar extends StatelessWidget {
               height: 6,
               width: constraints.maxWidth,
               decoration: BoxDecoration(
-                color: onSurface.withOpacity(0.08),
+                color: onSurface.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(999),
               ),
               alignment: Alignment.centerLeft,

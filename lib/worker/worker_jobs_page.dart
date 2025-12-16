@@ -57,7 +57,10 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
               child: Text(
                 L10n.workerJobsLoadError(),
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.8),
                 ),
               ),
             );
@@ -94,7 +97,7 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.8),
+                          .withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -197,7 +200,7 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                                   BoxShadow(
                                     color: Theme.of(context)
                                         .shadowColor
-                                        .withOpacity(0.08),
+                                        .withValues(alpha: 0.08),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -277,7 +280,7 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: statusColor(b.status)
-                                                .withOpacity(0.12),
+                                                .withValues(alpha: 0.12),
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),

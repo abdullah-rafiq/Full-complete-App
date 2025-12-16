@@ -170,7 +170,7 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
     // ignore: unused_local_variable
     final Color descColor = isDark
         ? Colors.white70
-        : theme.colorScheme.onSurface.withOpacity(0.7);
+        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
     const totalSteps = 4;
     final completedSteps =
         (_cnicFrontUrl != null ? 1 : 0) +
@@ -207,10 +207,10 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: _overallStatus == 'approved'
-                      ? Colors.green.withOpacity(0.12)
+                      ? Colors.green.withValues(alpha: 0.12)
                       : _overallStatus == 'rejected'
-                          ? Colors.redAccent.withOpacity(0.12)
-                          : Colors.orange.withOpacity(0.12),
+                          ? Colors.redAccent.withValues(alpha: 0.12)
+                          : Colors.orange.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -252,7 +252,7 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: theme.shadowColor.withOpacity(0.08),
+                    color: theme.shadowColor.withValues(alpha: 0.08),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -369,7 +369,7 @@ class _VerificationTile extends StatelessWidget {
         isDark ? Colors.white : theme.colorScheme.onSurface;
     final Color descColor = isDark
         ? Colors.white70
-        : theme.colorScheme.onSurface.withOpacity(0.7);
+        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
     Color statusColor(String s) {
       switch (s) {
@@ -380,7 +380,7 @@ class _VerificationTile extends StatelessWidget {
         case 'pending':
           return Colors.orange;
         default:
-          return theme.colorScheme.onSurface.withOpacity(0.4);
+          return theme.colorScheme.onSurface.withValues(alpha: 0.4);
       }
     }
 
@@ -409,7 +409,7 @@ class _VerificationTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.08),
+            color: theme.shadowColor.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -452,7 +452,7 @@ class _VerificationTile extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: statusColor(status).withOpacity(0.12),
+                        color: statusColor(status).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(

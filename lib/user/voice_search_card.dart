@@ -30,7 +30,7 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
     final Color searchTextColor =
         isDark ? Colors.white70 : Colors.black54;
     final Color searchIconBg =
-        isDark ? Colors.white10 : widget.primaryLightBlue.withOpacity(0.12);
+        isDark ? Colors.white10 : widget.primaryLightBlue.withValues(alpha: 0.12);
     final Color searchIconColor =
         isDark ? Colors.white70 : widget.primaryDarkBlue;
 
@@ -53,7 +53,7 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: widget.primaryDarkBlue.withOpacity(0.08),
+              color: widget.primaryDarkBlue.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),

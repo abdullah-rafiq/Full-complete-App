@@ -204,7 +204,9 @@ Future<void> _ensureUserLocationAndAddress(AppUser profile) async {
     }
 
     final position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
     );
 
     String? city;

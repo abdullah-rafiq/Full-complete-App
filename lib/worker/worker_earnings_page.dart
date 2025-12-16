@@ -66,7 +66,9 @@ class WorkerEarningsPage extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color:
-                            Theme.of(context).shadowColor.withOpacity(0.08),
+                            Theme.of(context)
+                                .shadowColor
+                                .withValues(alpha: 0.08),
                         blurRadius: 12,
                         offset: const Offset(0, 8),
                       ),
@@ -122,7 +124,7 @@ class WorkerEarningsPage extends StatelessWidget {
                                   BoxShadow(
                                     color: Theme.of(context)
                                         .shadowColor
-                                        .withOpacity(0.07),
+                                        .withValues(alpha: 0.07),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),

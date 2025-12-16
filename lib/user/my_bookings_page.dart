@@ -88,7 +88,7 @@ class MyBookingsPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.08),
+                  color: Theme.of(context).shadowColor.withValues(alpha: 0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -140,7 +140,7 @@ class MyBookingsPage extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: statusColor(b.status).withOpacity(0.12),
+                            color: statusColor(b.status).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

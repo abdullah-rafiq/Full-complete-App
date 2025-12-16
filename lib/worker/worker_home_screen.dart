@@ -39,7 +39,7 @@ class WorkerHomeScreen extends StatelessWidget {
               L10n.workerTodayOverviewSubtitle(),
               style: TextStyle(
                 fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 8),
@@ -87,7 +87,7 @@ class WorkerHomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 8),
           ),
@@ -99,7 +99,7 @@ class WorkerHomeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF29B6F6).withOpacity(0.08),
+              color: const Color(0xFF29B6F6).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
@@ -128,7 +128,7 @@ class WorkerHomeScreen extends StatelessWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -147,7 +147,7 @@ class WorkerHomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 8),
           ),
@@ -159,7 +159,7 @@ class WorkerHomeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.08),
+              color: Colors.green.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
@@ -188,7 +188,7 @@ class WorkerHomeScreen extends StatelessWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -255,7 +255,7 @@ class _WorkerDemandHint extends StatelessWidget {
               child: Text(
                 hint,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.75),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
                 ),
               ),
             ),

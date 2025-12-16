@@ -347,7 +347,7 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                                 ListTile(
                                   leading: CircleAvatar(
                                     backgroundColor:
-                                        Colors.blueAccent.withOpacity(0.1),
+                                        Colors.blueAccent.withValues(alpha: 0.1),
                                     child: Text(
                                       cat.name.isNotEmpty
                                           ? cat.name[0].toUpperCase()

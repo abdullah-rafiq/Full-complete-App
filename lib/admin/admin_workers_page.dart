@@ -163,7 +163,7 @@ class AdminWorkersPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: theme.shadowColor.withOpacity(0.08),
+                                color: theme.shadowColor.withValues(alpha: 0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -190,7 +190,7 @@ class AdminWorkersPage extends StatelessWidget {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: statusColor.withOpacity(0.12),
+                                      color: statusColor.withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
@@ -221,7 +221,7 @@ class AdminWorkersPage extends StatelessWidget {
                                     '(${item.reviewCount} reviews)',
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: onSurface.withOpacity(0.6),
+                                      color: onSurface.withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ],
@@ -231,7 +231,7 @@ class AdminWorkersPage extends StatelessWidget {
                                 'ID: ${worker.id}',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: onSurface.withOpacity(0.6),
+                                  color: onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                               const SizedBox(height: 2),

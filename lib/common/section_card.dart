@@ -26,7 +26,7 @@ class SectionCard extends StatelessWidget {
     final resolvedShadows = boxShadow ??
         [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.08),
+            color: theme.shadowColor.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 8),
           ),

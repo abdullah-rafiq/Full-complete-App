@@ -52,7 +52,7 @@ class FeaturedProvidersSection extends StatelessWidget {
               final isDark = theme.brightness == Brightness.dark;
               final subtleTextColor = isDark
                   ? Colors.white70
-                  : theme.colorScheme.onSurface.withOpacity(0.7);
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
               final name = (user.name?.trim().isNotEmpty ?? false)
                   ? user.name!.trim()
@@ -75,7 +75,7 @@ class FeaturedProvidersSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: theme.shadowColor.withOpacity(0.08),
+                      color: theme.shadowColor.withValues(alpha: 0.08),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -135,7 +135,7 @@ class FeaturedProvidersSection extends StatelessWidget {
                                     ),
                                     decoration: BoxDecoration(
                                       color:
-                                          primaryLightBlue.withOpacity(0.12),
+                                          primaryLightBlue.withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(

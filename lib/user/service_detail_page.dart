@@ -127,7 +127,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 boxShadow: [
                   BoxShadow(
                     color:
-                        Theme.of(context).shadowColor.withOpacity(0.08),
+                        Theme.of(context).shadowColor.withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 8),
                   ),
