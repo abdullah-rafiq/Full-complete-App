@@ -228,7 +228,10 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _callOther() async {
-    final phone = widget.otherUser.phone?.trim();
+    final rawPhone = widget.otherUser.phone?.trim();
+    final phone = rawPhone == null
+        ? null
+        : rawPhone.replaceAll(RegExp(r'[^0-9+]'), '');
     if (phone == null || phone.isEmpty) {
       if (!mounted) return;
       UIHelpers.showSnack(context, 'No phone number available for this user.');

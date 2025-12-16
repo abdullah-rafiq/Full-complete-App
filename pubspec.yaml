@@ -33,10 +33,10 @@ dependencies:
   path_provider: ^2.1.5
   geolocator: ^14.0.2
   geocoding: ^4.0.0
-  speech_to_text: ^7.3.0
   fl_chart: ^1.1.1
   permission_handler: ^12.0.1
   all: ^0.0.3
+  speech_to_text: ^7.3.0
 
 dev_dependencies:
   flutter_test:
@@ -48,16 +48,20 @@ dev_dependencies:
   flutter_native_splash: ^2.4.0
 
 flutter_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
-  image_path: "assets/icons/icon.png"
+  web:
+    generate: true
+  image_path: "assets/app_icon.png"
+  adaptive_icon_background: "#0288D1"
+  adaptive_icon_foreground: "assets/app_icon.png"
 
 flutter_native_splash:
   color: "#4FC3F7"
-  image: assets/icons/icon.png
+  image: assets/assist_logo.png
   android_12:
     color: "#4FC3F7"
-    image: assets/icons/icon.png
+    image: assets/assist_logo.png
 
 flutter:
   uses-material-design: true

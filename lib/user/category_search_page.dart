@@ -1,11 +1,13 @@
-// ignore_for_file: deprecated_member_use
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import 'package:flutter_application_1/models/category.dart';
 import 'package:flutter_application_1/models/service.dart';
 import 'package:flutter_application_1/services/service_catalog_service.dart';
+import 'package:flutter_application_1/services/ai_backend_service.dart';
 import 'category_services_page.dart';
 import 'service_detail_page.dart';
 
@@ -21,15 +23,121 @@ class CategorySearchPage extends StatefulWidget {
 class _CategorySearchPageState extends State<CategorySearchPage> {
   String _query = '';
   late final TextEditingController _controller;
-  String _serviceSort = 'relevance'; // relevance, price_asc, price_desc
   bool _showCategories = true;
   bool _showServices = true;
+  String _aiQuery = '';
+  Timer? _aiDebounce;
+  bool _aiEnhancing = false;
+  late final stt.SpeechToText _speech;
+  bool _isListening = false;
 
   @override
   void initState() {
     super.initState();
     _query = widget.initialQuery?.trim().toLowerCase() ?? '';
+    _aiQuery = _query;
     _controller = TextEditingController(text: widget.initialQuery ?? '');
+    _speech = stt.SpeechToText();
+  }
+
+  @override
+  void dispose() {
+    _aiDebounce?.cancel();
+    if (_isListening) {
+      _speech.stop();
+    }
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleQueryChanged(String value) {
+    final raw = value.trim();
+    setState(() {
+      _query = raw.toLowerCase();
+    });
+
+    _aiDebounce?.cancel();
+
+    if (raw.isEmpty) {
+      setState(() {
+        _aiQuery = '';
+        _aiEnhancing = false;
+      });
+      return;
+    }
+
+    _aiDebounce = Timer(const Duration(milliseconds: 600), () async {
+      if (!mounted) return;
+      setState(() {
+        _aiEnhancing = true;
+      });
+
+      try {
+        final translated = await AiBackendService.instance
+            .translateToEnglish(raw);
+        if (!mounted) return;
+        final lowered = translated.trim().toLowerCase();
+        setState(() {
+          _aiQuery = lowered.isNotEmpty ? lowered : _query;
+        });
+      } catch (_) {
+        if (!mounted) return;
+        setState(() {
+          _aiQuery = _query;
+        });
+      } finally {
+        if (mounted) {
+          setState(() {
+            _aiEnhancing = false;
+          });
+        }
+      }
+    });
+  }
+
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      if (!mounted) return;
+      setState(() {
+        _isListening = false;
+      });
+      return;
+    }
+
+    final available = await _speech.initialize(
+      onStatus: (status) {},
+      onError: (error) {},
+    );
+
+    if (!available) {
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _isListening = true;
+    });
+
+    await _speech.listen(
+      onResult: (result) {
+        final text = result.recognizedWords;
+        _controller.text = text;
+        _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length),
+        );
+        _handleQueryChanged(text);
+
+        if (result.finalResult) {
+          _speech.stop();
+          if (mounted) {
+            setState(() {
+              _isListening = false;
+            });
+          }
+        }
+      },
+    );
   }
 
   void _openFilterSheet() {
@@ -39,7 +147,6 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        String tempSort = _serviceSort;
         bool tempShowCategories = _showCategories;
         bool tempShowServices = _showServices;
         return StatefulBuilder(
@@ -56,30 +163,6 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Sort by price:',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  const SizedBox(height: 8),
-                  RadioListTile<String>(
-                    title: const Text('Price: Low to High'),
-                    value: 'price_asc',
-                    groupValue: tempSort,
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setModalState(() => tempSort = value);
-                    },
-                  ),
-                  RadioListTile<String>(
-                    title: const Text('Price: High to Low'),
-                    value: 'price_desc',
-                    groupValue: tempSort,
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setModalState(() => tempSort = value);
-                    },
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -116,7 +199,6 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _serviceSort = tempSort;
                             _showCategories = tempShowCategories;
                             _showServices = tempShowServices;
                           });
@@ -156,16 +238,32 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                 hintText: 'Search services or categories...',
                 prefixIcon: const Icon(Icons.search),
                 border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.filter_list),
-                  onPressed: _openFilterSheet,
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_aiEnhancing)
+                      const Padding(
+                        padding: EdgeInsets.only(right: 4),
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    IconButton(
+                      icon: Icon(
+                        _isListening ? Icons.mic : Icons.mic_none,
+                      ),
+                      onPressed: _toggleListening,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.filter_list),
+                      onPressed: _openFilterSheet,
+                    ),
+                  ],
                 ),
               ),
-              onChanged: (value) {
-                setState(() {
-                  _query = value.trim().toLowerCase();
-                });
-              },
+              onChanged: _handleQueryChanged,
             ),
           ),
           Expanded(
@@ -181,10 +279,17 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                 }
 
                 var categories = catSnapshot.data ?? [];
-                if (_query.isNotEmpty) {
-                  categories = categories
-                      .where((c) => c.name.toLowerCase().contains(_query))
-                      .toList();
+                final String q = _query;
+                final String aiQ = _aiQuery;
+                if (q.isNotEmpty || aiQ.isNotEmpty) {
+                  categories = categories.where((c) {
+                    final name = c.name.toLowerCase();
+                    final bool matchesNormal =
+                        q.isNotEmpty && name.contains(q);
+                    final bool matchesAi =
+                        aiQ.isNotEmpty && name.contains(aiQ);
+                    return matchesNormal || matchesAi;
+                  }).toList();
                 }
 
                 return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -201,17 +306,17 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                     var services = (svcSnapshot.data?.docs ?? [])
                         .map((d) => ServiceModel.fromMap(d.id, d.data()))
                         .toList();
-                    if (_query.isNotEmpty) {
-                      services = services
-                          .where((s) => s.name.toLowerCase().contains(_query))
-                          .toList();
-                    }
-
-                    // Apply sorting for services
-                    if (_serviceSort == 'price_asc') {
-                      services.sort((a, b) => a.basePrice.compareTo(b.basePrice));
-                    } else if (_serviceSort == 'price_desc') {
-                      services.sort((a, b) => b.basePrice.compareTo(a.basePrice));
+                    final String q = _query;
+                    final String aiQ = _aiQuery;
+                    if (q.isNotEmpty || aiQ.isNotEmpty) {
+                      services = services.where((s) {
+                        final name = s.name.toLowerCase();
+                        final bool matchesNormal =
+                            q.isNotEmpty && name.contains(q);
+                        final bool matchesAi =
+                            aiQ.isNotEmpty && name.contains(aiQ);
+                        return matchesNormal || matchesAi;
+                      }).toList();
                     }
 
                     final hasCategories = _showCategories && categories.isNotEmpty;
@@ -283,41 +388,12 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Services',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                DropdownButton<String>(
-                                  value: _serviceSort,
-                                  underline: const SizedBox.shrink(),
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: 'relevance',
-                                      child: Text('Relevance'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'price_asc',
-                                      child: Text('Price: Low to High'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'price_desc',
-                                      child: Text('Price: High to Low'),
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    if (value == null) return;
-                                    setState(() {
-                                      _serviceSort = value;
-                                    });
-                                  },
-                                ),
-                              ],
+                            child: const Text(
+                              'Services',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                           ),
                           ...services.map((svc) {

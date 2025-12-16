@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,18 +39,53 @@ class _MainPageState extends State<MainPage> {
   String? _displayName;
   String? _currentCity;
   late final List<Widget?> _pages;
+  static const List<String> _promoImagePaths = [
+    'assets/carsoual/1.jpg',
+    'assets/carsoual/2.jpg',
+    'assets/carsoual/3.jpg',
+    'assets/carsoual/4.jpg',
+  ];
   
   // Speech-to-text
   final PageController _promoController = PageController(viewportFraction: 0.9);
+  Timer? _promoAutoScrollTimer;
+  int _promoCurrentPage = 0;
 
   @override
   void initState() {
     super.initState();
     _pages = List<Widget?>.filled(5, null);
+
+    _promoAutoScrollTimer =
+        Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!mounted || !_promoController.hasClients) return;
+
+      final pageCount = _promoImagePaths.length;
+      if (pageCount <= 1) return;
+
+      final nextPage = (_promoCurrentPage + 1) % pageCount;
+      _promoController.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    });
+
+    // After the first home frame, warm up other tabs so their Firestore
+    // streams start in the background before the user taps them.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() {
+        _pages[1] ??= _buildCategoriesTab(context);
+        _pages[2] ??= const MyBookingsPage();
+        _pages[3] ??= const MessagesPage();
+      });
+    });
   }
 
   @override
   void dispose() {
+    _promoAutoScrollTimer?.cancel();
     _promoController.dispose();
     super.dispose();
   }
@@ -60,12 +95,10 @@ class _MainPageState extends State<MainPage> {
       height: 180,
       child: PageView(
         controller: _promoController,
-        children: [
-          _buildPromoCard('assets/carsoual/1.jpg'),
-          _buildPromoCard('assets/carsoual/2.jpg'),
-          _buildPromoCard('assets/carsoual/3.jpg'),
-          _buildPromoCard('assets/carsoual/4.jpg'),
-        ],
+        onPageChanged: (index) {
+          _promoCurrentPage = index;
+        },
+        children: _promoImagePaths.map(_buildPromoCard).toList(),
       ),
     );
   }
@@ -506,6 +539,7 @@ class _MainPageState extends State<MainPage> {
     return ScrollConfiguration(
       behavior: const ScrollBehavior(),
       child: SafeArea(
+        top: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 24),
           child: Column(

@@ -40,10 +40,20 @@ class AppUser {
   });
 
   factory AppUser.fromMap(String id, Map<String, dynamic> data) {
+    final dynamic phoneRaw = data['phone'] ?? data['phoneNumber'] ?? data['mobile'];
+    String? phone;
+    if (phoneRaw is String) {
+      phone = phoneRaw;
+    } else if (phoneRaw is num) {
+      phone = phoneRaw.toInt().toString();
+    } else if (phoneRaw != null) {
+      phone = phoneRaw.toString();
+    }
+
     return AppUser(
       id: id,
       name: data['name'] as String?,
-      phone: data['phone'] as String?,
+      phone: phone,
       email: data['email'] as String?,
       role: _roleFromString(data['role'] as String?),
       status: data['status'] as String? ?? 'Active',

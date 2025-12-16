@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/models/booking.dart';
 import 'package:flutter_application_1/models/review.dart';
+import 'package:flutter_application_1/common/sentiment_utils.dart';
 
 class AdminAnalyticsPage extends StatelessWidget {
   const AdminAnalyticsPage({super.key});
@@ -183,7 +184,7 @@ class AdminAnalyticsPage extends StatelessWidget {
     final reviews = reviewsSnap.docs
         .map((d) => ReviewModel.fromMap(d.id, d.data()))
         .toList();
-    final sentiment = _computeSentimentStats(reviews);
+    final sentiment = await _computeSentimentStats(reviews);
 
     // ---- Provider engagement analytics (featured + top workers) ----
     final engagement = _computeEngagementStats(analyticsSnap, userById);
@@ -438,125 +439,14 @@ class AdminAnalyticsPage extends StatelessWidget {
 
   /// Compute sentiment statistics over all customer review comments and ratings.
   /// Returns average sentiment in [-1, 1] and counts for positive/neutral/negative.
-  _SentimentStats _computeSentimentStats(List<ReviewModel> reviews) {
-    if (reviews.isEmpty) {
-      return const _SentimentStats(
-        avgScore: 0.0,
-        positiveCount: 0,
-        neutralCount: 0,
-        negativeCount: 0,
-      );
-    }
-
-    // Simple but non-trivial lexicon-based sentiment over comments,
-    // blended with star rating and questionnaire answers.
-    const positiveWords = [
-      'good',
-      'great',
-      'excellent',
-      'amazing',
-      'perfect',
-      'nice',
-      'fast',
-      'friendly',
-      'professional',
-      'clean',
-      'satisfied',
-      'recommend',
-      'helpful',
-    ];
-    const negativeWords = [
-      'bad',
-      'poor',
-      'terrible',
-      'awful',
-      'late',
-      'rude',
-      'dirty',
-      'slow',
-      'unprofessional',
-      'disappointed',
-      'refund',
-      'complaint',
-    ];
-
-    double total = 0.0;
-    int pos = 0;
-    int neu = 0;
-    int neg = 0;
-
-    for (final r in reviews) {
-      // Start from normalized rating (1-5 -> -1..+1)
-      final rating = r.rating.clamp(1, 5);
-      double score = ((rating - 3) / 2).clamp(-1.0, 1.0).toDouble();
-
-      // Questionnaire average (if present) also in -1..+1
-      final qVals = <int?>[
-        r.qPunctuality,
-        r.qQuality,
-        r.qCommunication,
-        r.qProfessionalism,
-      ].where((v) => v != null).cast<int>().toList();
-
-      if (qVals.isNotEmpty) {
-        final avgQ = qVals.reduce((a, b) => a + b) / qVals.length;
-        final qScore = ((avgQ - 3.0) / 2.0).clamp(-1.0, 1.0);
-        // Blend questionnaire with main rating
-        score = (score * 0.7) + (qScore * 0.3);
-      }
-
-      // Text sentiment from comment using simple lexicon counts
-      final comment = r.comment?.toLowerCase() ?? '';
-      if (comment.isNotEmpty) {
-        int posHits = 0;
-        int negHits = 0;
-
-        for (final w in positiveWords) {
-          if (comment.contains(w)) posHits++;
-        }
-        for (final w in negativeWords) {
-          if (comment.contains(w)) negHits++;
-        }
-
-        if (posHits > 0 || negHits > 0) {
-          final textScore = ((posHits - negHits) / (posHits + negHits))
-              .clamp(-1.0, 1.0);
-          // Blend text with numeric rating: keep rating primary
-          score = (score * 0.6) + (textScore * 0.4);
-        }
-      }
-
-      // Additional adjustment: wouldRecommend and disputes
-      if (r.wouldRecommend == true) {
-        score += 0.1;
-      } else if (r.wouldRecommend == false) {
-        score -= 0.1;
-      }
-
-      if (r.hadDispute == true) {
-        score -= 0.2;
-      }
-
-      // Clamp final score
-      score = score.clamp(-1.0, 1.0);
-
-      total += score;
-
-      if (score > 0.2) {
-        pos++;
-      } else if (score < -0.2) {
-        neg++;
-      } else {
-        neu++;
-      }
-    }
-
-    final avg = (total / reviews.length).clamp(-1.0, 1.0);
+  Future<_SentimentStats> _computeSentimentStats(
+      List<ReviewModel> reviews) async {
+    final SentimentStats s = await SentimentUtils.computeWithAi(reviews);
     return _SentimentStats(
-      avgScore: avg,
-      positiveCount: pos,
-      neutralCount: neu,
-      negativeCount: neg,
+      avgScore: s.avgScore,
+      positiveCount: s.positiveCount,
+      neutralCount: s.neutralCount,
+      negativeCount: s.negativeCount,
     );
   }
 

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
-
-import 'package:flutter_application_1/common/ui_helpers.dart';
 import 'package:flutter_application_1/user/category_search_page.dart';
 
 class VoiceSearchCard extends StatefulWidget {
@@ -19,56 +16,8 @@ class VoiceSearchCard extends StatefulWidget {
 }
 
 class _VoiceSearchCardState extends State<VoiceSearchCard> {
-  final stt.SpeechToText _speech = stt.SpeechToText();
-  bool _isListening = false;
-
-  Future<void> _startVoiceSearch() async {
-    try {
-      final available = await _speech.initialize(
-        onStatus: (status) {},
-        onError: (error) {
-          if (!mounted) return;
-          UIHelpers.showSnack(
-            context,
-            'Speech error: ${error.errorMsg}',
-          );
-        },
-      );
-      if (!mounted) return;
-
-      if (!available) {
-        if (!mounted) return;
-        UIHelpers.showSnack(context, 'Speech recognition not available');
-        return;
-      }
-
-      setState(() => _isListening = true);
-
-      _speech.listen(
-        onResult: (result) {
-          if (!result.finalResult) return;
-          final text = result.recognizedWords.trim();
-          if (!mounted) return;
-          setState(() {
-            _isListening = false;
-          });
-
-          if (text.isEmpty) return;
-
-          if (!mounted) return;
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => CategorySearchPage(initialQuery: text),
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _isListening = false);
-      UIHelpers.showSnack(context, 'Could not start voice search: $e');
-    }
-  }
+  // Local speech recognition removed. Voice search now relies only on
+  // the AI-enhanced text search in CategorySearchPage.
 
   @override
   Widget build(BuildContext context) {
@@ -125,21 +74,6 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
               child: Text(
                 'Search services, providers or locations',
                 style: TextStyle(color: searchTextColor),
-              ),
-            ),
-            GestureDetector(
-              onTap: _startVoiceSearch,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: widget.primaryLightBlue.withOpacity(0.12),
-                  shape: BoxShape.circle,
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Icon(
-                  _isListening ? Icons.mic : Icons.mic_none,
-                  color: widget.primaryDarkBlue,
-                  size: 18,
-                ),
               ),
             ),
           ],

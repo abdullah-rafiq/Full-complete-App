@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:flutter_application_1/services/ai_backend_service.dart';
 import 'package:flutter_application_1/services/cloudinary_service.dart';
 import 'package:flutter_application_1/services/media_permission_service.dart';
 import 'package:flutter_application_1/services/user_service.dart';
@@ -133,6 +134,21 @@ class WorkerVerificationController {
     }
 
     try {
+      // Trigger smart CNIC analysis on the backend so admins can see
+      // extracted details in their panel. This runs before we mark the
+      // verification as pending but does not block submission if it fails.
+      try {
+        final currentUser = await UserService.instance.getById(user.uid);
+        await AiBackendService.instance.verifyCnic(
+          cnicFrontUrl: cnicFrontUrl,
+          cnicBackUrl: cnicBackUrl,
+          expectedName: currentUser?.name,
+        );
+      } catch (_) {
+        // Ignore AI errors here; the manual verification flow should
+        // continue even if automatic CNIC parsing fails.
+      }
+
       await UserService.instance.updateUser(user.uid, {
         'verificationStatus': 'pending',
         'cnicFrontStatus': 'pending',

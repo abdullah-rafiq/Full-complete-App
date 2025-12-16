@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,6 +34,31 @@ class _AuthScreenState extends State<AuthScreen> {
 
   bool _isValidEmail(String email) {
     return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
+  }
+
+  void _navigateByRole(AppUser? profile) {
+    // Hide keyboard before navigation to reduce transition jank
+    FocusScope.of(context).unfocus();
+
+    if (profile == null) {
+      context.go('/role');
+      return;
+    }
+
+    switch (profile.role) {
+      case UserRole.customer:
+        context.go('/home');
+        break;
+      case UserRole.provider:
+        context.go('/worker');
+        break;
+      case UserRole.admin:
+        context.go('/admin');
+        break;
+      // ignore: unreachable_switch_default
+      default:
+        context.go('/home');
+    }
   }
 
   Future<void> _login() async {
@@ -80,28 +103,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
       if (!mounted) return;
 
-      // Hide keyboard before navigation to reduce transition jank
-      FocusScope.of(context).unfocus();
-
-      if (profile == null) {
-        context.go('/role');
-        return;
-      }
-
-      switch (profile.role) {
-        case UserRole.customer:
-          context.go('/home');
-          break;
-        case UserRole.provider:
-          context.go('/worker');
-          break;
-        case UserRole.admin:
-          context.go('/admin');
-          break;
-        // ignore: unreachable_switch_default
-        default:
-          context.go('/home');
-      }
+      _navigateByRole(profile);
     } on FirebaseAuthException catch (e) {
       String message = L10n.authLoginFailed();
 
@@ -124,11 +126,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Future<void> _signInWithGoogle() async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-      final GoogleSignInAccount googleUser =
-          await googleSignIn.authenticate();
+      final googleUser = await GoogleSignIn.instance.authenticate();
 
-      final googleAuth = googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
@@ -136,43 +136,19 @@ class _AuthScreenState extends State<AuthScreen> {
 
       final userCred =
           await FirebaseAuth.instance.signInWithCredential(credential);
-      final firebaseUser = userCred.user;
 
+      final firebaseUser = userCred.user;
       if (firebaseUser != null) {
-        // Ensure there is a Firestore user document if missing (e.g. first Google sign-in)
         await AuthService.instance.ensureUserDocument(
           firebaseUser: firebaseUser,
           role: UserRole.customer,
         );
       }
 
-      // Simple analytics/logging
-      // ignore: avoid_print
-      print('LOGIN_GOOGLE_SUCCESS user=${firebaseUser?.uid}');
-
       final profile = await AuthService.instance.getCurrentUserProfile();
-
       if (!mounted) return;
 
-      if (profile == null) {
-        context.go('/role');
-        return;
-      }
-
-      switch (profile.role) {
-        case UserRole.customer:
-          context.go('/home');
-          break;
-        case UserRole.provider:
-          context.go('/worker');
-          break;
-        case UserRole.admin:
-          context.go('/admin');
-          break;
-        // ignore: unreachable_switch_default
-        default:
-          context.go('/home');
-      }
+      _navigateByRole(profile);
     } on FirebaseAuthException catch (e) {
       UIHelpers.showSnack(
         context,
@@ -196,11 +172,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
-      // Avoid full layout jump when keyboard opens; we handle insets manually
+      // Avoid full layout jump when keyboard opens; we let Scaffold handle insets
       resizeToAvoidBottomInset: true,
 
       /// FIXED BACKGROUND
@@ -217,18 +192,16 @@ class _AuthScreenState extends State<AuthScreen> {
         /// Overlay
         child: Container(
           color: const Color.fromARGB(115, 0, 213, 255),
-
           child: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
                 left: 28,
                 right: 16,
                 top: 24,
-                bottom: bottomInset > 0 ? bottomInset + 24 : 40,
+                bottom: bottomInset,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -309,6 +282,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [AutofillHints.email],
+                          textInputAction: TextInputAction.next,
                           style: const TextStyle(color: Colors.black87),
                           decoration: InputDecoration(
                             labelText: L10n.authEmailLabel(),
@@ -321,7 +296,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               if (value.isEmpty) {
                                 _emailError = L10n.authEmailRequiredError();
                               } else if (!_isValidEmail(value.trim())) {
-                                _emailError = L10n.authEnterValidEmailError();
+                                _emailError =
+                                    L10n.authEnterValidEmailError();
                               } else {
                                 _emailError = null;
                               }
@@ -334,6 +310,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextField(
                           controller: _passwordController,
                           obscureText: true,
+                          autofillHints: const [AutofillHints.password],
                           textInputAction: TextInputAction.done,
                           style: const TextStyle(color: Colors.black87),
                           decoration: InputDecoration(
@@ -407,7 +384,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   Center(
                     child: SizedBox(
-                      width: size.width * 0.7,
+                      width: MediaQuery.of(context).size.width * 0.7,
                       height: 50,
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(

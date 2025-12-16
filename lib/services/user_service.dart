@@ -37,10 +37,11 @@ class UserService {
 
   Future<CloudinaryUploadResult> uploadProfileImage(
       String uid, Uint8List bytes, String fileName) async {
+    final uniquePublicId = '${uid}_${DateTime.now().millisecondsSinceEpoch}';
     final result = await CloudinaryService.instance.uploadImage(
       bytes: bytes,
       folder: 'user_profile_images',
-      publicId: uid,
+      publicId: uniquePublicId,
       fileName: fileName,
     );
     return result;

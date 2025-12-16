@@ -11,7 +11,6 @@ import 'package:flutter_application_1/services/user_service.dart';
 import 'package:flutter_application_1/controllers/profile_controller.dart';
 import 'package:flutter_application_1/controllers/current_user_controller.dart';
 import 'package:flutter_application_1/common/ui_helpers.dart';
-import 'package:flutter_application_1/worker/worker_verification_page.dart';
 
 import 'wallet_page.dart';
 import 'section_card.dart';
@@ -28,23 +27,27 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   StreamSubscription<AppUser?>? _verificationSub;
+  bool _localVerifiedOverride = false;
 
   @override
   void initState() {
     super.initState();
 
     final current = FirebaseAuth.instance.currentUser;
-    if (current != null && current.emailVerified) {
-      _verificationSub = UserService.instance
-          .watchUser(current.uid)
-          .listen((profile) async {
-        if (profile != null && !profile.verified) {
-          await UserService.instance
-              .updateUser(current.uid, {'verified': true});
-        }
+    if (current != null) {
+      current.reload().then((_) {
+        final refreshed = FirebaseAuth.instance.currentUser;
+        if (refreshed != null && refreshed.emailVerified) {
+          _verificationSub = UserService.instance
+              .watchUser(refreshed.uid)
+              .listen((profile) async {
+            await UserService.instance
+                .updateUser(refreshed.uid, {'verified': true});
 
-        await _verificationSub?.cancel();
-        _verificationSub = null;
+            await _verificationSub?.cancel();
+            _verificationSub = null;
+          });
+        }
       });
     }
   }
@@ -79,6 +82,10 @@ class _ProfilePageState extends State<ProfilePage> {
             }
             
             final profile = snapshot.data;
+            final bool profileVerified = profile?.verified ?? false;
+            final bool authEmailVerified = current.emailVerified;
+            final bool isVerified =
+                _localVerifiedOverride || profileVerified || authEmailVerified;
 
             // Debug: log the loaded role (if any) for this profile
             if (profile != null) {
@@ -131,6 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           alignment: Alignment.bottomRight,
                           children: [
                             CircleAvatar(
+                              key: ValueKey(profileImageUrl ?? 'no_image'),
                               radius: 40,
                               backgroundImage: avatarImage,
                             ),
@@ -165,24 +173,84 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (!isAdmin) ...[
                           InkWell(
                             borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              final currentProfile = profile;
-                              if (currentProfile == null ||
-                                  currentProfile.verified) {
+                            onTap: () async {
+                              final user = FirebaseAuth.instance.currentUser;
+                              if (user == null) {
+                                UIHelpers.showSnack(
+                                  context,
+                                  'You must be logged in to verify your email.',
+                                );
                                 return;
                               }
 
-                              if (currentProfile.role == UserRole.provider) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        const WorkerVerificationPage(),
-                                  ),
-                                );
-                              } else {
-                                ProfileController.startPhoneVerification(
+                              try {
+                                await user.reload();
+                              } catch (_) {
+                                // Ignore reload errors here; we'll still try to
+                                // send a verification email below if needed.
+                              }
+
+                              final refreshed = FirebaseAuth.instance.currentUser;
+
+                              if (refreshed != null && refreshed.emailVerified) {
+                                try {
+                                  if (!profileVerified) {
+                                    await UserService.instance.updateUser(
+                                      refreshed.uid,
+                                      {'verified': true},
+                                    );
+                                  }
+
+                                  if (!mounted) return;
+                                  setState(() {
+                                    _localVerifiedOverride = true;
+                                  });
+                                  if (!context.mounted) return;
+                                  UIHelpers.showSnack(
+                                    context,
+                                    'Your email is verified now.',
+                                  );
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  UIHelpers.showSnack(
+                                    context,
+                                    'Could not update verification status: $e',
+                                  );
+                                }
+                                return;
+                              }
+
+                              final email = refreshed?.email;
+
+                              if (refreshed == null ||
+                                  email == null ||
+                                  email.isEmpty) {
+                                if (!context.mounted) return;
+                                UIHelpers.showSnack(
                                   context,
-                                  currentProfile,
+                                  'No email found for this account. You may be using a social login.',
+                                );
+                                return;
+                              }
+
+                              try {
+                                await refreshed.sendEmailVerification();
+                                if (!context.mounted) return;
+                                UIHelpers.showSnack(
+                                  context,
+                                  'Verification email sent to $email. Please check your inbox.',
+                                );
+                              } on FirebaseAuthException catch (e) {
+                                if (!context.mounted) return;
+                                UIHelpers.showSnack(
+                                  context,
+                                  'Could not send verification email: ${e.message ?? ''} (${e.code})',
+                                );
+                              } catch (e) {
+                                if (!context.mounted) return;
+                                UIHelpers.showSnack(
+                                  context,
+                                  'Could not send verification email: $e',
                                 );
                               }
                             },
@@ -191,22 +259,22 @@ class _ProfilePageState extends State<ProfilePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  (profile?.verified ?? false)
+                                  isVerified
                                       ? Icons.verified
                                       : Icons.error_outline,
                                   size: 16,
-                                  color: (profile?.verified ?? false)
+                                  color: isVerified
                                       ? Colors.green
                                       : Colors.red,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  (profile?.verified ?? false)
+                                  isVerified
                                       ? 'Verified account'
                                       : 'Not verified (tap to verify)',
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: (profile?.verified ?? false)
+                                    color: isVerified
                                         ? Colors.green
                                         : Colors.red,
                                   ),
@@ -276,14 +344,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: const Icon(Icons.person_outline),
                       trailing:
                           const Icon(Icons.chevron_right, color: accentBlue),
-                      onTap: () {
-                        final effectiveProfile = profile ?? AppUser(
+                      onTap: () async {
+                        AppUser? effectiveProfile = profile;
+
+                        if (effectiveProfile == null) {
+                          try {
+                            effectiveProfile =
+                                await UserService.instance.getById(current.uid);
+                          } catch (_) {
+                            effectiveProfile = null;
+                          }
+                        }
+
+                        effectiveProfile ??= AppUser(
                           id: current.uid,
                           name: current.displayName ?? current.email,
                           phone: current.phoneNumber,
                           email: current.email,
                           role: UserRole.customer,
                         );
+
+                        if (!context.mounted) return;
                         _showEditProfileDialog(context, effectiveProfile);
                       },
                     ),
@@ -391,6 +472,54 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
+String _normalizePhone(String input) {
+  final trimmed = input.trim();
+  if (trimmed.isEmpty) return '';
+
+  final digitsOnly = trimmed.replaceAll(RegExp(r'[^0-9]'), '');
+  if (digitsOnly.isEmpty) return '';
+
+  if (digitsOnly.startsWith('0') && digitsOnly.length == 11) {
+    return '+92${digitsOnly.substring(1)}';
+  }
+
+  if (digitsOnly.startsWith('92') && digitsOnly.length == 12) {
+    return '+$digitsOnly';
+  }
+
+  if (digitsOnly.startsWith('3') && digitsOnly.length == 10) {
+    return '+92$digitsOnly';
+  }
+
+  if (trimmed.startsWith('+')) {
+    return '+$digitsOnly';
+  }
+
+  return digitsOnly;
+}
+
+String _formatPhoneForDisplay(String input) {
+  final trimmed = input.trim();
+  if (trimmed.isEmpty) return '';
+
+  final digitsOnly = trimmed.replaceAll(RegExp(r'[^0-9]'), '');
+  if (digitsOnly.isEmpty) return '';
+
+  if (digitsOnly.startsWith('0') && digitsOnly.length == 11) {
+    return digitsOnly;
+  }
+
+  if (digitsOnly.startsWith('92') && digitsOnly.length == 12) {
+    return '0${digitsOnly.substring(2)}';
+  }
+
+  if (digitsOnly.startsWith('3') && digitsOnly.length == 10) {
+    return '0$digitsOnly';
+  }
+
+  return digitsOnly;
+}
+
 Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async {
   final nameController = TextEditingController(text: profile.name ?? '');
 
@@ -398,9 +527,13 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
   // but fall back to the current authenticated user's phoneNumber.
   final authPhone = FirebaseAuth.instance.currentUser?.phoneNumber;
   final profilePhone = profile.phone?.trim();
-  final initialPhone = (profilePhone != null && profilePhone.isNotEmpty)
+  final initialPhoneRaw = (profilePhone != null && profilePhone.isNotEmpty)
       ? profilePhone
       : (authPhone ?? '');
+  final normalizedInitial =
+      initialPhoneRaw.isEmpty ? '' : _normalizePhone(initialPhoneRaw);
+  final initialPhone =
+      normalizedInitial.isEmpty ? '' : _formatPhoneForDisplay(normalizedInitial);
   final phoneController = TextEditingController(text: initialPhone);
   final addressController =
       TextEditingController(text: profile.addressLine1 ?? '');
@@ -465,7 +598,7 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
                       labelText: 'Phone number',
-                      hintText: '+92 300 1234567',
+                      hintText: '0300 1234567',
                       prefixIcon: Icon(Icons.phone_outlined),
                     ),
                   ),
@@ -551,6 +684,8 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                           onPressed: () async {
                             final name = nameController.text.trim();
                             final phone = phoneController.text.trim();
+                            final normalizedPhone =
+                                phone.isEmpty ? '' : _normalizePhone(phone);
 
                             if (name.isEmpty) {
                               UIHelpers.showSnack(
@@ -566,7 +701,9 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
 
                               await UserService.instance.updateUser(profile.id, {
                                 'name': name,
-                                'phone': phone.isEmpty ? null : phone,
+                                'phone': normalizedPhone.isEmpty
+                                    ? null
+                                    : normalizedPhone,
                                 'city': selectedCity,
                                 'addressLine1':
                                     address.isEmpty ? null : address,
@@ -597,34 +734,9 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                     leading: const Icon(Icons.lock_reset),
                     title: const Text('Change password'),
                     subtitle:
-                        const Text('Send a password reset link to your email.'),
-                    onTap: () async {
-                      final user = FirebaseAuth.instance.currentUser;
-                      final email = user?.email;
-
-                      if (email == null || email.isEmpty) {
-                        UIHelpers.showSnack(
-                          context,
-                          'No email found for this account. You may be using a social login.',
-                        );
-                        return;
-                      }
-
-                      try {
-                        await FirebaseAuth.instance
-                            .sendPasswordResetEmail(email: email);
-                        if (!context.mounted) return;
-                        UIHelpers.showSnack(
-                          context,
-                          'Password reset email sent. Please check your inbox.',
-                        );
-                      } catch (e) {
-                        if (!context.mounted) return;
-                        UIHelpers.showSnack(
-                          context,
-                          'Could not send reset email: $e',
-                        );
-                      }
+                        const Text('Set a new password for your account.'),
+                    onTap: () {
+                      _showChangePasswordDialog(context);
                     },
                   ),
                   const Divider(height: 1),
@@ -643,6 +755,134 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
             ),
           );
         },
+      );
+    },
+  );
+}
+
+Future<void> _showChangePasswordDialog(BuildContext context) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    UIHelpers.showSnack(
+      context,
+      'You must be logged in to change your password.',
+    );
+    return;
+  }
+
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text('Change password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Choose a strong password that you can remember. ',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: newPasswordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'New password',
+                prefixIcon: Icon(Icons.lock_outline),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: confirmPasswordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Confirm new password',
+                prefixIcon: Icon(Icons.lock),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final newPassword = newPasswordController.text.trim();
+              final confirmPassword =
+                  confirmPasswordController.text.trim();
+
+              if (newPassword.isEmpty || confirmPassword.isEmpty) {
+                UIHelpers.showSnack(
+                  dialogContext,
+                  'Please enter and confirm your new password.',
+                );
+                return;
+              }
+
+              if (newPassword != confirmPassword) {
+                UIHelpers.showSnack(
+                  dialogContext,
+                  'Passwords do not match.',
+                );
+                return;
+              }
+
+              if (newPassword.length < 6) {
+                UIHelpers.showSnack(
+                  dialogContext,
+                  'Password should be at least 6 characters.',
+                );
+                return;
+              }
+
+              try {
+                await user.updatePassword(newPassword);
+                if (!dialogContext.mounted) return;
+                Navigator.of(dialogContext).pop();
+                if (!context.mounted) return;
+                UIHelpers.showSnack(
+                  context,
+                  'Password updated successfully.',
+                );
+              } on FirebaseAuthException catch (e) {
+                String message =
+                    'Could not update password: ${e.code}';
+                if (e.code == 'weak-password') {
+                  message =
+                      'Password is too weak. Please choose a stronger one.';
+                } else if (e.code == 'requires-recent-login') {
+                  message =
+                      'Please log in again and then try changing your password.';
+                }
+                if (!dialogContext.mounted) return;
+                UIHelpers.showSnack(dialogContext, message);
+              } catch (e) {
+                if (!dialogContext.mounted) return;
+                UIHelpers.showSnack(
+                  dialogContext,
+                  'Could not update password: $e',
+                );
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
       );
     },
   );

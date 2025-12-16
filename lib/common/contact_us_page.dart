@@ -14,6 +14,7 @@ class ContactUsPage extends StatefulWidget {
 class _ContactUsPageState extends State<ContactUsPage> {
   final TextEditingController _chatController = TextEditingController();
   final List<_ChatMessage> _messages = <_ChatMessage>[];
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -35,12 +36,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Future<void> _sendMessage() async {
     final text = _chatController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty || _isSending) return;
 
     setState(() {
       _messages.add(
         _ChatMessage(fromUser: true, text: text, timestampLabel: 'now'),
       );
+      _isSending = true;
     });
 
     _chatController.clear();
@@ -56,6 +58,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             timestampLabel: 'now',
           ),
         );
+        _isSending = false;
       });
     } catch (_) {
       if (!mounted) return;
@@ -67,6 +70,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             timestampLabel: 'now',
           ),
         );
+        _isSending = false;
       });
     }
   }
@@ -239,8 +243,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.send),
-                                    onPressed: _sendMessage,
+                                    icon: _isSending
+                                        ? const SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Icon(Icons.send),
+                                    onPressed: _isSending ? null : _sendMessage,
                                   ),
                                 ],
                               ),

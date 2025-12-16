@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/models/booking.dart';
 import 'package:flutter_application_1/models/review.dart';
+import 'package:flutter_application_1/common/sentiment_utils.dart';
 import 'package:flutter_application_1/controllers/admin_worker_controller.dart';
 import 'package:flutter_application_1/common/section_card.dart';
 
@@ -137,6 +138,17 @@ class AdminWorkerDetailPage extends StatelessWidget {
             (data['selfieStatus'] as String?) ?? 'pending';
         final String shopStatus =
             (data['shopStatus'] as String?) ?? 'pending';
+
+        final Map<String, dynamic>? verification =
+            data['verification'] as Map<String, dynamic>?;
+        final Map<String, dynamic>? cnicVerification =
+            verification?['cnic'] as Map<String, dynamic>?;
+        final Map<String, dynamic>? cnicExtracted =
+            cnicVerification?['extracted'] as Map<String, dynamic>?;
+        final Map<String, dynamic>? expectedMatches =
+            cnicVerification?['expectedMatches'] as Map<String, dynamic>?;
+        final Map<String, dynamic>? addressUrdu =
+            cnicExtracted?['addressUrdu'] as Map<String, dynamic>?;
 
         final bool hasAnyImage =
             cnicFrontUrl != null ||
@@ -308,6 +320,75 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 status: shopStatus,
                 url: shopUrl,
               ),
+              if (cnicExtracted != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'Smart CNIC details',
+                  style:
+                      Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                ),
+                const SizedBox(height: 4),
+                _buildCnicDetailsRow(
+                  label: 'Name',
+                  value: cnicExtracted['fullName'] as String?,
+                ),
+                _buildCnicDetailsRow(
+                  label: 'Father name',
+                  value: cnicExtracted['fatherName'] as String?,
+                ),
+                _buildCnicDetailsRow(
+                  label: 'CNIC number',
+                  value: cnicExtracted['cnicNumber'] as String?,
+                ),
+                _buildCnicDetailsRow(
+                  label: 'Date of birth',
+                  value: cnicExtracted['dateOfBirth'] as String?,
+                ),
+                _buildCnicDetailsRow(
+                  label: 'Date of issue',
+                  value: cnicExtracted['dateOfIssue'] as String?,
+                ),
+                _buildCnicDetailsRow(
+                  label: 'Date of expiry',
+                  value: cnicExtracted['dateOfExpiry'] as String?,
+                ),
+                _buildCnicDetailsRow(
+                  label: 'Address (Urdu)',
+                  value: _joinNonEmpty([
+                    addressUrdu?['line1'] as String?,
+                    addressUrdu?['line2'] as String?,
+                    addressUrdu?['district'] as String?,
+                    addressUrdu?['tehsil'] as String?,
+                  ]),
+                ),
+                if (expectedMatches != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Match scores (0–1)',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  _buildCnicDetailsRow(
+                    label: 'Name match',
+                    value:
+                        (expectedMatches['nameMatchesLikely'] as num?)
+                            ?.toStringAsFixed(2),
+                  ),
+                  _buildCnicDetailsRow(
+                    label: 'Father name match',
+                    value:
+                        (expectedMatches['fatherNameMatchesLikely'] as num?)
+                            ?.toStringAsFixed(2),
+                  ),
+                  _buildCnicDetailsRow(
+                    label: 'DOB match',
+                    value:
+                        (expectedMatches['dobMatchesLikely'] as num?)
+                            ?.toStringAsFixed(2),
+                  ),
+                ],
+              ],
             ],
           ),
         );
@@ -572,140 +653,214 @@ class AdminWorkerDetailPage extends StatelessWidget {
         return _sectionCard(
           context,
           title: 'Customer reviews',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          child: FutureBuilder<SentimentStats>(
+            future: SentimentUtils.computeWithAi(reviews),
+            builder: (context, snapshot) {
+              final SentimentStats sentiment = snapshot.data ??
+                  SentimentUtils.compute(reviews);
+              final sentimentPercent =
+                  ((sentiment.avgScore + 1.0) / 2.0 * 100.0)
+                      .clamp(0.0, 100.0);
+              String sentimentLabel;
+              if (sentiment.avgScore > 0.25) {
+                sentimentLabel = 'Sentiment: Positive';
+              } else if (sentiment.avgScore < -0.25) {
+                sentimentLabel = 'Sentiment: Negative';
+              } else {
+                sentimentLabel = 'Sentiment: Neutral';
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.star, color: Colors.amber),
-                  const SizedBox(width: 4),
-                  Text(
-                    avgRating.toStringAsFixed(1),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber),
+                      const SizedBox(width: 4),
+                      Text(
+                        avgRating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '(${reviews.length} review(s))',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    '(${reviews.length} review(s))',
+                    '$sentimentLabel | Sentiment score: ${sentimentPercent.toStringAsFixed(0)} / 100'
+                    '  (Pos: ${sentiment.positiveCount}, Neu: ${sentiment.neutralCount}, Neg: ${sentiment.negativeCount})',
                     style: const TextStyle(fontSize: 12),
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              if (topStrengths.isNotEmpty) ...[
-                const Text(
-                  'Top strengths',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: topStrengths
-                      .map(
-                        (e) => Chip(
-                          label: Text(e.key),
-                          visualDensity: VisualDensity.compact,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (topIssues.isNotEmpty) ...[
-                const Text(
-                  'Common issues',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: topIssues
-                      .map(
-                        (e) => Chip(
-                          label: Text(e.key),
-                          visualDensity: VisualDensity.compact,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 8),
-              ],
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: reviews.length,
-                separatorBuilder: (separatorContext, separatorIndex) =>
-                    const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final r = reviews[index];
-                  return Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context)
-                              .shadowColor
-                              .withOpacity(0.07),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                  const SizedBox(height: 8),
+                  if (topStrengths.isNotEmpty) ...[
+                    const Text(
+                      'Top strengths',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: List.generate(5, (i) {
-                            return Icon(
-                              i < r.rating
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              size: 16,
-                              color: Colors.amber,
-                            );
-                          }),
-                        ),
-                        if (r.comment != null && r.comment!.trim().isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              r.comment!,
-                              style: const TextStyle(fontSize: 13),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: topStrengths
+                          .map(
+                            (e) => Chip(
+                              label: Text(e.key),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                             ),
-                          ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Booking: ${r.bookingId}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
+                          )
+                          .toList(),
                     ),
-                  );
-                },
-              ),
-            ],
+                    const SizedBox(height: 8),
+                  ],
+                  if (topIssues.isNotEmpty) ...[
+                    const Text(
+                      'Common issues',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: topIssues
+                          .map(
+                            (e) => Chip(
+                              label: Text(e.key),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: reviews.length,
+                    separatorBuilder:
+                        (separatorContext, separatorIndex) =>
+                            const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final r = reviews[index];
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context)
+                                  .shadowColor
+                                  .withOpacity(0.07),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: List.generate(5, (i) {
+                                return Icon(
+                                  i < r.rating
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  size: 16,
+                                  color: Colors.amber,
+                                );
+                              }),
+                            ),
+                            if (r.comment != null &&
+                                r.comment!.trim().isNotEmpty)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  r.comment!,
+                                  style:
+                                      const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Booking: ${r.bookingId}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
           ),
         );
       },
     );
+  }
+
+  Widget _buildCnicDetailsRow({
+    required String label,
+    String? value,
+  }) {
+    if (value == null || value.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String? _joinNonEmpty(List<String?> parts) {
+    final List<String> filtered = parts
+        .where((p) => p != null && p.trim().isNotEmpty)
+        .map((p) => p!.trim())
+        .toList();
+    if (filtered.isEmpty) {
+      return null;
+    }
+    return filtered.join(', ');
   }
 
   Widget _sectionCard(BuildContext context,

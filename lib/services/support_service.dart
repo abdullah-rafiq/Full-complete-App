@@ -44,6 +44,11 @@ class SupportService {
       throw StateError('Could not obtain ID token');
     }
 
+    // Debug: print the Firebase ID token so it can be used for backend tests.
+    // Remove this in production if you do not want tokens in logs.
+    // ignore: avoid_print
+    print('FIREBASE_ID_TOKEN: $token');
+
     http.Response response = await sendWithToken(token);
 
     if (response.statusCode == 401 || response.statusCode == 403) {

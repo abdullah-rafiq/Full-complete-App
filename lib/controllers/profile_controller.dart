@@ -25,6 +25,32 @@ class ProfileLocationResult {
 class ProfileController {
   const ProfileController._();
 
+  static String _normalizePhone(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty) return '';
+
+    final digitsOnly = trimmed.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.isEmpty) return '';
+
+    if (digitsOnly.startsWith('0') && digitsOnly.length == 11) {
+      return '+92${digitsOnly.substring(1)}';
+    }
+
+    if (digitsOnly.startsWith('92') && digitsOnly.length == 12) {
+      return '+$digitsOnly';
+    }
+
+    if (digitsOnly.startsWith('3') && digitsOnly.length == 10) {
+      return '+92$digitsOnly';
+    }
+
+    if (trimmed.startsWith('+')) {
+      return '+$digitsOnly';
+    }
+
+    return digitsOnly;
+  }
+
   /// Change the user's profile image by picking from gallery and uploading.
   static Future<void> changeProfileImage(
     BuildContext context,
@@ -63,8 +89,18 @@ class ProfileController {
         bytes,
         fileName,
       );
-      await UserService.instance
-          .updateProfileImageUrl(uid, uploadResult.secureUrl);
+      final urlWithVersion = Uri.parse(uploadResult.secureUrl).replace(
+        queryParameters: {
+          ...Uri.parse(uploadResult.secureUrl).queryParameters,
+          'v': DateTime.now().millisecondsSinceEpoch.toString(),
+        },
+      );
+      final cacheBustedUrl = urlWithVersion.toString();
+      await UserService.instance.updateProfileImageUrl(uid, cacheBustedUrl);
+      try {
+        await NetworkImage(cacheBustedUrl).evict();
+        await precacheImage(NetworkImage(cacheBustedUrl), context);
+      } catch (_) {}
       await UserService.instance.updateUser(uid, {
         'profileImagePublicId': uploadResult.publicId,
       });
@@ -91,7 +127,8 @@ class ProfileController {
     BuildContext context,
     AppUser profile,
   ) async {
-    final phone = profile.phone?.trim();
+    final rawPhone = profile.phone?.trim();
+    final phone = rawPhone == null ? null : _normalizePhone(rawPhone);
 
     if (phone == null || phone.isEmpty) {
       UIHelpers.showSnack(

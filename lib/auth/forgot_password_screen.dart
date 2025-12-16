@@ -42,10 +42,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       if (!mounted) return;
-      UIHelpers.showSnack(
+      await UIHelpers.showSnack(
         context,
         'Password reset email sent. Check your inbox.',
       );
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (_) {
       if (!mounted) return;

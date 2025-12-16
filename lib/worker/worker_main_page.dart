@@ -25,11 +25,20 @@ class _WorkerMainPageState extends State<WorkerMainPage> {
   void initState() {
     super.initState();
     _pages = List<Widget?>.filled(5, null);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() {
+        _pages[1] ??= const WorkerJobsPage();
+        _pages[2] ??= const WorkerEarningsPage();
+        _pages[3] ??= const MessagesPage();
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _buildPages() {
+    List<Widget> buildPages() {
       final children = <Widget>[];
       for (var i = 0; i < _pages.length; i++) {
         final cached = _pages[i];
@@ -69,7 +78,7 @@ class _WorkerMainPageState extends State<WorkerMainPage> {
       return children;
     }
 
-    final pages = _buildPages();
+    final pages = buildPages();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
