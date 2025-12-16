@@ -104,6 +104,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
       final profile = await AuthService.instance.getCurrentUserProfile();
 
+      if (!mounted) return;
+
       final url = profile?.profileImageUrl;
       if (url != null && url.isNotEmpty) {
         try {
@@ -111,10 +113,9 @@ class _AuthScreenState extends State<AuthScreen> {
         } catch (_) {}
       }
 
-      if (!mounted) return;
-
       _navigateByRole(profile);
     } on FirebaseAuthException catch (e) {
+      debugPrint('LOGIN_EMAIL_ERROR code=${e.code} message=${e.message}');
       String message = L10n.authLoginFailed();
 
       if (e.code == 'user-not-found') {
@@ -123,6 +124,19 @@ class _AuthScreenState extends State<AuthScreen> {
         message = L10n.authWrongPassword();
       } else if (e.code == 'invalid-email') {
         message = L10n.authInvalidEmail();
+      } else if (e.code == 'invalid-credential' ||
+          e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        message = L10n.authWrongPassword();
+      } else if (e.code == 'network-request-failed') {
+        message =
+            'Network error on Android. Disable VPN/Private DNS, update Google Play services, and try again.';
+      } else if (e.code == 'too-many-requests') {
+        message = 'Too many attempts. Please wait a bit and try again.';
+      }
+
+      final raw = e.message;
+      if (message == L10n.authLoginFailed() && raw != null && raw.isNotEmpty) {
+        message = raw;
       }
 
       UIHelpers.showSnack(context, message);
@@ -138,7 +152,7 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       final googleUser = await GoogleSignIn.instance.authenticate();
 
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
@@ -159,6 +173,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
       final profile = await AuthService.instance.getCurrentUserProfile();
 
+      if (!mounted) return;
+
       final url = profile?.profileImageUrl;
       if (url != null && url.isNotEmpty) {
         try {
@@ -166,15 +182,15 @@ class _AuthScreenState extends State<AuthScreen> {
         } catch (_) {}
       }
 
-      if (!mounted) return;
-
       _navigateByRole(profile);
     } on FirebaseAuthException catch (e) {
+      debugPrint('LOGIN_GOOGLE_ERROR code=${e.code} message=${e.message}');
       UIHelpers.showSnack(
         context,
         e.message ?? L10n.authGoogleFailed(),
       );
     } catch (e) {
+      debugPrint('LOGIN_GOOGLE_ERROR: $e');
       UIHelpers.showSnack(
         context,
         '${L10n.authGoogleFailed()}: $e',

@@ -78,6 +78,7 @@ class ProfileController {
 
       if (!context.mounted) return;
       dialogShown = true;
+      final rootNavigator = Navigator.of(context, rootNavigator: true);
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -99,7 +100,7 @@ class ProfileController {
       await UserService.instance.updateProfileImageUrl(uid, cacheBustedUrl);
       try {
         await NetworkImage(cacheBustedUrl).evict();
-        await precacheImage(NetworkImage(cacheBustedUrl), context);
+        await precacheImage(NetworkImage(cacheBustedUrl), rootNavigator.context);
       } catch (_) {}
       await UserService.instance.updateUser(uid, {
         'profileImagePublicId': uploadResult.publicId,
@@ -107,7 +108,7 @@ class ProfileController {
 
       if (!context.mounted) return;
       if (dialogShown) {
-        Navigator.of(context, rootNavigator: true).pop();
+        rootNavigator.pop();
       }
       UIHelpers.showSnack(context, 'Profile picture updated.');
     } catch (e) {
