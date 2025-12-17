@@ -17,8 +17,7 @@ class AppBottomNav extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final colorScheme = theme.colorScheme;
-    final Color selectedColor =
-        isDark ? Colors.white : colorScheme.primary;
+    final Color selectedColor = isDark ? Colors.white : colorScheme.primary;
     final Color unselectedColor = isDark
         ? Colors.white70
         : colorScheme.onSurface.withValues(alpha: 0.6);

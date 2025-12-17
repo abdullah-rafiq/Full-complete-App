@@ -13,10 +13,9 @@ class AdminWorkerController {
     String workerId,
   ) async {
     try {
-      await FirebaseFirestore.instance.collection('users').doc(workerId).update({
-        'verified': true,
-        'verificationStatus': 'approved',
-      });
+      await FirebaseFirestore.instance.collection('users').doc(workerId).update(
+        {'verified': true, 'verificationStatus': 'approved'},
+      );
 
       if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Worker approved successfully.');
@@ -37,9 +36,7 @@ class AdminWorkerController {
           title: const Text('Reject worker'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
-              labelText: 'Reason (optional)',
-            ),
+            decoration: const InputDecoration(labelText: 'Reason (optional)'),
           ),
           actions: [
             TextButton(
@@ -66,12 +63,15 @@ class AdminWorkerController {
     String? reason,
   }) async {
     try {
-      await FirebaseFirestore.instance.collection('users').doc(workerId).update({
-        'verificationStatus': 'rejected',
-        'verificationReason': (reason == null || reason.trim().isEmpty)
-            ? null
-            : reason.trim(),
-      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(workerId)
+          .update({
+            'verificationStatus': 'rejected',
+            'verificationReason': (reason == null || reason.trim().isEmpty)
+                ? null
+                : reason.trim(),
+          });
 
       if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Worker rejected.');

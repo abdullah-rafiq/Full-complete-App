@@ -166,10 +166,13 @@ class FeaturedProvidersController {
 
     try {
       if (items.isNotEmpty) {
-        await AnalyticsService.instance.logEvent('featured_impression', <String, dynamic>{
-          'providerIds': items.map((e) => e.user.id).toList(),
-          'count': items.length,
-        });
+        await AnalyticsService.instance.logEvent(
+          'featured_impression',
+          <String, dynamic>{
+            'providerIds': items.map((e) => e.user.id).toList(),
+            'count': items.length,
+          },
+        );
       }
     } catch (_) {}
 

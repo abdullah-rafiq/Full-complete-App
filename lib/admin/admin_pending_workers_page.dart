@@ -20,9 +20,7 @@ class AdminPendingWorkersPage extends StatelessWidget {
 
     if (current == null) {
       return const Scaffold(
-        body: Center(
-          child: Text('Please log in as admin to view this page.'),
-        ),
+        body: Center(child: Text('Please log in as admin to view this page.')),
       );
     }
 
@@ -56,9 +54,7 @@ class AdminPendingWorkersPage extends StatelessWidget {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Pending worker verifications'),
-          ),
+          appBar: AppBar(title: const Text('Pending worker verifications')),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
@@ -72,9 +68,7 @@ class AdminPendingWorkersPage extends StatelessWidget {
               }
 
               if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
+                return Center(child: Text('Error: ${snapshot.error}'));
               }
 
               final docs = snapshot.data?.docs ?? [];
@@ -105,9 +99,9 @@ class AdminPendingWorkersPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context)
-                              .shadowColor
-                              .withOpacity(0.08),
+                          color: Theme.of(
+                            context,
+                          ).shadowColor.withOpacity(0.08),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -152,11 +146,16 @@ class AdminPendingWorkersPage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: OutlinedButton.icon(
-                                icon: const Icon(Icons.close, color: Colors.red),
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.red,
+                                ),
                                 label: const Text('Reject'),
                                 onPressed: () async {
-                                  final reason = await AdminWorkerController
-                                      .promptRejectReason(context);
+                                  final reason =
+                                      await AdminWorkerController.promptRejectReason(
+                                        context,
+                                      );
                                   if (!context.mounted || reason == null) {
                                     return;
                                   }

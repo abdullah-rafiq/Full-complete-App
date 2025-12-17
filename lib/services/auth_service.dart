@@ -54,15 +54,12 @@ class AuthService {
       final bool hasRole = roleRaw is String && roleRaw.trim().isNotEmpty;
       if (hasRole) return;
 
-      await userRef.set(
-        {
-          'role': role.name,
-          'email': firebaseUser.email,
-          'name': firebaseUser.displayName,
-          'phone': firebaseUser.phoneNumber,
-        },
-        SetOptions(merge: true),
-      );
+      await userRef.set({
+        'role': role.name,
+        'email': firebaseUser.email,
+        'name': firebaseUser.displayName,
+        'phone': firebaseUser.phoneNumber,
+      }, SetOptions(merge: true));
       return;
     }
 
@@ -90,15 +87,12 @@ class AuthService {
     final snapshot = await userRef.get();
 
     if (snapshot.exists) {
-      await userRef.set(
-        {
-          'role': UserRole.admin.name,
-          'email': firebaseUser.email,
-          'name': firebaseUser.displayName,
-          'phone': firebaseUser.phoneNumber,
-        },
-        SetOptions(merge: true),
-      );
+      await userRef.set({
+        'role': UserRole.admin.name,
+        'email': firebaseUser.email,
+        'name': firebaseUser.displayName,
+        'phone': firebaseUser.phoneNumber,
+      }, SetOptions(merge: true));
       return;
     }
 

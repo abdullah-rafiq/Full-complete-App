@@ -25,9 +25,7 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
 
     if (user == null) {
       return Scaffold(
-        body: Center(
-          child: Text(L10n.workerJobsLoginRequiredMessage()),
-        ),
+        body: Center(child: Text(L10n.workerJobsLoginRequiredMessage())),
       );
     }
 
@@ -57,10 +55,9 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
               child: Text(
                 L10n.workerJobsLoadError(),
                 style: TextStyle(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.8),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.8),
                 ),
               ),
             );
@@ -94,10 +91,9 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                     L10n.workerJobsEmptyMessage(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.8),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -124,8 +120,10 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
           return Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -133,24 +131,31 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                       _buildFilterChip(L10n.bookingFilterAll(), null),
                       const SizedBox(width: 8),
                       _buildFilterChip(
-                          L10n.bookingStatusRequested(), BookingStatus.requested),
+                        L10n.bookingStatusRequested(),
+                        BookingStatus.requested,
+                      ),
                       const SizedBox(width: 8),
                       _buildFilterChip(
-                          L10n.bookingStatusAccepted(), BookingStatus.accepted),
+                        L10n.bookingStatusAccepted(),
+                        BookingStatus.accepted,
+                      ),
                       const SizedBox(width: 8),
                       _buildFilterChip(
-                          L10n.bookingStatusInProgress(), BookingStatus.inProgress),
+                        L10n.bookingStatusInProgress(),
+                        BookingStatus.inProgress,
+                      ),
                       const SizedBox(width: 8),
                       _buildFilterChip(
-                          L10n.bookingStatusCompleted(), BookingStatus.completed),
+                        L10n.bookingStatusCompleted(),
+                        BookingStatus.completed,
+                      ),
                     ],
                   ),
                 ),
               ),
               Expanded(
                 child: FutureBuilder<Map<String, ServiceModel?>>(
-                  future:
-                      BookingsController.loadServicesForBookings(bookings),
+                  future: BookingsController.loadServicesForBookings(bookings),
                   builder: (context, servicesSnap) {
                     final servicesById =
                         servicesSnap.data ?? <String, ServiceModel?>{};
@@ -158,14 +163,13 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                     if (servicesSnap.connectionState ==
                             ConnectionState.waiting &&
                         servicesById.isEmpty) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     return FutureBuilder<Map<String, AppUser?>>(
-                      future: BookingsController
-                          .loadCustomersForBookings(bookings),
+                      future: BookingsController.loadCustomersForBookings(
+                        bookings,
+                      ),
                       builder: (context, customersSnap) {
                         final customersById =
                             customersSnap.data ?? <String, AppUser?>{};
@@ -188,8 +192,8 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                             final serviceName = service?.name ?? 'Service';
                             final customerName =
                                 (customer?.name?.trim().isNotEmpty ?? false)
-                                    ? customer!.name!.trim()
-                                    : 'Customer';
+                                ? customer!.name!.trim()
+                                : 'Customer';
 
                             return Container(
                               padding: const EdgeInsets.all(14),
@@ -198,9 +202,9 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context)
-                                        .shadowColor
-                                        .withValues(alpha: 0.08),
+                                    color: Theme.of(
+                                      context,
+                                    ).shadowColor.withValues(alpha: 0.08),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -258,8 +262,7 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                                             Text(
                                               b.address!,
                                               maxLines: 1,
-                                              overflow:
-                                                  TextOverflow.ellipsis,
+                                              overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 fontSize: 12,
                                               ),
@@ -279,10 +282,12 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
                                             vertical: 2,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: statusColor(b.status)
-                                                .withValues(alpha: 0.12),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
+                                            color: statusColor(
+                                              b.status,
+                                            ).withValues(alpha: 0.12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           child: Text(
                                             b.status,
@@ -341,9 +346,11 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
 String _formatDateTime(DateTime? dt) {
   if (dt == null) return L10n.commonNotSet();
   final local = dt.toLocal();
-  final date = '${local.year.toString().padLeft(4, '0')}-'
+  final date =
+      '${local.year.toString().padLeft(4, '0')}-'
       '${local.month.toString().padLeft(2, '0')}-'
       '${local.day.toString().padLeft(2, '0')}';
-  final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+  final time =
+      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   return '$date • $time';
 }

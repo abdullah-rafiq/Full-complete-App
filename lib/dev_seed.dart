@@ -138,8 +138,9 @@ Future<void> seedDemoData() async {
   });
 
   // Pending provider (for AdminPendingWorkersPage)
-  final userProviderPending =
-      db.collection('users').doc('user_provider_pending_1');
+  final userProviderPending = db
+      .collection('users')
+      .doc('user_provider_pending_1');
   batch.set(userProviderPending, {
     'name': 'Pending Provider',
     'phone': '+92...123',
@@ -182,34 +183,30 @@ Future<void> seedDemoData() async {
     'notificationsEnabled': true,
   });
 
-  final serviceDeepCleaning =
-      db.collection('services').doc('deep_cleaning_3bhk');
+  final serviceDeepCleaning = db
+      .collection('services')
+      .doc('deep_cleaning_3bhk');
   batch.set(serviceDeepCleaning, {
     'name': 'Deep Cleaning (3 BHK)',
     'categoryId': 'cleaner',
     'description': 'Full house deep cleaning',
     'basePrice': 3500,
     'durationEstimate': 180,
-    'images': <String>[
-      'https://example.com/demo/deep-cleaning.jpg',
-    ],
+    'images': <String>['https://example.com/demo/deep-cleaning.jpg'],
     'isActive': true,
     // For demo: attach to an approved Karachi provider so distance logic works
     'providerId': 'user_provider_1',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 10, 9)),
   });
 
-  final serviceAcRepair =
-      db.collection('services').doc('ac_repair_split');
+  final serviceAcRepair = db.collection('services').doc('ac_repair_split');
   batch.set(serviceAcRepair, {
     'name': 'AC Repair - Split Unit',
     'categoryId': 'ac_repair',
     'description': 'Repair and servicing of split AC units',
     'basePrice': 2500,
     'durationEstimate': 90,
-    'images': <String>[
-      'https://example.com/demo/ac-repair.jpg',
-    ],
+    'images': <String>['https://example.com/demo/ac-repair.jpg'],
     'isActive': true,
     // Attach to Karachi provider for demo distance filtering
     'providerId': 'user_provider_1',
@@ -223,43 +220,39 @@ Future<void> seedDemoData() async {
     'description': 'Fixing common pipe and tap leaks',
     'basePrice': 1800,
     'durationEstimate': 60,
-    'images': <String>[
-      'https://example.com/demo/plumbing.jpg',
-    ],
+    'images': <String>['https://example.com/demo/plumbing.jpg'],
     'isActive': true,
     // Attach to Lahore provider so Lahore customers see a nearby plumber
     'providerId': 'user_provider_2',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 13, 11)),
   });
 
-  final serviceElectrician =
-      db.collection('services').doc('electrician_fault_fix');
+  final serviceElectrician = db
+      .collection('services')
+      .doc('electrician_fault_fix');
   batch.set(serviceElectrician, {
     'name': 'Electrician - Fault Fix',
     'categoryId': 'electrician',
     'description': 'Troubleshooting and fixing electrical faults',
     'basePrice': 2000,
     'durationEstimate': 75,
-    'images': <String>[
-      'https://example.com/demo/electrician.jpg',
-    ],
+    'images': <String>['https://example.com/demo/electrician.jpg'],
     'isActive': true,
     // Attach to Karachi provider for demo
     'providerId': 'user_provider_1',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 14, 10)),
   });
 
-  final serviceCarpenter =
-      db.collection('services').doc('carpenter_furniture_repair');
+  final serviceCarpenter = db
+      .collection('services')
+      .doc('carpenter_furniture_repair');
   batch.set(serviceCarpenter, {
     'name': 'Carpenter - Furniture Repair',
     'categoryId': 'carpenter',
     'description': 'Repairing doors, cupboards, and furniture',
     'basePrice': 2200,
     'durationEstimate': 120,
-    'images': <String>[
-      'https://example.com/demo/carpentry.jpg',
-    ],
+    'images': <String>['https://example.com/demo/carpentry.jpg'],
     'isActive': true,
     // Attach to Islamabad provider so Islamabad customers see a nearby carpenter
     'providerId': 'user_provider_3',
@@ -273,9 +266,7 @@ Future<void> seedDemoData() async {
     'description': 'Painting a standard size room with one color',
     'basePrice': 3000,
     'durationEstimate': 180,
-    'images': <String>[
-      'https://example.com/demo/painting.jpg',
-    ],
+    'images': <String>['https://example.com/demo/painting.jpg'],
     'isActive': true,
     // Attach to Lahore provider for demo
     'providerId': 'user_provider_2',
@@ -289,9 +280,7 @@ Future<void> seedDemoData() async {
     'description': 'At-home haircut and basic grooming',
     'basePrice': 1200,
     'durationEstimate': 45,
-    'images': <String>[
-      'https://example.com/demo/barber.jpg',
-    ],
+    'images': <String>['https://example.com/demo/barber.jpg'],
     'isActive': true,
     // Attach to Karachi provider for demo
     'providerId': 'user_provider_1',
@@ -839,7 +828,8 @@ Future<void> seedDemoData() async {
     'customerId': 'user_customer_1',
     'providerId': 'user_provider_1',
     'rating': 4,
-    'comment': 'Electrician solved the problem, took a bit longer than expected.',
+    'comment':
+        'Electrician solved the problem, took a bit longer than expected.',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 21, 20)),
     'qPunctuality': 4,
     'qQuality': 5,
@@ -913,8 +903,7 @@ Future<void> seedDemoData() async {
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 25, 11)),
   });
 
-  final adminNotif1 =
-      db.collection('admin_notifications').doc('admin_notif_1');
+  final adminNotif1 = db.collection('admin_notifications').doc('admin_notif_1');
   batch.set(adminNotif1, {
     'type': 'new_user',
     'userId': 'user_customer_1',
@@ -923,8 +912,7 @@ Future<void> seedDemoData() async {
   });
 
   // Additional admin notifications so admin panel has richer data
-  final adminNotif2 =
-      db.collection('admin_notifications').doc('admin_notif_2');
+  final adminNotif2 = db.collection('admin_notifications').doc('admin_notif_2');
   batch.set(adminNotif2, {
     'type': 'new_user',
     'userId': 'user_provider_1',
@@ -932,8 +920,7 @@ Future<void> seedDemoData() async {
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 2, 10)),
   });
 
-  final adminNotif3 =
-      db.collection('admin_notifications').doc('admin_notif_3');
+  final adminNotif3 = db.collection('admin_notifications').doc('admin_notif_3');
   batch.set(adminNotif3, {
     'type': 'new_user',
     'userId': 'user_provider_2',
@@ -941,39 +928,38 @@ Future<void> seedDemoData() async {
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 4, 11)),
   });
 
-  final adminNotif4 =
-      db.collection('admin_notifications').doc('admin_notif_4');
+  final adminNotif4 = db.collection('admin_notifications').doc('admin_notif_4');
   batch.set(adminNotif4, {
     'type': 'info',
     'title': 'High cancellation rate detected',
-    'message': 'Booking booking_3 was cancelled by the customer. Review worker and customer history if pattern continues.',
+    'message':
+        'Booking booking_3 was cancelled by the customer. Review worker and customer history if pattern continues.',
     'bookingId': 'booking_3',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 28, 10)),
   });
 
-  final adminNotif5 =
-      db.collection('admin_notifications').doc('admin_notif_5');
+  final adminNotif5 = db.collection('admin_notifications').doc('admin_notif_5');
   batch.set(adminNotif5, {
     'type': 'info',
     'title': 'Dispute opened on booking',
-    'message': 'Booking booking_8 has a dispute flag. Please review details and contact both parties if needed.',
+    'message':
+        'Booking booking_8 has a dispute flag. Please review details and contact both parties if needed.',
     'bookingId': 'booking_8',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 16, 14)),
   });
 
   // System-level notification for admin
-  final adminNotif6 =
-      db.collection('admin_notifications').doc('admin_notif_6');
+  final adminNotif6 = db.collection('admin_notifications').doc('admin_notif_6');
   batch.set(adminNotif6, {
     'type': 'system',
     'title': 'Daily summary ready',
-    'message': 'Daily analytics summary for bookings, revenue and new users is ready to review.',
+    'message':
+        'Daily analytics summary for bookings, revenue and new users is ready to review.',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 29, 9, 30)),
   });
 
   // Admin action style notifications (used like an audit log)
-  final adminNotif7 =
-      db.collection('admin_notifications').doc('admin_notif_7');
+  final adminNotif7 = db.collection('admin_notifications').doc('admin_notif_7');
   batch.set(adminNotif7, {
     'type': 'info',
     'title': 'Provider verification approved',
@@ -981,12 +967,12 @@ Future<void> seedDemoData() async {
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 26, 11, 20)),
   });
 
-  final adminNotif8 =
-      db.collection('admin_notifications').doc('admin_notif_8');
+  final adminNotif8 = db.collection('admin_notifications').doc('admin_notif_8');
   batch.set(adminNotif8, {
     'type': 'system',
     'title': 'Daily payouts processed',
-    'message': 'Automated payouts for completed bookings have been processed successfully.',
+    'message':
+        'Automated payouts for completed bookings have been processed successfully.',
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 29, 18, 0)),
   });
 
@@ -999,16 +985,14 @@ Future<void> seedDemoData() async {
     'updatedAt': Timestamp.fromDate(DateTime(2024, 11, 25, 16)),
   });
 
-  final chat1Msg1 =
-      chat1.collection('messages').doc('msg_1');
+  final chat1Msg1 = chat1.collection('messages').doc('msg_1');
   batch.set(chat1Msg1, {
     'senderId': 'user_customer_1',
     'text': 'Hello, I would like to confirm my booking.',
     'timestamp': Timestamp.fromDate(DateTime(2024, 11, 25, 15, 50)),
   });
 
-  final chat1Msg2 =
-      chat1.collection('messages').doc('msg_2');
+  final chat1Msg2 = chat1.collection('messages').doc('msg_2');
   batch.set(chat1Msg2, {
     'senderId': 'user_provider_1',
     'text': 'Sure, I will be there on time.',
@@ -1024,24 +1008,23 @@ Future<void> seedDemoData() async {
     'updatedAt': Timestamp.fromDate(DateTime(2024, 11, 26, 11, 15)),
   });
 
-  final adminChatMsg1 =
-      adminChat.collection('messages').doc('msg_1');
+  final adminChatMsg1 = adminChat.collection('messages').doc('msg_1');
   batch.set(adminChatMsg1, {
     'senderId': 'user_provider_1',
-    'text': 'Hello admin, my verification is still pending. Can you please check?',
+    'text':
+        'Hello admin, my verification is still pending. Can you please check?',
     'timestamp': Timestamp.fromDate(DateTime(2024, 11, 26, 10, 45)),
   });
 
-  final adminChatMsg2 =
-      adminChat.collection('messages').doc('msg_2');
+  final adminChatMsg2 = adminChat.collection('messages').doc('msg_2');
   batch.set(adminChatMsg2, {
     'senderId': 'user_admin_1',
-    'text': 'Hi, I see your profile. I will review your documents and update the status shortly.',
+    'text':
+        'Hi, I see your profile. I will review your documents and update the status shortly.',
     'timestamp': Timestamp.fromDate(DateTime(2024, 11, 26, 11, 0)),
   });
 
-  final adminChatMsg3 =
-      adminChat.collection('messages').doc('msg_3');
+  final adminChatMsg3 = adminChat.collection('messages').doc('msg_3');
   batch.set(adminChatMsg3, {
     'senderId': 'user_admin_1',
     'text': 'Thanks, I will review your documents today.',

@@ -118,12 +118,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           await FirebaseFirestore.instance
                               .collection('users')
                               .doc(user.uid)
-                              .set(
-                            {
-                              'notificationsEnabled': value,
-                            },
-                            SetOptions(merge: true),
-                          );
+                              .set({
+                                'notificationsEnabled': value,
+                              }, SetOptions(merge: true));
                         } catch (_) {
                           // Revert on failure
                           if (!context.mounted) return;
@@ -162,8 +159,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   return ListTile(
                     leading: const Icon(Icons.language),
                     title: Text(L10n.settingsLanguageTitle()),
-                    subtitle:
-                        Text(isUrdu ? L10n.languageNameUrdu() : L10n.languageNameEnglish()),
+                    subtitle: Text(
+                      isUrdu
+                          ? L10n.languageNameUrdu()
+                          : L10n.languageNameEnglish(),
+                    ),
                     onTap: () async {
                       final newLocale = isUrdu
                           ? const Locale('en')

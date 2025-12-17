@@ -29,9 +29,7 @@ class SupportService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode(<String, dynamic>{
-          'message': message,
-        }),
+        body: jsonEncode(<String, dynamic>{'message': message}),
       );
     }
 

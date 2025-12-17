@@ -14,8 +14,10 @@ class PaymentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<void> handlePayment(String method) async {
-      await BookingService.instance
-          .updatePaymentStatus(booking.id, PaymentStatus.paid);
+      await BookingService.instance.updatePaymentStatus(
+        booking.id,
+        PaymentStatus.paid,
+      );
 
       if (!context.mounted) return;
 
@@ -44,10 +46,7 @@ class PaymentPage extends StatelessWidget {
               children: [
                 const Text(
                   'Pay for booking',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -57,8 +56,7 @@ class PaymentPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Current status: ${booking.paymentStatus}',
-                  style:
-                      const TextStyle(fontSize: 14, color: Colors.black54),
+                  style: const TextStyle(fontSize: 14, color: Colors.black54),
                 ),
               ],
             ),
@@ -66,8 +64,10 @@ class PaymentPage extends StatelessWidget {
           const SizedBox(height: 16),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined,
-                  color: Colors.deepPurple),
+              leading: const Icon(
+                Icons.account_balance_wallet_outlined,
+                color: Colors.deepPurple,
+              ),
               title: const Text('JazzCash'),
               subtitle: const Text('Pay using your JazzCash mobile wallet.'),
               trailing: const Icon(Icons.chevron_right),
@@ -79,8 +79,10 @@ class PaymentPage extends StatelessWidget {
           const SizedBox(height: 8),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.account_balance_wallet,
-                  color: Colors.green),
+              leading: const Icon(
+                Icons.account_balance_wallet,
+                color: Colors.green,
+              ),
               title: const Text('Easypaisa'),
               subtitle: const Text('Pay using your Easypaisa mobile wallet.'),
               trailing: const Icon(Icons.chevron_right),
@@ -106,10 +108,7 @@ class PaymentPage extends StatelessWidget {
             'Note: This is a demo payment screen. Connect these methods to real payment gateways for production use.',
             style: TextStyle(
               fontSize: 13,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
         ],

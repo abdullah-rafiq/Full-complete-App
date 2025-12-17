@@ -56,10 +56,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   Future<void> _confirmBooking() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      UIHelpers.showSnack(
-        context,
-        'Please log in again to book a service.',
-      );
+      UIHelpers.showSnack(context, 'Please log in again to book a service.');
       return;
     }
 
@@ -92,10 +89,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       Navigator.of(context).pop();
     } catch (_) {
       if (!mounted) return;
-      UIHelpers.showSnack(
-        context,
-        'Could not create booking. Try again.',
-      );
+      UIHelpers.showSnack(context, 'Could not create booking. Try again.');
     } finally {
       if (mounted) {
         setState(() {
@@ -110,9 +104,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     final service = widget.service;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(service.name),
-      ),
+      appBar: AppBar(title: Text(service.name)),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -126,8 +118,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        Theme.of(context).shadowColor.withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).shadowColor.withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 8),
                   ),
@@ -164,10 +157,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Home service',
-                              style: TextStyle(),
-                            ),
+                            const Text('Home service', style: TextStyle()),
                             const SizedBox(height: 8),
                             Text(
                               'Starting from PKR ${service.basePrice.toStringAsFixed(0)}',
@@ -185,10 +175,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   const SizedBox(height: 24),
                   const Text(
                     'Select date & time',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
@@ -203,17 +190,15 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   const SizedBox(height: 24),
                   const Text(
                     'Notes (optional)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _notesController,
                     maxLines: 3,
                     decoration: const InputDecoration(
-                      hintText: 'Add any special instructions for the provider...',
+                      hintText:
+                          'Add any special instructions for the provider...',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -226,8 +211,10 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               child: ElevatedButton(
                 onPressed: _submitting ? null : _confirmBooking,
                 style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                 ),
                 child: _submitting
                     ? const SizedBox(

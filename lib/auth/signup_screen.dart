@@ -42,7 +42,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final hasDigit = password.contains(RegExp(r'[0-9]'));
     final hasSpecial = password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'));
 
-    return hasMinLength && hasUppercase && hasLowercase && hasDigit && hasSpecial;
+    return hasMinLength &&
+        hasUppercase &&
+        hasLowercase &&
+        hasDigit &&
+        hasSpecial;
   }
 
   Future<void> _signUp() async {
@@ -58,7 +62,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _confirmPasswordError = null;
     });
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       setState(() {
         if (name.isEmpty) _nameError = 'Name is required';
         if (email.isEmpty) _emailError = 'Email is required';
@@ -79,7 +86,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (!_isStrongPassword(password)) {
       setState(() {
-        _passwordError = 'Password does not meet the required strength criteria';
+        _passwordError =
+            'Password does not meet the required strength criteria';
       });
       return;
     }
@@ -105,7 +113,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (!mounted) return;
 
       context.go('/role');
-
     } on FirebaseAuthException catch (e) {
       String message = 'Sign up failed';
       if (e.code == 'email-already-in-use') {
@@ -167,9 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.80),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                      ),
+                      border: Border.all(color: Colors.white.withOpacity(0.4)),
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0x22000000),
@@ -184,8 +189,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: const TextStyle(color: Colors.black87),
                       onChanged: (value) {
                         setState(() {
-                          _nameError =
-                              value.trim().isEmpty ? 'Name is required' : null;
+                          _nameError = value.trim().isEmpty
+                              ? 'Name is required'
+                              : null;
                         });
                       },
                       decoration: InputDecoration(
@@ -202,9 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.80),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                      ),
+                      border: Border.all(color: Colors.white.withOpacity(0.4)),
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0x22000000),
@@ -242,9 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.80),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                      ),
+                      border: Border.all(color: Colors.white.withOpacity(0.4)),
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0x22000000),
@@ -274,7 +276,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (_confirmPasswordController.text.isNotEmpty) {
                                 if (_confirmPasswordController.text.trim() !=
                                     value.trim()) {
-                                  _confirmPasswordError = 'Passwords do not match';
+                                  _confirmPasswordError =
+                                      'Passwords do not match';
                                 } else {
                                   _confirmPasswordError = null;
                                 }
@@ -292,35 +295,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         const Text(
                           'Password requirements:',
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 13),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Builder(
                           builder: (context) {
                             final text = _passwordController.text;
                             final hasMinLength = text.length >= 8;
-                            final hasUppercase =
-                                text.contains(RegExp(r'[A-Z]'));
-                            final hasLowercase =
-                                text.contains(RegExp(r'[a-z]'));
-                            final hasDigit =
-                                text.contains(RegExp(r'[0-9]'));
-                            final hasSpecial = text
-                                .contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'));
+                            final hasUppercase = text.contains(
+                              RegExp(r'[A-Z]'),
+                            );
+                            final hasLowercase = text.contains(
+                              RegExp(r'[a-z]'),
+                            );
+                            final hasDigit = text.contains(RegExp(r'[0-9]'));
+                            final hasSpecial = text.contains(
+                              RegExp(r'[!@#\$%^&*(),.?":{}|<>]'),
+                            );
 
                             Color colorFor(bool condition) =>
                                 condition ? Colors.green : Colors.red;
 
                             Icon iconFor(bool condition) => Icon(
-                                  condition ? Icons.check : Icons.close,
-                                  size: 16,
-                                  color: colorFor(condition),
-                                );
+                              condition ? Icons.check : Icons.close,
+                              size: 16,
+                              color: colorFor(condition),
+                            );
 
                             TextStyle styleFor(bool condition) => TextStyle(
-                                  fontSize: 12,
-                                  color: colorFor(condition),
-                                );
+                              fontSize: 12,
+                              color: colorFor(condition),
+                            );
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,9 +395,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.80),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                      ),
+                      border: Border.all(color: Colors.white.withOpacity(0.4)),
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0x22000000),

@@ -23,9 +23,7 @@ class NotificationsPage extends StatelessWidget {
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: current == null
-          ? const Center(
-              child: Text('Please log in to view notifications.'),
-            )
+          ? const Center(child: Text('Please log in to view notifications.'))
           : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
                   .collection('notifications')
@@ -45,9 +43,7 @@ class NotificationsPage extends StatelessWidget {
                 final docs = snapshot.data?.docs ?? [];
 
                 if (docs.isEmpty) {
-                  return const Center(
-                    child: Text('No notifications yet.'),
-                  );
+                  return const Center(child: Text('No notifications yet.'));
                 }
 
                 return ListView.separated(
@@ -64,8 +60,9 @@ class NotificationsPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.08),
+                            color: Theme.of(
+                              context,
+                            ).shadowColor.withOpacity(0.08),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -82,12 +79,7 @@ class NotificationsPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            body,
-                            style: const TextStyle(
-                              fontSize: 13,
-                            ),
-                          ),
+                          Text(body, style: const TextStyle(fontSize: 13)),
                         ],
                       ),
                     );

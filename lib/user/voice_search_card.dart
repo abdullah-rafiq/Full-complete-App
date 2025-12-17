@@ -23,33 +23,28 @@ class _VoiceSearchCardState extends State<VoiceSearchCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final Color searchBg1 =
-        isDark ? const Color(0xFF2A2A2A) : Colors.white;
-    final Color searchBg2 =
-        isDark ? const Color(0xFF303030) : Colors.white70;
-    final Color searchTextColor =
-        isDark ? Colors.white70 : Colors.black54;
-    final Color searchIconBg =
-        isDark ? Colors.white10 : widget.primaryLightBlue.withValues(alpha: 0.12);
-    final Color searchIconColor =
-        isDark ? Colors.white70 : widget.primaryDarkBlue;
+    final Color searchBg1 = isDark ? const Color(0xFF2A2A2A) : Colors.white;
+    final Color searchBg2 = isDark ? const Color(0xFF303030) : Colors.white70;
+    final Color searchTextColor = isDark ? Colors.white70 : Colors.black54;
+    final Color searchIconBg = isDark
+        ? Colors.white10
+        : widget.primaryLightBlue.withValues(alpha: 0.12);
+    final Color searchIconColor = isDark
+        ? Colors.white70
+        : widget.primaryDarkBlue;
 
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => const CategorySearchPage(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const CategorySearchPage()));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [searchBg1, searchBg2],
-          ),
+          gradient: LinearGradient(colors: [searchBg1, searchBg2]),
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(

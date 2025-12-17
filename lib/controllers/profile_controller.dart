@@ -15,11 +15,7 @@ class ProfileLocationResult {
   final String? town;
   final String? addressLine1;
 
-  const ProfileLocationResult({
-    this.city,
-    this.town,
-    this.addressLine1,
-  });
+  const ProfileLocationResult({this.city, this.town, this.addressLine1});
 }
 
 class ProfileController {
@@ -78,7 +74,6 @@ class ProfileController {
 
       if (!context.mounted) return;
       dialogShown = true;
-      final rootNavigator = Navigator.of(context, rootNavigator: true);
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -98,9 +93,11 @@ class ProfileController {
       );
       final cacheBustedUrl = urlWithVersion.toString();
       await UserService.instance.updateProfileImageUrl(uid, cacheBustedUrl);
+      if (!context.mounted) return;
       try {
         await NetworkImage(cacheBustedUrl).evict();
-        await precacheImage(NetworkImage(cacheBustedUrl), rootNavigator.context);
+        if (!context.mounted) return;
+        await precacheImage(NetworkImage(cacheBustedUrl), context);
       } catch (_) {}
       await UserService.instance.updateUser(uid, {
         'profileImagePublicId': uploadResult.publicId,
@@ -108,7 +105,7 @@ class ProfileController {
 
       if (!context.mounted) return;
       if (dialogShown) {
-        rootNavigator.pop();
+        Navigator.of(context, rootNavigator: true).pop();
       }
       UIHelpers.showSnack(context, 'Profile picture updated.');
     } catch (e) {
@@ -116,10 +113,7 @@ class ProfileController {
       if (dialogShown) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      UIHelpers.showSnack(
-        context,
-        'Could not update profile picture: $e',
-      );
+      UIHelpers.showSnack(context, 'Could not update profile picture: $e');
     }
   }
 
@@ -146,8 +140,7 @@ class ProfileController {
     }
 
     // If phone provider is already linked, just mark verified.
-    final alreadyLinked =
-        user.providerData.any((p) => p.providerId == 'phone');
+    final alreadyLinked = user.providerData.any((p) => p.providerId == 'phone');
     if (alreadyLinked) {
       await UserService.instance.updateUser(profile.id, {'verified': true});
       if (!context.mounted) return;
@@ -166,8 +159,7 @@ class ProfileController {
             // Ignore link errors; user might already be linked.
           }
 
-          await UserService.instance
-              .updateUser(profile.id, {'verified': true});
+          await UserService.instance.updateUser(profile.id, {'verified': true});
 
           if (!context.mounted) return;
           // Simple analytics/logging
@@ -177,10 +169,7 @@ class ProfileController {
         },
         verificationFailed: (FirebaseAuthException e) {
           if (!context.mounted) return;
-          UIHelpers.showSnack(
-            context,
-            'Verification failed: ${e.message}',
-          );
+          UIHelpers.showSnack(context, 'Verification failed: ${e.message}');
         },
         codeSent: (String verificationId, int? resendToken) async {
           if (!context.mounted) return;
@@ -196,10 +185,7 @@ class ProfileController {
       );
     } catch (e) {
       if (!context.mounted) return;
-      UIHelpers.showSnack(
-        context,
-        'Could not start phone verification: $e',
-      );
+      UIHelpers.showSnack(context, 'Could not start phone verification: $e');
     }
   }
 
@@ -234,10 +220,7 @@ class ProfileController {
                 children: [
                   const Text(
                     'Enter OTP',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -296,8 +279,9 @@ class ProfileController {
                         // Ignore link errors; user might already be linked or signed in.
                       }
 
-                      await UserService.instance
-                          .updateUser(profile.id, {'verified': true});
+                      await UserService.instance.updateUser(profile.id, {
+                        'verified': true,
+                      });
 
                       if (!context.mounted) return;
                       Navigator.of(context).pop();
@@ -363,7 +347,9 @@ class ProfileController {
 
       // Debug: log raw coordinates
       // ignore: avoid_print
-      print('LOCATION_POSITION lat=${position.latitude}, lng=${position.longitude}');
+      print(
+        'LOCATION_POSITION lat=${position.latitude}, lng=${position.longitude}',
+      );
 
       String? city;
       String? town;
@@ -388,9 +374,14 @@ class ProfileController {
           // Debug: log resolved place components
           // ignore: avoid_print
           print(
-            'LOCATION_PLACE city=' '${city ?? 'null'}' ', '
-            'town=' '${town ?? 'null'}' ', '
-            'addressLine1=' '${addressLine1 ?? 'null'}',
+            'LOCATION_PLACE city='
+            '${city ?? 'null'}'
+            ', '
+            'town='
+            '${town ?? 'null'}'
+            ', '
+            'addressLine1='
+            '${addressLine1 ?? 'null'}',
           );
 
           final lowerCity = city?.toLowerCase() ?? '';
@@ -404,9 +395,14 @@ class ProfileController {
           // Debug: log resolved place components
           // ignore: avoid_print
           print(
-            'LOCATION_PLACE city=' '${city ?? 'null'}' ', '
-            'town=' '${town ?? 'null'}' ', '
-            'addressLine1=' '${addressLine1 ?? 'null'}',
+            'LOCATION_PLACE city='
+            '${city ?? 'null'}'
+            ', '
+            'town='
+            '${town ?? 'null'}'
+            ', '
+            'addressLine1='
+            '${addressLine1 ?? 'null'}',
           );
         }
       } catch (_) {
@@ -468,9 +464,7 @@ class ProfileController {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.redAccent,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
               child: const Text('Delete'),
             ),
           ],
@@ -504,10 +498,7 @@ class ProfileController {
           'Please log in again and then try deleting your account.',
         );
       } else {
-        UIHelpers.showSnack(
-          context,
-          'Could not delete account: ${e.code}',
-        );
+        UIHelpers.showSnack(context, 'Could not delete account: ${e.code}');
       }
     } catch (e) {
       if (context.mounted) {

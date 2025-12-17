@@ -17,9 +17,7 @@ class AdminProfilePage extends StatelessWidget {
 
     if (current == null) {
       return const Scaffold(
-        body: Center(
-          child: Text('Please log in to view admin profile.'),
-        ),
+        body: Center(child: Text('Please log in to view admin profile.')),
       );
     }
 
@@ -63,9 +61,9 @@ class AdminProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context)
-                              .shadowColor
-                              .withOpacity(0.08),
+                          color: Theme.of(
+                            context,
+                          ).shadowColor.withOpacity(0.08),
                           blurRadius: 12,
                           offset: const Offset(0, 8),
                         ),
@@ -84,17 +82,13 @@ class AdminProfilePage extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           'Role: ${profile.role.name}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                          ),
+                          style: const TextStyle(fontSize: 13),
                         ),
                         const SizedBox(height: 4),
                         if (profile.email != null)
                           Text(
                             profile.email!,
-                            style: const TextStyle(
-                              fontSize: 13,
-                            ),
+                            style: const TextStyle(fontSize: 13),
                           ),
                       ],
                     ),

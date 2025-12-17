@@ -23,7 +23,8 @@ class SectionCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     final resolvedRadius = borderRadius ?? BorderRadius.circular(18);
-    final resolvedShadows = boxShadow ??
+    final resolvedShadows =
+        boxShadow ??
         [
           BoxShadow(
             color: theme.shadowColor.withValues(alpha: 0.08),

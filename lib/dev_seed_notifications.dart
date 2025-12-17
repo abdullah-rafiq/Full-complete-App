@@ -26,8 +26,9 @@ Future<void> seedDemoNotifications() async {
       'createdAt': Timestamp.fromDate(now.subtract(const Duration(days: 1))),
     });
 
-    final notifSummary =
-        db.collection('notifications').doc('notif_${uid}_daily_summary');
+    final notifSummary = db
+        .collection('notifications')
+        .doc('notif_${uid}_daily_summary');
     batch.set(notifSummary, {
       'userId': uid,
       'title': 'Daily summary ready',
@@ -35,18 +36,23 @@ Future<void> seedDemoNotifications() async {
       'createdAt': Timestamp.fromDate(now.subtract(const Duration(hours: 2))),
     });
 
-    final notifDisputes =
-        db.collection('notifications').doc('notif_${uid}_disputes');
+    final notifDisputes = db
+        .collection('notifications')
+        .doc('notif_${uid}_disputes');
     batch.set(notifDisputes, {
       'userId': uid,
       'title': 'Dispute overview',
       'body': 'There are new disputes flagged for recent bookings.',
-      'createdAt': Timestamp.fromDate(now.subtract(const Duration(minutes: 30))),
+      'createdAt': Timestamp.fromDate(
+        now.subtract(const Duration(minutes: 30)),
+      ),
     });
   }
 
   // Demo notifications for seeded sample users (if they exist).
-  final demoNotif1 = db.collection('notifications').doc('notif_user_customer_1_1');
+  final demoNotif1 = db
+      .collection('notifications')
+      .doc('notif_user_customer_1_1');
   batch.set(demoNotif1, {
     'userId': 'user_customer_1',
     'title': 'Booking confirmed',
@@ -54,7 +60,9 @@ Future<void> seedDemoNotifications() async {
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 25, 11)),
   });
 
-  final demoNotif2 = db.collection('notifications').doc('notif_user_customer_2_1');
+  final demoNotif2 = db
+      .collection('notifications')
+      .doc('notif_user_customer_2_1');
   batch.set(demoNotif2, {
     'userId': 'user_customer_2',
     'title': 'Worker on the way',
@@ -62,7 +70,9 @@ Future<void> seedDemoNotifications() async {
     'createdAt': Timestamp.fromDate(DateTime(2024, 11, 18, 10, 30)),
   });
 
-  final demoNotif3 = db.collection('notifications').doc('notif_user_provider_1_1');
+  final demoNotif3 = db
+      .collection('notifications')
+      .doc('notif_user_provider_1_1');
   batch.set(demoNotif3, {
     'userId': 'user_provider_1',
     'title': 'New booking assigned',

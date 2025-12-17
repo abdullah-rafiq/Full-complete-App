@@ -42,20 +42,21 @@ class _ProfilePageState extends State<ProfilePage> {
           _verificationSub = UserService.instance
               .watchUser(refreshed.uid)
               .listen((profile) async {
-            if (profile == null) {
-              return;
-            }
+                if (profile == null) {
+                  return;
+                }
 
-            if (profile.role == UserRole.provider) {
-              return;
-            }
+                if (profile.role == UserRole.provider) {
+                  return;
+                }
 
-            await UserService.instance
-                .updateUser(refreshed.uid, {'verified': true});
+                await UserService.instance.updateUser(refreshed.uid, {
+                  'verified': true,
+                });
 
-            await _verificationSub?.cancel();
-            _verificationSub = null;
-          });
+                await _verificationSub?.cancel();
+                _verificationSub = null;
+              });
         }
       });
     }
@@ -74,9 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (current == null) {
       return const Scaffold(
-        body: Center(
-          child: Text('Please log in to view your profile.'),
-        ),
+        body: Center(child: Text('Please log in to view your profile.')),
       );
     }
 
@@ -89,14 +88,16 @@ class _ProfilePageState extends State<ProfilePage> {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
-            
+
             final profile = snapshot.data;
             final bool profileVerified = profile?.verified ?? false;
             final bool authEmailVerified = current.emailVerified;
             final bool isWorker = profile?.role == UserRole.provider;
             final bool isVerified = isWorker
                 ? (profile?.verificationStatus == 'approved')
-                : (_localVerifiedOverride || profileVerified || authEmailVerified);
+                : (_localVerifiedOverride ||
+                      profileVerified ||
+                      authEmailVerified);
 
             // Debug: log the loaded role (if any) for this profile
             if (profile != null) {
@@ -106,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             final bool isAdmin =
                 profile?.role == UserRole.admin ||
-                    (current.email?.toLowerCase() == 'firebase@fire.com');
+                (current.email?.toLowerCase() == 'firebase@fire.com');
 
             // Prefer Firestore profile name; then auth displayName; then email prefix
             String displayName = 'User';
@@ -175,8 +176,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   minHeight: 28,
                                 ),
                                 icon: const Icon(Icons.add_a_photo, size: 16),
-                                onPressed: () => ProfileController
-                                    .changeProfileImage(context, current.uid),
+                                onPressed: () =>
+                                    ProfileController.changeProfileImage(
+                                      context,
+                                      current.uid,
+                                    ),
                               ),
                             ),
                           ],
@@ -210,9 +214,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 // send a verification email below if needed.
                               }
 
-                              final refreshed = FirebaseAuth.instance.currentUser;
+                              final refreshed =
+                                  FirebaseAuth.instance.currentUser;
 
-                              if (refreshed != null && refreshed.emailVerified) {
+                              if (refreshed != null &&
+                                  refreshed.emailVerified) {
                                 try {
                                   if (!profileVerified) {
                                     await UserService.instance.updateUser(
@@ -283,9 +289,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ? Icons.verified
                                       : Icons.error_outline,
                                   size: 16,
-                                  color: isVerified
-                                      ? Colors.green
-                                      : Colors.red,
+                                  color: isVerified ? Colors.green : Colors.red,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -309,7 +313,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => const WorkerVerificationPage(),
+                                  builder: (_) =>
+                                      const WorkerVerificationPage(),
                                 ),
                               );
                             },
@@ -369,7 +374,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (_) => const WalletPage()),
+                                  builder: (_) => const WalletPage(),
+                                ),
                               );
                             },
                           ),
@@ -379,7 +385,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (_) => const MyBookingsPage()),
+                                  builder: (_) => const MyBookingsPage(),
+                                ),
                               );
                             },
                           ),
@@ -389,7 +396,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (_) => const MyBookingsPage()),
+                                  builder: (_) => const MyBookingsPage(),
+                                ),
                               );
                             },
                           ),
@@ -413,15 +421,17 @@ class _ProfilePageState extends State<ProfilePage> {
                             : 'Update your name or phone number',
                       ),
                       leading: const Icon(Icons.person_outline),
-                      trailing:
-                          const Icon(Icons.chevron_right, color: accentBlue),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: accentBlue,
+                      ),
                       onTap: () async {
                         AppUser? effectiveProfile = profile;
 
                         if (effectiveProfile == null) {
                           try {
-                            effectiveProfile =
-                                await UserService.instance.getById(current.uid);
+                            effectiveProfile = await UserService.instance
+                                .getById(current.uid);
                           } catch (_) {
                             effectiveProfile = null;
                           }
@@ -448,8 +458,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         'Populate Firestore with demo users, services, bookings, and reviews (dev only).',
                       ),
                       leading: const Icon(Icons.dataset_outlined),
-                      trailing:
-                          const Icon(Icons.play_arrow, color: accentBlue),
+                      trailing: const Icon(Icons.play_arrow, color: accentBlue),
                       onTap: () async {
                         try {
                           await seedDemoData();
@@ -476,12 +485,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       'assets/icons/setting.png',
                       width: 30,
                       height: 30,
-                      cacheWidth: 125,  
+                      cacheWidth: 125,
                       cacheHeight: 125,
                       fit: BoxFit.scaleDown,
                     ),
-                    trailing:
-                        const Icon(Icons.chevron_right, color: accentBlue),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: accentBlue,
+                    ),
                     onTap: () {
                       context.push('/settings');
                     },
@@ -496,8 +507,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         cacheWidth: 125,
                         cacheHeight: 125,
                       ),
-                      trailing:
-                          const Icon(Icons.chevron_right, color: accentBlue),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: accentBlue,
+                      ),
                       onTap: () {
                         context.push('/contact');
                       },
@@ -511,8 +524,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         cacheWidth: 125,
                         cacheHeight: 125,
                       ),
-                      trailing:
-                          const Icon(Icons.chevron_right, color: accentBlue),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: accentBlue,
+                      ),
                       onTap: () {
                         context.push('/faq');
                       },
@@ -523,8 +538,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: Text(L10n.profileLogoutTitle()),
                     subtitle: const Text('Sign out from this account'),
                     leading: const Icon(Icons.logout),
-                    trailing:
-                        const Icon(Icons.chevron_right, color: accentBlue),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: accentBlue,
+                    ),
                     onTap: () async {
                       await FirebaseAuth.instance.signOut();
                       CurrentUserController.reset();
@@ -591,7 +608,10 @@ String _formatPhoneForDisplay(String input) {
   return digitsOnly;
 }
 
-Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async {
+Future<void> _showEditProfileDialog(
+  BuildContext context,
+  AppUser profile,
+) async {
   final nameController = TextEditingController(text: profile.name ?? '');
 
   // Pre-fill phone with the latest known phone number: prefer profile.phone,
@@ -601,13 +621,16 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
   final initialPhoneRaw = (profilePhone != null && profilePhone.isNotEmpty)
       ? profilePhone
       : (authPhone ?? '');
-  final normalizedInitial =
-      initialPhoneRaw.isEmpty ? '' : _normalizePhone(initialPhoneRaw);
-  final initialPhone =
-      normalizedInitial.isEmpty ? '' : _formatPhoneForDisplay(normalizedInitial);
+  final normalizedInitial = initialPhoneRaw.isEmpty
+      ? ''
+      : _normalizePhone(initialPhoneRaw);
+  final initialPhone = normalizedInitial.isEmpty
+      ? ''
+      : _formatPhoneForDisplay(normalizedInitial);
   final phoneController = TextEditingController(text: initialPhone);
-  final addressController =
-      TextEditingController(text: profile.addressLine1 ?? '');
+  final addressController = TextEditingController(
+    text: profile.addressLine1 ?? '',
+  );
   final townController = TextEditingController(text: profile.town ?? '');
   String? selectedCity = profile.city;
 
@@ -682,8 +705,14 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                     ),
                     items: const [
                       DropdownMenuItem(value: 'Lahore', child: Text('Lahore')),
-                      DropdownMenuItem(value: 'Islamabad', child: Text('Islamabad')),
-                      DropdownMenuItem(value: 'Karachi', child: Text('Karachi')),
+                      DropdownMenuItem(
+                        value: 'Islamabad',
+                        child: Text('Islamabad'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Karachi',
+                        child: Text('Karachi'),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -711,11 +740,11 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                   const SizedBox(height: 12),
                   TextButton.icon(
                     onPressed: () async {
-                      final result = await ProfileController
-                          .updateLocationFromCurrentPosition(
-                        context,
-                        profile.id,
-                      );
+                      final result =
+                          await ProfileController.updateLocationFromCurrentPosition(
+                            context,
+                            profile.id,
+                          );
                       if (result == null) return;
 
                       setState(() {
@@ -726,8 +755,7 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                           selectedCity = result.city;
                         }
 
-                        if (result.town != null &&
-                            result.town!.isNotEmpty) {
+                        if (result.town != null && result.town!.isNotEmpty) {
                           townController.text = result.town!;
                         }
 
@@ -755,8 +783,9 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                           onPressed: () async {
                             final name = nameController.text.trim();
                             final phone = phoneController.text.trim();
-                            final normalizedPhone =
-                                phone.isEmpty ? '' : _normalizePhone(phone);
+                            final normalizedPhone = phone.isEmpty
+                                ? ''
+                                : _normalizePhone(phone);
 
                             if (name.isEmpty) {
                               UIHelpers.showSnack(
@@ -770,16 +799,18 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                               final address = addressController.text.trim();
                               final town = townController.text.trim();
 
-                              await UserService.instance.updateUser(profile.id, {
-                                'name': name,
-                                'phone': normalizedPhone.isEmpty
-                                    ? null
-                                    : normalizedPhone,
-                                'city': selectedCity,
-                                'addressLine1':
-                                    address.isEmpty ? null : address,
-                                'town': town.isEmpty ? null : town,
-                              });
+                              await UserService.instance
+                                  .updateUser(profile.id, {
+                                    'name': name,
+                                    'phone': normalizedPhone.isEmpty
+                                        ? null
+                                        : normalizedPhone,
+                                    'city': selectedCity,
+                                    'addressLine1': address.isEmpty
+                                        ? null
+                                        : address,
+                                    'town': town.isEmpty ? null : town,
+                                  });
 
                               if (!context.mounted) return;
                               Navigator.of(context).pop();
@@ -804,8 +835,9 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                   ListTile(
                     leading: const Icon(Icons.lock_reset),
                     title: const Text('Change password'),
-                    subtitle:
-                        const Text('Set a new password for your account.'),
+                    subtitle: const Text(
+                      'Set a new password for your account.',
+                    ),
                     onTap: () {
                       _showChangePasswordDialog(context);
                     },
@@ -818,7 +850,8 @@ Future<void> _showEditProfileDialog(BuildContext context, AppUser profile) async
                     ),
                     title: const Text('Delete account'),
                     subtitle: const Text(
-                        'Permanently remove your account and data.'),
+                      'Permanently remove your account and data.',
+                    ),
                     onTap: () => ProfileController.deleteAccount(context),
                   ),
                 ],
@@ -848,9 +881,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Change password'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -858,10 +889,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
           children: [
             const Text(
               'Choose a strong password that you can remember. ',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.black54,
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.black54),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -895,8 +923,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
           TextButton(
             onPressed: () async {
               final newPassword = newPasswordController.text.trim();
-              final confirmPassword =
-                  confirmPasswordController.text.trim();
+              final confirmPassword = confirmPasswordController.text.trim();
 
               if (newPassword.isEmpty || confirmPassword.isEmpty) {
                 UIHelpers.showSnack(
@@ -907,10 +934,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
               }
 
               if (newPassword != confirmPassword) {
-                UIHelpers.showSnack(
-                  dialogContext,
-                  'Passwords do not match.',
-                );
+                UIHelpers.showSnack(dialogContext, 'Passwords do not match.');
                 return;
               }
 
@@ -927,13 +951,9 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                 if (!dialogContext.mounted) return;
                 Navigator.of(dialogContext).pop();
                 if (!context.mounted) return;
-                UIHelpers.showSnack(
-                  context,
-                  'Password updated successfully.',
-                );
+                UIHelpers.showSnack(context, 'Password updated successfully.');
               } on FirebaseAuthException catch (e) {
-                String message =
-                    'Could not update password: ${e.code}';
+                String message = 'Could not update password: ${e.code}';
                 if (e.code == 'weak-password') {
                   message =
                       'Password is too weak. Please choose a stronger one.';

@@ -4,8 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppLocale {
   static const _keyLocale = 'appLocale';
 
-  static final ValueNotifier<Locale> locale =
-      ValueNotifier<Locale>(const Locale('en'));
+  static final ValueNotifier<Locale> locale = ValueNotifier<Locale>(
+    const Locale('en'),
+  );
 
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();

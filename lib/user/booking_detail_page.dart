@@ -66,8 +66,9 @@ class BookingDetailPage extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color:
-                              _statusColor(booking.status).withValues(alpha: 0.12),
+                          color: _statusColor(
+                            booking.status,
+                          ).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -167,7 +168,8 @@ class BookingDetailPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: booking.paymentStatus == PaymentStatus.pending
+                            color:
+                                booking.paymentStatus == PaymentStatus.pending
                                 ? Colors.redAccent
                                 : Colors.green,
                           ),
@@ -183,12 +185,12 @@ class BookingDetailPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed:
-                        booking.paymentStatus == PaymentStatus.pending
+                    onPressed: booking.paymentStatus == PaymentStatus.pending
                         ? () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => payment_page.PaymentPage(booking: booking),
+                                builder: (_) =>
+                                    payment_page.PaymentPage(booking: booking),
                               ),
                             );
                           }
@@ -249,10 +251,12 @@ Color _statusColor(String status) {
 String _formatDateTime(DateTime? dt) {
   if (dt == null) return 'Not set';
   final local = dt.toLocal();
-  final date = '${local.year.toString().padLeft(4, '0')}-'
+  final date =
+      '${local.year.toString().padLeft(4, '0')}-'
       '${local.month.toString().padLeft(2, '0')}-'
       '${local.day.toString().padLeft(2, '0')}';
-  final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+  final time =
+      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   return '$date • $time';
 }
 
@@ -268,10 +272,7 @@ Future<void> _openChatForBooking(
 
   final providerId = booking.providerId;
   if (providerId == null) {
-    UIHelpers.showSnack(
-      context,
-      'No provider assigned to this booking.',
-    );
+    UIHelpers.showSnack(context, 'No provider assigned to this booking.');
     return;
   }
 
@@ -281,13 +282,10 @@ Future<void> _openChatForBooking(
 
   final chatRef = FirebaseFirestore.instance.collection('chats').doc(chatId);
 
-  await chatRef.set(
-    {
-      'participants': ids,
-      'updatedAt': FieldValue.serverTimestamp(),
-    },
-    SetOptions(merge: true),
-  );
+  await chatRef.set({
+    'participants': ids,
+    'updatedAt': FieldValue.serverTimestamp(),
+  }, SetOptions(merge: true));
 
   final otherId = current.uid == customerId ? providerId : customerId;
   final other = await UserService.instance.getById(otherId);
@@ -301,10 +299,7 @@ Future<void> _openChatForBooking(
 
   Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (_) => chat_page.ChatPage(
-        chatId: chatId,
-        otherUser: other,
-      ),
+      builder: (_) => chat_page.ChatPage(chatId: chatId, otherUser: other),
     ),
   );
 }

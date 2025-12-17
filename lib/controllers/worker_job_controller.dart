@@ -53,17 +53,11 @@ class WorkerJobController {
     try {
       await BookingService.instance.updateStatus(booking.id, newStatus);
       if (!context.mounted) return;
-      UIHelpers.showSnack(
-        context,
-        'Job status updated to $newStatus.',
-      );
+      UIHelpers.showSnack(context, 'Job status updated to $newStatus.');
       Navigator.of(context).pop();
     } catch (e) {
       if (!context.mounted) return;
-      UIHelpers.showSnack(
-        context,
-        'Could not update job status: $e',
-      );
+      UIHelpers.showSnack(context, 'Could not update job status: $e');
     }
   }
 
@@ -73,17 +67,16 @@ class WorkerJobController {
     BookingModel booking,
   ) async {
     try {
-      await BookingService.instance
-          .updateStatus(booking.id, BookingStatus.cancelled);
+      await BookingService.instance.updateStatus(
+        booking.id,
+        BookingStatus.cancelled,
+      );
       if (!context.mounted) return;
       UIHelpers.showSnack(context, 'Job cancelled.');
       Navigator.of(context).pop();
     } catch (e) {
       if (!context.mounted) return;
-      UIHelpers.showSnack(
-        context,
-        'Could not cancel job: $e',
-      );
+      UIHelpers.showSnack(context, 'Could not cancel job: $e');
     }
   }
 
@@ -108,16 +101,12 @@ class WorkerJobController {
     final ids = [customerId, providerId]..sort();
     final chatId = ids.join('_');
 
-    final chatRef =
-        FirebaseFirestore.instance.collection('chats').doc(chatId);
+    final chatRef = FirebaseFirestore.instance.collection('chats').doc(chatId);
 
-    await chatRef.set(
-      {
-        'participants': ids,
-        'updatedAt': FieldValue.serverTimestamp(),
-      },
-      SetOptions(merge: true),
-    );
+    await chatRef.set({
+      'participants': ids,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
 
     if (!context.mounted) return;
 
@@ -131,10 +120,7 @@ class WorkerJobController {
 
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ChatPage(
-          chatId: chatId,
-          otherUser: other,
-        ),
+        builder: (_) => ChatPage(chatId: chatId, otherUser: other),
       ),
     );
   }

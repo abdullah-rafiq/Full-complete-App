@@ -145,17 +145,15 @@ class _AuthScreenState extends State<AuthScreen> {
 
       UIHelpers.showSnack(context, message);
     } catch (_) {
-      UIHelpers.showSnack(
-        context,
-        L10n.authSomethingWentWrong(),
-      );
+      UIHelpers.showSnack(context, L10n.authSomethingWentWrong());
     }
   }
 
   Future<void> _signInWithGoogle() async {
     try {
-      _googleInitFuture ??= GoogleSignIn.instance
-          .initialize(serverClientId: _googleServerClientId);
+      _googleInitFuture ??= GoogleSignIn.instance.initialize(
+        serverClientId: _googleServerClientId,
+      );
       await _googleInitFuture;
 
       final googleUser = await GoogleSignIn.instance.authenticate();
@@ -167,9 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
         throw StateError('Google sign-in did not return an idToken');
       }
 
-      final credential = GoogleAuthProvider.credential(
-        idToken: idToken,
-      );
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
 
       await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -194,25 +190,17 @@ class _AuthScreenState extends State<AuthScreen> {
       _navigateByRole(profile);
     } on FirebaseAuthException catch (e) {
       debugPrint('LOGIN_GOOGLE_ERROR code=${e.code} message=${e.message}');
-      UIHelpers.showSnack(
-        context,
-        e.message ?? L10n.authGoogleFailed(),
-      );
+      UIHelpers.showSnack(context, e.message ?? L10n.authGoogleFailed());
     } catch (e) {
       debugPrint('LOGIN_GOOGLE_ERROR: $e');
-      UIHelpers.showSnack(
-        context,
-        '${L10n.authGoogleFailed()}: $e',
-      );
+      UIHelpers.showSnack(context, '${L10n.authGoogleFailed()}: $e');
     }
   }
 
   Future<void> _forgotPassword() async {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const ForgotPasswordScreen(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()));
   }
 
   @override
@@ -297,10 +285,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   Text(
                     L10n.authLoginSubtitle(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
 
                   const SizedBox(height: 40),
@@ -332,8 +317,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           style: const TextStyle(color: Colors.black87),
                           decoration: InputDecoration(
                             labelText: L10n.authEmailLabel(),
-                            labelStyle:
-                                const TextStyle(color: Colors.black54),
+                            labelStyle: const TextStyle(color: Colors.black54),
                             errorText: _emailError,
                           ),
                           onChanged: (value) {
@@ -341,8 +325,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               if (value.isEmpty) {
                                 _emailError = L10n.authEmailRequiredError();
                               } else if (!_isValidEmail(value.trim())) {
-                                _emailError =
-                                    L10n.authEnterValidEmailError();
+                                _emailError = L10n.authEnterValidEmailError();
                               } else {
                                 _emailError = null;
                               }
@@ -360,8 +343,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           style: const TextStyle(color: Colors.black87),
                           decoration: InputDecoration(
                             labelText: L10n.authPasswordLabel(),
-                            labelStyle:
-                                const TextStyle(color: Colors.black54),
+                            labelStyle: const TextStyle(color: Colors.black54),
                             errorText: _passwordError,
                           ),
                           onChanged: (value) {
@@ -408,9 +390,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     children: [
                       Text(
                         L10n.authForgotPasswordQuestion(),
-                        style: const TextStyle(
-                          color: Colors.white70,
-                        ),
+                        style: const TextStyle(color: Colors.white70),
                       ),
                       GestureDetector(
                         onTap: _forgotPassword,
@@ -421,7 +401,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
 
@@ -436,10 +416,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           backgroundColor: Colors.white,
                         ),
                         onPressed: _signInWithGoogle,
-                        icon: Image.asset(
-                          "assets/icons/google.png",
-                          width: 24,
-                        ),
+                        icon: Image.asset("assets/icons/google.png", width: 24),
                         label: Text(
                           L10n.authContinueWithGoogle(),
                           style: const TextStyle(
@@ -460,7 +437,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const SignUpScreen()),
+                            builder: (_) => const SignUpScreen(),
+                          ),
                         );
                       },
                       child: Text(

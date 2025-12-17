@@ -135,8 +135,8 @@ class SentimentUtils {
         }
 
         if (posHits > 0 || negHits > 0) {
-          final double textScore =
-              ((posHits - negHits) / (posHits + negHits)).clamp(-1.0, 1.0);
+          final double textScore = ((posHits - negHits) / (posHits + negHits))
+              .clamp(-1.0, 1.0);
           score = (score * 0.6) + (textScore * 0.4);
         }
       }
@@ -175,8 +175,7 @@ class SentimentUtils {
   /// Compute sentiment statistics, enhanced with the backend Sentiment AI
   /// when possible. Falls back to the local rule-based logic if the AI
   /// call fails or if there is no usable text.
-  static Future<SentimentStats> computeWithAi(
-      List<ReviewModel> reviews) async {
+  static Future<SentimentStats> computeWithAi(List<ReviewModel> reviews) async {
     final SentimentStats baseline = compute(reviews);
     if (reviews.isEmpty) {
       return baseline;
@@ -195,11 +194,28 @@ class SentimentUtils {
       return baseline;
     }
 
-    final String text = comments.join('\n');
+    const int maxChars = 8000;
+    final buffer = StringBuffer();
+    for (final c in comments) {
+      if (buffer.length >= maxChars) break;
+      final remaining = maxChars - buffer.length;
+      if (remaining <= 0) break;
+      if (c.length <= remaining) {
+        buffer.write(c);
+      } else {
+        buffer.write(c.substring(0, remaining));
+      }
+      buffer.write('\n');
+    }
+
+    final String text = buffer.toString().trim();
+    if (text.isEmpty) {
+      return baseline;
+    }
 
     try {
-      final Map<String, dynamic> resp =
-          await AiBackendService.instance.analyzeSentiment(text);
+      final Map<String, dynamic> resp = await AiBackendService.instance
+          .analyzeSentiment(text);
 
       final dynamic labelRaw = resp['sentiment'];
       final dynamic confRaw = resp['confidence'];
@@ -227,8 +243,7 @@ class SentimentUtils {
 
       // Blend AI score with baseline average to keep behavior stable while
       // still benefitting from the dedicated model.
-      final double blended =
-          (baseline.avgScore * 0.6) + (aiScore * 0.4);
+      final double blended = (baseline.avgScore * 0.6) + (aiScore * 0.4);
 
       return SentimentStats(
         avgScore: blended.clamp(-1.0, 1.0),

@@ -14,9 +14,7 @@ class WorkerEarningsPage extends StatelessWidget {
 
     if (user == null) {
       return Scaffold(
-        body: Center(
-          child: Text(L10n.workerEarningsLoginRequiredMessage()),
-        ),
+        body: Center(child: Text(L10n.workerEarningsLoginRequiredMessage())),
       );
     }
 
@@ -42,9 +40,7 @@ class WorkerEarningsPage extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(L10n.workerEarningsLoadError()),
-            );
+            return Center(child: Text(L10n.workerEarningsLoadError()));
           }
 
           final bookings = snapshot.data ?? [];
@@ -65,10 +61,9 @@ class WorkerEarningsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            Theme.of(context)
-                                .shadowColor
-                                .withValues(alpha: 0.08),
+                        color: Theme.of(
+                          context,
+                        ).shadowColor.withValues(alpha: 0.08),
                         blurRadius: 12,
                         offset: const Offset(0, 8),
                       ),
@@ -122,19 +117,21 @@ class WorkerEarningsPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context)
-                                        .shadowColor
-                                        .withValues(alpha: 0.07),
+                                    color: Theme.of(
+                                      context,
+                                    ).shadowColor.withValues(alpha: 0.07),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Job #${b.id}',
@@ -144,10 +141,10 @@ class WorkerEarningsPage extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        _formatDateTime(b.scheduledTime ?? b.createdAt),
-                                        style: const TextStyle(
-                                          fontSize: 12,
+                                        _formatDateTime(
+                                          b.scheduledTime ?? b.createdAt,
                                         ),
+                                        style: const TextStyle(fontSize: 12),
                                       ),
                                     ],
                                   ),
@@ -175,10 +172,11 @@ class WorkerEarningsPage extends StatelessWidget {
 String _formatDateTime(DateTime? dt) {
   if (dt == null) return L10n.commonNotSet();
   final local = dt.toLocal();
-  final date = '${local.year.toString().padLeft(4, '0')}-'
+  final date =
+      '${local.year.toString().padLeft(4, '0')}-'
       '${local.month.toString().padLeft(2, '0')}-'
       '${local.day.toString().padLeft(2, '0')}';
-  final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+  final time =
+      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   return '$date • $time';
 }
-

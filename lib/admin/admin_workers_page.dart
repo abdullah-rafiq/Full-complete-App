@@ -21,9 +21,7 @@ class AdminWorkersPage extends StatelessWidget {
 
     if (current == null) {
       return const Scaffold(
-        body: Center(
-          child: Text('Please log in as admin to view this page.'),
-        ),
+        body: Center(child: Text('Please log in as admin to view this page.')),
       );
     }
 
@@ -60,10 +58,7 @@ class AdminWorkersPage extends StatelessWidget {
         final onSurface = theme.colorScheme.onSurface;
 
         return Scaffold(
-          appBar: AppBar(
-            elevation: 4,
-            title: const Text('All workers'),
-          ),
+          appBar: AppBar(elevation: 4, title: const Text('All workers')),
           backgroundColor: theme.scaffoldBackgroundColor,
           body: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
             future: FirebaseFirestore.instance
@@ -76,17 +71,13 @@ class AdminWorkersPage extends StatelessWidget {
               }
 
               if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
+                return Center(child: Text('Error: ${snapshot.error}'));
               }
 
               final docs = snapshot.data?.docs ?? [];
 
               if (docs.isEmpty) {
-                return const Center(
-                  child: Text('No workers found.'),
-                );
+                return const Center(child: Text('No workers found.'));
               }
 
               return FutureBuilder<List<_WorkerWithScore>>(
@@ -105,9 +96,7 @@ class AdminWorkersPage extends StatelessWidget {
                   final items = scoreSnap.data ?? [];
 
                   if (items.isEmpty) {
-                    return const Center(
-                      child: Text('No workers found.'),
-                    );
+                    return const Center(child: Text('No workers found.'));
                   }
 
                   return ListView.separated(
@@ -152,7 +141,8 @@ class AdminWorkersPage extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => AdminWorkerDetailPage(worker: worker),
+                              builder: (_) =>
+                                  AdminWorkerDetailPage(worker: worker),
                             ),
                           );
                         },
@@ -163,7 +153,9 @@ class AdminWorkersPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: theme.shadowColor.withValues(alpha: 0.08),
+                                color: theme.shadowColor.withValues(
+                                  alpha: 0.08,
+                                ),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -173,7 +165,8 @@ class AdminWorkersPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -190,7 +183,9 @@ class AdminWorkersPage extends StatelessWidget {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: statusColor.withValues(alpha: 0.12),
+                                      color: statusColor.withValues(
+                                        alpha: 0.12,
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
@@ -207,7 +202,11 @@ class AdminWorkersPage extends StatelessWidget {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  const Icon(Icons.star, color: Colors.amber, size: 16),
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     item.avgRating.toStringAsFixed(1),
@@ -262,9 +261,12 @@ class AdminWorkersPage extends StatelessWidget {
                                         ),
                                         label: const Text('Reject'),
                                         onPressed: () async {
-                                          final reason = await AdminWorkerController
-                                              .promptRejectReason(context);
-                                          if (!context.mounted || reason == null) {
+                                          final reason =
+                                              await AdminWorkerController.promptRejectReason(
+                                                context,
+                                              );
+                                          if (!context.mounted ||
+                                              reason == null) {
                                             return;
                                           }
                                           await AdminWorkerController.rejectWorker(
@@ -279,8 +281,9 @@ class AdminWorkersPage extends StatelessWidget {
                                     Expanded(
                                       child: ElevatedButton.icon(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF29B6F6),
+                                          backgroundColor: const Color(
+                                            0xFF29B6F6,
+                                          ),
                                           foregroundColor: Colors.white,
                                           elevation: 2,
                                         ),
@@ -349,9 +352,8 @@ Future<List<_WorkerWithScore>> _loadWorkersWithScore(
 
     double avgRating = 0.0;
     if (reviews.isNotEmpty) {
-      avgRating = reviews
-              .map((r) => r.rating.toDouble())
-              .reduce((a, b) => a + b) /
+      avgRating =
+          reviews.map((r) => r.rating.toDouble()).reduce((a, b) => a + b) /
           reviews.length;
     }
 

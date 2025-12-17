@@ -69,8 +69,7 @@ class BookingModel {
       location: data['location'] as GeoPoint?,
       address: data['address'] as String?,
       price: (data['price'] as num?) ?? 0,
-      paymentStatus:
-          data['paymentStatus'] as String? ?? PaymentStatus.pending,
+      paymentStatus: data['paymentStatus'] as String? ?? PaymentStatus.pending,
       paymentMethod: data['paymentMethod'] as String?,
       paymentProviderId: data['paymentProviderId'] as String?,
       paymentAmount: data['paymentAmount'] as num?,
@@ -87,8 +86,9 @@ class BookingModel {
       'customerId': customerId,
       'providerId': providerId,
       'status': status,
-      'scheduledTime':
-          scheduledTime == null ? null : Timestamp.fromDate(scheduledTime!),
+      'scheduledTime': scheduledTime == null
+          ? null
+          : Timestamp.fromDate(scheduledTime!),
       'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
       'location': location,
       'address': address,

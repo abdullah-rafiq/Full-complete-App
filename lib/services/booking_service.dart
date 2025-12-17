@@ -16,7 +16,9 @@ class BookingService {
     final doc = await _col.add(booking.toMap());
     // Simple analytics/logging
     // ignore: avoid_print
-    print('BOOKING_CREATED id=${doc.id} customer=${booking.customerId} provider=${booking.providerId} service=${booking.serviceId}');
+    print(
+      'BOOKING_CREATED id=${doc.id} customer=${booking.customerId} provider=${booking.providerId} service=${booking.serviceId}',
+    );
     return doc.id;
   }
 
@@ -45,17 +47,20 @@ class BookingService {
         );
   }
 
-  Stream<List<BookingModel>> watchProviderBookings(String providerId,
-      {String? status}) {
-    Query<Map<String, dynamic>> query =
-        _col.where('providerId', isEqualTo: providerId);
+  Stream<List<BookingModel>> watchProviderBookings(
+    String providerId, {
+    String? status,
+  }) {
+    Query<Map<String, dynamic>> query = _col.where(
+      'providerId',
+      isEqualTo: providerId,
+    );
     if (status != null) {
       query = query.where('status', isEqualTo: status);
     }
     return query.snapshots().map(
-          (snap) => snap.docs
-              .map((d) => BookingModel.fromMap(d.id, d.data()))
-              .toList(),
-        );
+      (snap) =>
+          snap.docs.map((d) => BookingModel.fromMap(d.id, d.data())).toList(),
+    );
   }
 }

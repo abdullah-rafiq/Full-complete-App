@@ -40,14 +40,13 @@ class WorkerJobDetailPage extends StatelessWidget {
                     future: UserService.instance.getById(booking.customerId),
                     builder: (context, snapshot) {
                       final customer = snapshot.data;
-                      final name =
-                          (customer?.name?.trim().isNotEmpty ?? false)
-                              ? customer!.name!.trim()
-                              : 'Customer';
+                      final name = (customer?.name?.trim().isNotEmpty ?? false)
+                          ? customer!.name!.trim()
+                          : 'Customer';
                       final phone =
                           (customer?.phone?.trim().isNotEmpty ?? false)
-                              ? customer!.phone!.trim()
-                              : null;
+                          ? customer!.phone!.trim()
+                          : null;
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
@@ -104,8 +103,9 @@ class WorkerJobDetailPage extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: _statusColor(booking.status)
-                              .withValues(alpha: 0.12),
+                          color: _statusColor(
+                            booking.status,
+                          ).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -151,7 +151,8 @@ class WorkerJobDetailPage extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          (booking.address != null && booking.address!.isNotEmpty)
+                          (booking.address != null &&
+                                  booking.address!.isNotEmpty)
                               ? booking.address!
                               : 'Address: Not provided',
                           style: const TextStyle(fontSize: 13),
@@ -202,10 +203,7 @@ class WorkerJobDetailPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      booking.notes!,
-                      style: const TextStyle(fontSize: 13),
-                    ),
+                    Text(booking.notes!, style: const TextStyle(fontSize: 13)),
                   ],
                 ],
               ),
@@ -317,10 +315,12 @@ class WorkerJobDetailPage extends StatelessWidget {
   String _formatDateTime(DateTime? dt) {
     if (dt == null) return 'Not set';
     final local = dt.toLocal();
-    final date = '${local.year.toString().padLeft(4, '0')}-'
+    final date =
+        '${local.year.toString().padLeft(4, '0')}-'
         '${local.month.toString().padLeft(2, '0')}-'
         '${local.day.toString().padLeft(2, '0')}';
-    final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
     return '$date • $time';
   }
 
@@ -339,4 +339,3 @@ class WorkerJobDetailPage extends StatelessWidget {
     await WorkerJobController.openChatForJob(context, booking);
   }
 }
-

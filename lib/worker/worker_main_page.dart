@@ -82,10 +82,7 @@ class _WorkerMainPageState extends State<WorkerMainPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: pages),
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -152,10 +149,7 @@ class _WorkerMessagesIconWithBadge extends StatelessWidget {
             Positioned(
               right: -2,
               top: -2,
-              child: CircleAvatar(
-                radius: 4,
-                backgroundColor: Colors.red,
-              ),
+              child: CircleAvatar(radius: 4, backgroundColor: Colors.red),
             ),
           ],
         );
@@ -163,4 +157,3 @@ class _WorkerMessagesIconWithBadge extends StatelessWidget {
     );
   }
 }
-

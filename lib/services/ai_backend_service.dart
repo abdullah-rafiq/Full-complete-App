@@ -40,11 +40,6 @@ class AiBackendService {
       throw StateError('Could not obtain ID token');
     }
 
-    // Debug: print the Firebase ID token so it can be used for backend tests.
-    // Remove this in production if you do not want tokens in logs.
-    // ignore: avoid_print
-    print('FIREBASE_ID_TOKEN: $token');
-
     http.Response response = await sendWithToken(token);
 
     if (response.statusCode == 401 || response.statusCode == 403) {
@@ -107,12 +102,53 @@ class AiBackendService {
     return _postAuthedJson('/api/vision/verify-cnic', payload);
   }
 
+  Future<Map<String, dynamic>> verifyFace({
+    required String cnicImageUrl,
+    required String selfieImageUrl,
+  }) async {
+    final cnicResp = await http.get(Uri.parse(cnicImageUrl));
+    if (cnicResp.statusCode != 200) {
+      throw Exception('Failed to download CNIC image');
+    }
+
+    final selfieResp = await http.get(Uri.parse(selfieImageUrl));
+    if (selfieResp.statusCode != 200) {
+      throw Exception('Failed to download selfie image');
+    }
+
+    final String cnicBase64 = base64Encode(cnicResp.bodyBytes);
+    final String selfieBase64 = base64Encode(selfieResp.bodyBytes);
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'cnicImage': cnicBase64,
+      'selfieImage': selfieBase64,
+    };
+
+    return _postAuthedJson('/api/kyc/face', payload);
+  }
+
+  Future<Map<String, dynamic>> verifyShop({
+    required String shopImageUrl,
+  }) async {
+    final shopResp = await http.get(Uri.parse(shopImageUrl));
+    if (shopResp.statusCode != 200) {
+      throw Exception('Failed to download shop image');
+    }
+
+    final String shopBase64 = base64Encode(shopResp.bodyBytes);
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'shopImage': shopBase64,
+    };
+
+    return _postAuthedJson('/api/kyc/shop', payload);
+  }
+
   Future<Map<String, dynamic>> speechToText(Uint8List audioBytes) {
     final String audioBase64 = base64Encode(audioBytes);
-    return _postAuthedJson(
-      '/api/speech-to-text',
-      <String, dynamic>{'audioBase64': audioBase64},
-    );
+    return _postAuthedJson('/api/speech-to-text', <String, dynamic>{
+      'audioBase64': audioBase64,
+    });
   }
 
   /// Translate arbitrary text into English using the AI backend.
@@ -124,10 +160,7 @@ class AiBackendService {
   Future<String> translateToEnglish(String text) async {
     final Map<String, dynamic> resp = await _postAuthedJson(
       '/ai/text/translate',
-      <String, dynamic>{
-        'text': text,
-        'targetLang': 'en',
-      },
+      <String, dynamic>{'text': text, 'targetLang': 'en'},
     );
 
     final dynamic translationField = resp['translation'];
@@ -145,9 +178,8 @@ class AiBackendService {
   /// optional `confidence` field in [0, 1]. The raw JSON map is
   /// returned to the caller for interpretation.
   Future<Map<String, dynamic>> analyzeSentiment(String text) {
-    return _postAuthedJson(
-      '/ai/text/sentiment',
-      <String, dynamic>{'text': text},
-    );
+    return _postAuthedJson('/ai/text/sentiment', <String, dynamic>{
+      'text': text,
+    });
   }
 }

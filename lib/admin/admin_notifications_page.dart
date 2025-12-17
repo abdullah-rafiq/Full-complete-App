@@ -9,9 +9,7 @@ class AdminNotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-      ),
+      appBar: AppBar(title: const Text('Notifications')),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
         future: FirebaseFirestore.instance
@@ -24,23 +22,20 @@ class AdminNotificationsPage extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
-            return const Center(
-              child: Text('No notifications yet.'),
-            );
+            return const Center(child: Text('No notifications yet.'));
           }
 
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: docs.length,
-            separatorBuilder: (separatorContext, separatorIndex) => const SizedBox(height: 8),
+            separatorBuilder: (separatorContext, separatorIndex) =>
+                const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final data = docs[index].data();
               final type = data['type'] as String? ?? 'info';
@@ -66,9 +61,9 @@ class AdminNotificationsPage extends StatelessWidget {
               final timeText = createdAt == null
                   ? ''
                   : '${createdAt.year.toString().padLeft(4, '0')}-'
-                    '${createdAt.month.toString().padLeft(2, '0')}-'
-                    '${createdAt.day.toString().padLeft(2, '0')}'
-                    ' ${createdAt.hour.toString().padLeft(2, '0')}:${createdAt.minute.toString().padLeft(2, '0')}';
+                        '${createdAt.month.toString().padLeft(2, '0')}-'
+                        '${createdAt.day.toString().padLeft(2, '0')}'
+                        ' ${createdAt.hour.toString().padLeft(2, '0')}:${createdAt.minute.toString().padLeft(2, '0')}';
 
               return Container(
                 padding: const EdgeInsets.all(12),
@@ -77,9 +72,7 @@ class AdminNotificationsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context)
-                          .shadowColor
-                          .withOpacity(0.08),
+                      color: Theme.of(context).shadowColor.withOpacity(0.08),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -105,9 +98,7 @@ class AdminNotificationsPage extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               subtitle,
-                              style: const TextStyle(
-                                fontSize: 12,
-                              ),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ],
                           if (timeText.isNotEmpty) ...[
@@ -116,10 +107,9 @@ class AdminNotificationsPage extends StatelessWidget {
                               timeText,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.6),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.6),
                               ),
                             ),
                           ],

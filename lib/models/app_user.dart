@@ -42,7 +42,8 @@ class AppUser {
   });
 
   factory AppUser.fromMap(String id, Map<String, dynamic> data) {
-    final dynamic phoneRaw = data['phone'] ?? data['phoneNumber'] ?? data['mobile'];
+    final dynamic phoneRaw =
+        data['phone'] ?? data['phoneNumber'] ?? data['mobile'];
     String? phone;
     if (phoneRaw is String) {
       phone = phoneRaw;

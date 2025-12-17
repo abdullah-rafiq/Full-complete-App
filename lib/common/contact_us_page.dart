@@ -52,11 +52,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       if (!mounted) return;
       setState(() {
         _messages.add(
-          _ChatMessage(
-            fromUser: false,
-            text: reply,
-            timestampLabel: 'now',
-          ),
+          _ChatMessage(fromUser: false, text: reply, timestampLabel: 'now'),
         );
         _isSending = false;
       });
@@ -78,9 +74,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(L10n.contactAppBarTitle()),
-      ),
+      appBar: AppBar(title: Text(L10n.contactAppBarTitle())),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
@@ -94,8 +88,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            Theme.of(context).shadowColor.withOpacity(0.08),
+                        color: Theme.of(context).shadowColor.withOpacity(0.08),
                         blurRadius: 12,
                         offset: const Offset(0, 8),
                       ),
@@ -129,8 +122,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         ListTile(
                           leading: Icon(Icons.access_time),
                           title: Text('Support hours'),
-                          subtitle:
-                              Text('Mon - Fri, 9:00 AM - 6:00 PM '),
+                          subtitle: Text('Mon - Fri, 9:00 AM - 6:00 PM '),
                         ),
                       ],
                     ),
@@ -143,8 +135,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            Theme.of(context).shadowColor.withOpacity(0.08),
+                        color: Theme.of(context).shadowColor.withOpacity(0.08),
                         blurRadius: 12,
                         offset: const Offset(0, 8),
                       ),
@@ -154,24 +145,28 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         child: Text(
                           L10n.contactLiveChatTitle(),
                           style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       Container(
                         height: 260,
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .outlineVariant,
+                            color: Theme.of(context).colorScheme.outlineVariant,
                           ),
                         ),
                         child: Column(
@@ -187,33 +182,32 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                       : Alignment.centerLeft;
                                   final color = message.fromUser
                                       ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerHighest;
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerHighest;
                                   final textColor = message.fromUser
                                       ? Colors.white
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant;
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant;
 
                                   return Align(
                                     alignment: alignment,
                                     child: Container(
                                       margin: const EdgeInsets.symmetric(
-                                          vertical: 4),
+                                        vertical: 4,
+                                      ),
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
                                         vertical: 6,
                                       ),
                                       decoration: BoxDecoration(
                                         color: color,
-                                        borderRadius:
-                                            BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
                                         message.text,
-                                        style:
-                                            TextStyle(color: textColor),
+                                        style: TextStyle(color: textColor),
                                       ),
                                     ),
                                   );

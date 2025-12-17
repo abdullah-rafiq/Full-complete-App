@@ -59,8 +59,9 @@ class ServiceCatalogService {
   Stream<List<CategoryModel>> watchCategories() {
     // Categories are local/static. Expose them as a one-shot stream so existing
     // StreamBuilder-based UIs keep working without hitting Firestore.
-    final active =
-        _localCategories.where((c) => c.isActive).toList(growable: false);
+    final active = _localCategories
+        .where((c) => c.isActive)
+        .toList(growable: false);
     return Stream.value(active);
   }
 

@@ -28,17 +28,16 @@ class CategoryServicesPage extends StatelessWidget {
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: StreamBuilder<List<ServiceModel>>(
-        stream:
-            ServiceCatalogService.instance.watchServicesForCategory(category.id),
+        stream: ServiceCatalogService.instance.watchServicesForCategory(
+          category.id,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Could not load services.'),
-            );
+            return const Center(child: Text('Could not load services.'));
           }
 
           final services = snapshot.data ?? [];
@@ -145,15 +144,15 @@ class _CategoryServiceTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ServiceDetailPage(service: s),
-            ),
+            MaterialPageRoute(builder: (_) => ServiceDetailPage(service: s)),
           );
         },
         child: Row(
           children: [
-            const Icon(Icons.cleaning_services_rounded,
-                color: Colors.blueAccent),
+            const Icon(
+              Icons.cleaning_services_rounded,
+              color: Colors.blueAccent,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -161,17 +160,13 @@ class _CategoryServiceTile extends StatelessWidget {
                 children: [
                   Text(
                     s.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     s.description ??
                         'Starting from PKR ${s.basePrice.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ],
               ),
@@ -182,18 +177,11 @@ class _CategoryServiceTile extends StatelessWidget {
               children: [
                 Text(
                   'PKR ${s.basePrice.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 if (distanceLabel != null) ...[
                   const SizedBox(height: 2),
-                  Text(
-                    distanceLabel,
-                    style: const TextStyle(
-                      fontSize: 11,
-                    ),
-                  ),
+                  Text(distanceLabel, style: const TextStyle(fontSize: 11)),
                 ],
               ],
             ),
@@ -240,15 +228,14 @@ Future<List<_ServiceWithDistance>> _loadServicesWithDistance(
 
     providersById = {
       for (final doc in providerSnap.docs)
-        doc.id: AppUser.fromMap(doc.id, doc.data())
+        doc.id: AppUser.fromMap(doc.id, doc.data()),
     };
   }
 
   final result = <_ServiceWithDistance>[];
 
   for (final s in services) {
-    final provider =
-        s.providerId != null ? providersById[s.providerId!] : null;
+    final provider = s.providerId != null ? providersById[s.providerId!] : null;
 
     double? distanceKm;
     if (userLat != null &&

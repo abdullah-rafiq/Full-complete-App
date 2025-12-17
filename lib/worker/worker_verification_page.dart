@@ -60,15 +60,11 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
         _cnicBackStatus = (data['cnicBackStatus'] as String?) ?? 'none';
         _selfieStatus = (data['selfieStatus'] as String?) ?? 'none';
         _shopStatus = (data['shopStatus'] as String?) ?? 'none';
-        _overallStatus =
-            (data['verificationStatus'] as String?) ?? 'none';
+        _overallStatus = (data['verificationStatus'] as String?) ?? 'none';
       });
     } catch (e) {
       if (!mounted) return;
-      UIHelpers.showSnack(
-        context,
-        'Could not load existing verification: $e',
-      );
+      UIHelpers.showSnack(context, 'Could not load existing verification: $e');
     }
   }
 
@@ -165,8 +161,9 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
     // ignore: unused_local_variable
-    final Color titleColor =
-        isDark ? Colors.white : theme.colorScheme.onSurface;
+    final Color titleColor = isDark
+        ? Colors.white
+        : theme.colorScheme.onSurface;
     // ignore: unused_local_variable
     final Color descColor = isDark
         ? Colors.white70
@@ -178,13 +175,12 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
         (_selfieUrl != null ? 1 : 0) +
         (_shopUrl != null ? 1 : 0);
     final progress = completedSteps / totalSteps;
-    final currentStep =
-        completedSteps < totalSteps ? completedSteps + 1 : totalSteps;
+    final currentStep = completedSteps < totalSteps
+        ? completedSteps + 1
+        : totalSteps;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Worker verification'),
-      ),
+      appBar: AppBar(title: const Text('Worker verification')),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -209,8 +205,8 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                   color: _overallStatus == 'approved'
                       ? Colors.green.withValues(alpha: 0.12)
                       : _overallStatus == 'rejected'
-                          ? Colors.redAccent.withValues(alpha: 0.12)
-                          : Colors.orange.withValues(alpha: 0.12),
+                      ? Colors.redAccent.withValues(alpha: 0.12)
+                      : Colors.orange.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -220,13 +216,13 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                       _overallStatus == 'approved'
                           ? Icons.check_circle
                           : _overallStatus == 'rejected'
-                              ? Icons.error_outline
-                              : Icons.hourglass_bottom,
+                          ? Icons.error_outline
+                          : Icons.hourglass_bottom,
                       color: _overallStatus == 'approved'
                           ? Colors.green
                           : _overallStatus == 'rejected'
-                              ? Colors.redAccent
-                              : Colors.orange,
+                          ? Colors.redAccent
+                          : Colors.orange,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -234,8 +230,8 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                         _overallStatus == 'approved'
                             ? 'Your verification has been approved. Thank you.'
                             : _overallStatus == 'rejected'
-                                ? 'Some of your documents were rejected. Please retake the ones marked "Needs resubmit".'
-                                : 'Your verification is under review. You will be notified once it is approved or if changes are needed.',
+                            ? 'Some of your documents were rejected. Please retake the ones marked "Needs resubmit".'
+                            : 'Your verification is under review. You will be notified once it is approved or if changes are needed.',
                         style: TextStyle(
                           fontSize: 13,
                           color: theme.colorScheme.onSurface,
@@ -297,7 +293,8 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                 children: [
                   _VerificationTile(
                     title: 'CNIC front picture',
-                    description: 'Take a clear picture of the front of your CNIC.',
+                    description:
+                        'Take a clear picture of the front of your CNIC.',
                     uploaded: _cnicFrontUrl != null,
                     status: _cnicFrontStatus,
                     overallStatus: _overallStatus,
@@ -315,10 +312,10 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                   ),
                   _VerificationTile(
                     title: 'Live picture',
-                    description: 'Take a live picture of yourself matching your CNIC.',
+                    description:
+                        'Take a live picture of yourself matching your CNIC.',
                     uploaded: _selfieUrl != null,
-                    enabled:
-                        _cnicFrontUrl != null && _cnicBackUrl != null,
+                    enabled: _cnicFrontUrl != null && _cnicBackUrl != null,
                     status: _selfieStatus,
                     overallStatus: _overallStatus,
                     onTap: () => _pickAndUpload('selfieImageUrl'),
@@ -365,8 +362,9 @@ class _VerificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
-    final Color titleColor =
-        isDark ? Colors.white : theme.colorScheme.onSurface;
+    final Color titleColor = isDark
+        ? Colors.white
+        : theme.colorScheme.onSurface;
     final Color descColor = isDark
         ? Colors.white70
         : theme.colorScheme.onSurface.withValues(alpha: 0.7);
@@ -397,7 +395,8 @@ class _VerificationTile extends StatelessWidget {
       }
     }
 
-    final bool canTap = enabled &&
+    final bool canTap =
+        enabled &&
         ((overallStatus == 'none' || overallStatus == 'pending')
             ? true
             : status == 'rejected');
@@ -438,10 +437,7 @@ class _VerificationTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: descColor,
-                  ),
+                  style: TextStyle(fontSize: 12, color: descColor),
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -474,8 +470,8 @@ class _VerificationTile extends StatelessWidget {
                     child: Text(
                       uploaded
                           ? (status == 'rejected'
-                              ? 'Retake photo'
-                              : 'View photo')
+                                ? 'Retake photo'
+                                : 'View photo')
                           : 'Take photo',
                     ),
                   ),

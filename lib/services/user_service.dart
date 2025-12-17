@@ -14,8 +14,7 @@ class UserService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final Map<String, AppUser> _userCache = <String, AppUser>{};
 
-  CollectionReference<Map<String, dynamic>> get _col =>
-      _db.collection('users');
+  CollectionReference<Map<String, dynamic>> get _col => _db.collection('users');
 
   Future<AppUser?> getById(String id) async {
     final doc = await _col.doc(id).get();
@@ -30,13 +29,14 @@ class UserService {
   }
 
   Future<void> addToWallet(String id, num amount) {
-    return _col.doc(id).update({
-      'walletBalance': FieldValue.increment(amount),
-    });
+    return _col.doc(id).update({'walletBalance': FieldValue.increment(amount)});
   }
 
   Future<CloudinaryUploadResult> uploadProfileImage(
-      String uid, Uint8List bytes, String fileName) async {
+    String uid,
+    Uint8List bytes,
+    String fileName,
+  ) async {
     final uniquePublicId = '${uid}_${DateTime.now().millisecondsSinceEpoch}';
     final result = await CloudinaryService.instance.uploadImage(
       bytes: bytes,
@@ -81,9 +81,7 @@ class UserService {
     const chunkSize = 10;
     for (var i = 0; i < missing.length; i += chunkSize) {
       final chunk = missing.sublist(i, min(i + chunkSize, missing.length));
-      final snap = await _col
-          .where(FieldPath.documentId, whereIn: chunk)
-          .get();
+      final snap = await _col.where(FieldPath.documentId, whereIn: chunk).get();
       for (final doc in snap.docs) {
         final user = AppUser.fromMap(doc.id, doc.data());
         _userCache[doc.id] = user;

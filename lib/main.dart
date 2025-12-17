@@ -21,9 +21,7 @@ import 'app_locale.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kIsWeb) {
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: false,
@@ -121,10 +119,7 @@ class MainApp extends StatelessWidget {
               title: 'Assist',
               themeMode: themeMode,
               locale: locale,
-              supportedLocales: const [
-                Locale('en'),
-                Locale('ur'),
-              ],
+              supportedLocales: const [Locale('en'), Locale('ur')],
               localizationsDelegates: const [
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
@@ -157,8 +152,10 @@ class MainApp extends StatelessWidget {
                 scaffoldBackgroundColor: const Color(0xFF121212),
                 appBarTheme: AppBarTheme(
                   elevation: 4,
-                  backgroundColor:
-                      ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark).primary,
+                  backgroundColor: ColorScheme.fromSeed(
+                    seedColor: Colors.blue,
+                    brightness: Brightness.dark,
+                  ).primary,
                   foregroundColor: Colors.white,
                 ),
                 cardColor: const Color(0xFF1E1E1E),

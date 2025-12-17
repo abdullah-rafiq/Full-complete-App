@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +17,9 @@ class AdminWorkerDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(worker.name?.isNotEmpty == true ? worker.name! : 'Worker details'),
+        title: Text(
+          worker.name?.isNotEmpty == true ? worker.name! : 'Worker details',
+        ),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -50,7 +50,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 8),
           ),
@@ -61,16 +61,10 @@ class AdminWorkerDetailPage extends StatelessWidget {
         children: [
           Text(
             worker.name?.isNotEmpty == true ? worker.name! : 'Worker',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
-          Text(
-            'ID: ${worker.id}',
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text('ID: ${worker.id}', style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 4),
           if (worker.phone != null)
             Text(
@@ -136,8 +130,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
             (data['cnicBackStatus'] as String?) ?? 'pending';
         final String selfieStatus =
             (data['selfieStatus'] as String?) ?? 'pending';
-        final String shopStatus =
-            (data['shopStatus'] as String?) ?? 'pending';
+        final String shopStatus = (data['shopStatus'] as String?) ?? 'pending';
 
         final Map<String, dynamic>? verification =
             data['verification'] as Map<String, dynamic>?;
@@ -212,8 +205,8 @@ class AdminWorkerDetailPage extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -221,7 +214,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor(status).withOpacity(0.12),
+                      color: statusColor(status).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
@@ -240,10 +233,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: Image.network(
-                    url,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.network(url, fit: BoxFit.cover),
                 ),
               ),
               const SizedBox(height: 8),
@@ -267,10 +257,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton.icon(
-                      icon: const Icon(
-                        Icons.refresh,
-                        color: Colors.redAccent,
-                      ),
+                      icon: const Icon(Icons.refresh, color: Colors.redAccent),
                       label: const Text('Resubmit'),
                       onPressed: () async {
                         await AdminWorkerController.updateDocumentStatus(
@@ -324,10 +311,9 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Smart CNIC details',
-                  style:
-                      Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 _buildCnicDetailsRow(
@@ -371,21 +357,18 @@ class AdminWorkerDetailPage extends StatelessWidget {
                   ),
                   _buildCnicDetailsRow(
                     label: 'Name match',
-                    value:
-                        (expectedMatches['nameMatchesLikely'] as num?)
-                            ?.toStringAsFixed(2),
+                    value: (expectedMatches['nameMatchesLikely'] as num?)
+                        ?.toStringAsFixed(2),
                   ),
                   _buildCnicDetailsRow(
                     label: 'Father name match',
-                    value:
-                        (expectedMatches['fatherNameMatchesLikely'] as num?)
-                            ?.toStringAsFixed(2),
+                    value: (expectedMatches['fatherNameMatchesLikely'] as num?)
+                        ?.toStringAsFixed(2),
                   ),
                   _buildCnicDetailsRow(
                     label: 'DOB match',
-                    value:
-                        (expectedMatches['dobMatchesLikely'] as num?)
-                            ?.toStringAsFixed(2),
+                    value: (expectedMatches['dobMatchesLikely'] as num?)
+                        ?.toStringAsFixed(2),
                   ),
                 ],
               ],
@@ -513,26 +496,34 @@ class AdminWorkerDetailPage extends StatelessWidget {
 
         final List<Widget> bullets = [];
 
-        bullets.add(Text(
-          'Completed jobs: $totalCompleted, Cancelled: $totalCancelled',
-          style: const TextStyle(fontSize: 13),
-        ));
+        bullets.add(
+          Text(
+            'Completed jobs: $totalCompleted, Cancelled: $totalCancelled',
+            style: const TextStyle(fontSize: 13),
+          ),
+        );
 
-        bullets.add(Text(
-          'Cancellation rate: ${cancelRate.toStringAsFixed(1)}%',
-          style: const TextStyle(fontSize: 13),
-        ));
+        bullets.add(
+          Text(
+            'Cancellation rate: ${cancelRate.toStringAsFixed(1)}%',
+            style: const TextStyle(fontSize: 13),
+          ),
+        );
 
-        bullets.add(Text(
-          'Disputes on completed jobs: $totalDisputes (${disputeRate.toStringAsFixed(1)}%)',
-          style: const TextStyle(fontSize: 13),
-        ));
+        bullets.add(
+          Text(
+            'Disputes on completed jobs: $totalDisputes (${disputeRate.toStringAsFixed(1)}%)',
+            style: const TextStyle(fontSize: 13),
+          ),
+        );
 
         if (totalNoShows > 0) {
-          bullets.add(Text(
-            'No-shows recorded: $totalNoShows',
-            style: const TextStyle(fontSize: 13),
-          ));
+          bullets.add(
+            Text(
+              'No-shows recorded: $totalNoShows',
+              style: const TextStyle(fontSize: 13),
+            ),
+          );
         }
 
         return _sectionCard(
@@ -541,10 +532,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final w in bullets) ...[
-                w,
-                const SizedBox(height: 2),
-              ],
+              for (final w in bullets) ...[w, const SizedBox(height: 2)],
             ],
           ),
         );
@@ -590,7 +578,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
         final avgRating = reviews.isEmpty
             ? 0.0
             : reviews.map((r) => r.rating).reduce((a, b) => a + b) /
-                reviews.length;
+                  reviews.length;
 
         final Map<String, int> strengthCounts = <String, int>{};
         final Map<String, int> issueCounts = <String, int>{};
@@ -603,13 +591,19 @@ class AdminWorkerDetailPage extends StatelessWidget {
           final text = r.comment?.toLowerCase() ?? '';
           if (text.isEmpty) continue;
 
-          if (text.contains('on time') || text.contains('ontime') || text.contains('punctual')) {
+          if (text.contains('on time') ||
+              text.contains('ontime') ||
+              text.contains('punctual')) {
             addCount(strengthCounts, 'Punctual');
           }
-          if (text.contains('friendly') || text.contains('polite') || text.contains('kind')) {
+          if (text.contains('friendly') ||
+              text.contains('polite') ||
+              text.contains('kind')) {
             addCount(strengthCounts, 'Friendly');
           }
-          if (text.contains('clean') || text.contains('neat') || text.contains('tidy')) {
+          if (text.contains('clean') ||
+              text.contains('neat') ||
+              text.contains('tidy')) {
             addCount(strengthCounts, 'Clean');
           }
           if (text.contains('professional')) {
@@ -642,12 +636,15 @@ class AdminWorkerDetailPage extends StatelessWidget {
           }
         }
 
-        final List<MapEntry<String, int>> strengths = strengthCounts.entries.toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
+        final List<MapEntry<String, int>> strengths =
+            strengthCounts.entries.toList()
+              ..sort((a, b) => b.value.compareTo(a.value));
         final List<MapEntry<String, int>> issues = issueCounts.entries.toList()
           ..sort((a, b) => b.value.compareTo(a.value));
 
-        final topStrengths = strengths.length > 3 ? strengths.sublist(0, 3) : strengths;
+        final topStrengths = strengths.length > 3
+            ? strengths.sublist(0, 3)
+            : strengths;
         final topIssues = issues.length > 3 ? issues.sublist(0, 3) : issues;
 
         return _sectionCard(
@@ -656,11 +653,10 @@ class AdminWorkerDetailPage extends StatelessWidget {
           child: FutureBuilder<SentimentStats>(
             future: SentimentUtils.computeWithAi(reviews),
             builder: (context, snapshot) {
-              final SentimentStats sentiment = snapshot.data ??
-                  SentimentUtils.compute(reviews);
+              final SentimentStats sentiment =
+                  snapshot.data ?? SentimentUtils.compute(reviews);
               final sentimentPercent =
-                  ((sentiment.avgScore + 1.0) / 2.0 * 100.0)
-                      .clamp(0.0, 100.0);
+                  ((sentiment.avgScore + 1.0) / 2.0 * 100.0).clamp(0.0, 100.0);
               String sentimentLabel;
               if (sentiment.avgScore > 0.25) {
                 sentimentLabel = 'Sentiment: Positive';
@@ -752,9 +748,8 @@ class AdminWorkerDetailPage extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: reviews.length,
-                    separatorBuilder:
-                        (separatorContext, separatorIndex) =>
-                            const SizedBox(height: 8),
+                    separatorBuilder: (separatorContext, separatorIndex) =>
+                        const SizedBox(height: 8),
                     itemBuilder: (context, index) {
                       final r = reviews[index];
                       return Container(
@@ -764,9 +759,9 @@ class AdminWorkerDetailPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Theme.of(context)
-                                  .shadowColor
-                                  .withOpacity(0.07),
+                              color: Theme.of(
+                                context,
+                              ).shadowColor.withValues(alpha: 0.07),
                               blurRadius: 6,
                               offset: const Offset(0, 3),
                             ),
@@ -778,9 +773,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
                             Row(
                               children: List.generate(5, (i) {
                                 return Icon(
-                                  i < r.rating
-                                      ? Icons.star
-                                      : Icons.star_border,
+                                  i < r.rating ? Icons.star : Icons.star_border,
                                   size: 16,
                                   color: Colors.amber,
                                 );
@@ -789,20 +782,16 @@ class AdminWorkerDetailPage extends StatelessWidget {
                             if (r.comment != null &&
                                 r.comment!.trim().isNotEmpty)
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 4.0),
+                                padding: const EdgeInsets.only(top: 4.0),
                                 child: Text(
                                   r.comment!,
-                                  style:
-                                      const TextStyle(fontSize: 13),
+                                  style: const TextStyle(fontSize: 13),
                                 ),
                               ),
                             const SizedBox(height: 2),
                             Text(
                               'Booking: ${r.bookingId}',
-                              style: const TextStyle(
-                                fontSize: 11,
-                              ),
+                              style: const TextStyle(fontSize: 11),
                             ),
                           ],
                         ),
@@ -818,10 +807,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCnicDetailsRow({
-    required String label,
-    String? value,
-  }) {
+  Widget _buildCnicDetailsRow({required String label, String? value}) {
     if (value == null || value.trim().isEmpty) {
       return const SizedBox.shrink();
     }
@@ -835,18 +821,10 @@ class AdminWorkerDetailPage extends StatelessWidget {
             width: 120,
             child: Text(
               '$label:',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 12))),
         ],
       ),
     );
@@ -863,18 +841,18 @@ class AdminWorkerDetailPage extends StatelessWidget {
     return filtered.join(', ');
   }
 
-  Widget _sectionCard(BuildContext context,
-      {required String title, required Widget child}) {
+  Widget _sectionCard(
+    BuildContext context, {
+    required String title,
+    required Widget child,
+  }) {
     return SectionCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           child,

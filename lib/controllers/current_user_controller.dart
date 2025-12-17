@@ -32,16 +32,18 @@ class CurrentUserController {
       _controller = StreamController<AppUser?>.broadcast();
       _lastValue = null;
       _hasValue = false;
-      _sub = UserService.instance.watchUser(current.uid).listen(
-        (value) {
-          _lastValue = value;
-          _hasValue = true;
-          _controller?.add(value);
-        },
-        onError: (Object e, StackTrace st) {
-          _controller?.addError(e, st);
-        },
-      );
+      _sub = UserService.instance
+          .watchUser(current.uid)
+          .listen(
+            (value) {
+              _lastValue = value;
+              _hasValue = true;
+              _controller?.add(value);
+            },
+            onError: (Object e, StackTrace st) {
+              _controller?.addError(e, st);
+            },
+          );
     }
 
     final controller = _controller;

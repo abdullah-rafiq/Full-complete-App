@@ -19,7 +19,6 @@ class CloudinaryService {
     required String publicId,
     required String fileName,
   }) async {
-   
     if (cloudName.isEmpty || uploadPreset.isEmpty) {
       throw StateError(
         'CloudinaryService is not configured. Set cloudName and uploadPreset.',
@@ -32,11 +31,9 @@ class CloudinaryService {
       ..fields['upload_preset'] = uploadPreset
       ..fields['folder'] = folder
       ..fields['public_id'] = publicId
-      ..files.add(http.MultipartFile.fromBytes(
-        'file',
-        bytes,
-        filename: fileName,
-      ));
+      ..files.add(
+        http.MultipartFile.fromBytes('file', bytes, filename: fileName),
+      );
 
     final response = await request.send();
     final body = await response.stream.bytesToString();

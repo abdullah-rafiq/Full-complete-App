@@ -29,9 +29,7 @@ class WalletPage extends StatelessWidget {
           ),
           title: const Text('Wallet'),
         ),
-        body: const Center(
-          child: Text('Please log in to view your wallet.'),
-        ),
+        body: const Center(child: Text('Please log in to view your wallet.')),
       );
     }
 
@@ -44,11 +42,10 @@ class WalletPage extends StatelessWidget {
             title: Text('Top up via $method'),
             content: TextField(
               controller: controller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Amount (PKR)',
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
               ),
+              decoration: const InputDecoration(labelText: 'Amount (PKR)'),
             ),
             actions: [
               TextButton(
@@ -116,13 +113,11 @@ class WalletPage extends StatelessWidget {
                 SectionCard(
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
-                    color:
-                        Theme.of(context).dividerColor.withOpacity(0.4),
+                    color: Theme.of(context).dividerColor.withOpacity(0.4),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          Theme.of(context).shadowColor.withOpacity(0.08),
+                      color: Theme.of(context).shadowColor.withOpacity(0.08),
                       blurRadius: 18,
                       offset: const Offset(0, 10),
                     ),
@@ -178,32 +173,32 @@ class WalletPage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'Unpaid bookings',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
                 Expanded(
                   child: StreamBuilder<List<BookingModel>>(
-                    stream: BookingService.instance
-                        .watchCustomerBookings(current.uid),
+                    stream: BookingService.instance.watchCustomerBookings(
+                      current.uid,
+                    ),
                     builder: (context, snap) {
                       if (snap.connectionState == ConnectionState.waiting) {
                         return const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2));
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
                       }
 
                       if (snap.hasError) {
                         return const Center(
-                          child:
-                              Text('Could not load unpaid bookings (demo).'),
+                          child: Text('Could not load unpaid bookings (demo).'),
                         );
                       }
 
                       final all = snap.data ?? [];
                       final unpaid = all
-                          .where((b) => b.paymentStatus == PaymentStatus.pending)
+                          .where(
+                            (b) => b.paymentStatus == PaymentStatus.pending,
+                          )
                           .toList();
 
                       if (unpaid.isEmpty) {
@@ -223,17 +218,19 @@ class WalletPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: Theme.of(context)
-                                    .shadowColor
-                                    .withOpacity(0.08),
+                                color: Theme.of(
+                                  context,
+                                ).shadowColor.withOpacity(0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                             child: Row(
                               children: [
-                                const Icon(Icons.receipt_long,
-                                    color: Colors.blueAccent),
+                                const Icon(
+                                  Icons.receipt_long,
+                                  color: Colors.blueAccent,
+                                ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
@@ -250,9 +247,7 @@ class WalletPage extends StatelessWidget {
                                       const SizedBox(height: 2),
                                       Text(
                                         'Amount: PKR ${b.price.toStringAsFixed(0)}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                        ),
+                                        style: const TextStyle(fontSize: 12),
                                       ),
                                     ],
                                   ),
@@ -262,9 +257,7 @@ class WalletPage extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (_) => PaymentPage(
-                                          booking: b,
-                                        ),
+                                        builder: (_) => PaymentPage(booking: b),
                                       ),
                                     );
                                   },

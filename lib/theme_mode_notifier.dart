@@ -4,8 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppTheme {
   static const _keyThemeMode = 'themeMode';
 
-  static final ValueNotifier<ThemeMode> themeMode =
-      ValueNotifier(ThemeMode.light);
+  static final ValueNotifier<ThemeMode> themeMode = ValueNotifier(
+    ThemeMode.light,
+  );
 
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();

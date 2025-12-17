@@ -74,39 +74,30 @@ class L10n {
       ? 'اس ای میل کے ساتھ کوئی صارف نہیں ملا۔'
       : 'No user found for that email.';
 
-  static String authWrongPassword() => _isUrdu
-      ? 'غلط پاس ورڈ فراہم کیا گیا۔'
-      : 'Wrong password provided.';
+  static String authWrongPassword() =>
+      _isUrdu ? 'غلط پاس ورڈ فراہم کیا گیا۔' : 'Wrong password provided.';
 
-  static String authInvalidEmail() => _isUrdu
-      ? 'ای میل ایڈریس درست نہیں۔'
-      : 'Invalid email address.';
+  static String authInvalidEmail() =>
+      _isUrdu ? 'ای میل ایڈریس درست نہیں۔' : 'Invalid email address.';
 
   static String authSomethingWentWrong() => _isUrdu
       ? 'کچھ غلط ہو گیا، براہِ کرم بعد میں دوبارہ کوشش کریں۔'
       : 'Something went wrong, please try again later';
 
-  static String authGoogleFailed() => _isUrdu
-      ? 'گوگل لاگ اِن ناکام رہا'
-      : 'Google sign-in failed';
+  static String authGoogleFailed() =>
+      _isUrdu ? 'گوگل لاگ اِن ناکام رہا' : 'Google sign-in failed';
 
   // Customer main page + nav
 
   static String customerNavHome() => _isUrdu ? 'ہوم' : 'Home';
-  static String customerNavCategories() =>
-      _isUrdu ? 'کیٹیگریز' : 'Categories';
-  static String customerNavBookings() =>
-      _isUrdu ? 'بکنگز' : 'Bookings';
-  static String customerNavMessages() =>
-      _isUrdu ? 'پیغامات' : 'Messages';
-  static String customerNavProfile() =>
-      _isUrdu ? 'پروفائل' : 'Profile';
+  static String customerNavCategories() => _isUrdu ? 'کیٹیگریز' : 'Categories';
+  static String customerNavBookings() => _isUrdu ? 'بکنگز' : 'Bookings';
+  static String customerNavMessages() => _isUrdu ? 'پیغامات' : 'Messages';
+  static String customerNavProfile() => _isUrdu ? 'پروفائل' : 'Profile';
 
-  static String mainWelcomePrefix() =>
-      _isUrdu ? 'خوش آمدید،' : 'Welcome,';
+  static String mainWelcomePrefix() => _isUrdu ? 'خوش آمدید،' : 'Welcome,';
 
-  static String mainCategoriesTitle() =>
-      _isUrdu ? 'کیٹیگریز' : 'Categories';
+  static String mainCategoriesTitle() => _isUrdu ? 'کیٹیگریز' : 'Categories';
 
   static String mainFeaturedProvidersTitle() =>
       _isUrdu ? 'نمایاں فراہم کنندگان' : 'Featured Providers';
@@ -117,15 +108,13 @@ class L10n {
   static String mainAllCategoriesTitle() =>
       _isUrdu ? 'تمام کیٹیگریز' : 'All Categories';
 
-  static String statusAvailable() =>
-      _isUrdu ? 'دستیاب' : 'Available';
+  static String statusAvailable() => _isUrdu ? 'دستیاب' : 'Available';
 
-  static String statusUnavailable() => _isUrdu
-      ? 'اس وقت دستیاب نہیں'
-      : 'Currently unavailable';
+  static String statusUnavailable() =>
+      _isUrdu ? 'اس وقت دستیاب نہیں' : 'Currently unavailable';
 
   // Settings
- 
+
   static String settingsAppBarTitle() =>
       _isUrdu ? 'ایپ سیٹنگز' : 'App settings';
 
@@ -136,32 +125,26 @@ class L10n {
       ? 'اپنی بکنگز اور آفرز کے بارے میں اپ ڈیٹس حاصل کریں۔'
       : 'Receive updates about your bookings and offers.';
 
-  static String settingsDarkModeTitle() =>
-      _isUrdu ? 'ڈارک موڈ' : 'Dark mode';
+  static String settingsDarkModeTitle() => _isUrdu ? 'ڈارک موڈ' : 'Dark mode';
 
   static String settingsDarkModeSubtitle() => _isUrdu
       ? 'ایپ کے لئے ڈارک تھیم استعمال کریں۔'
       : 'Use a dark theme for the application.';
 
-  static String settingsLanguageTitle() =>
-      _isUrdu ? 'زبان' : 'Language';
+  static String settingsLanguageTitle() => _isUrdu ? 'زبان' : 'Language';
 
-  static String languageNameEnglish() =>
-      _isUrdu ? 'انگلش' : 'English';
+  static String languageNameEnglish() => _isUrdu ? 'انگلش' : 'English';
 
-  static String languageNameUrdu() =>
-      _isUrdu ? 'اردو' : 'Urdu';
+  static String languageNameUrdu() => _isUrdu ? 'اردو' : 'Urdu';
 
   // Contact us
 
-  static String contactAppBarTitle() =>
-      _isUrdu ? 'رابطہ کریں' : 'Contact us';
+  static String contactAppBarTitle() => _isUrdu ? 'رابطہ کریں' : 'Contact us';
 
   static String contactInfoTitle() =>
       _isUrdu ? 'رابطہ معلومات' : 'Contact information';
 
-  static String contactLiveChatTitle() =>
-      _isUrdu ? 'لائیو چیٹ' : 'Live chat';
+  static String contactLiveChatTitle() => _isUrdu ? 'لائیو چیٹ' : 'Live chat';
 
   static String contactTypeMessageHint() =>
       _isUrdu ? 'اپنا پیغام لکھیں...' : 'Type your message...';
@@ -212,92 +195,75 @@ class L10n {
   static String profileEditTitle() =>
       _isUrdu ? 'پروفائل میں ترمیم کریں' : 'Edit profile';
 
-  static String profileSettingsTitle() =>
-      _isUrdu ? 'سیٹنگز' : 'Settings';
+  static String profileSettingsTitle() => _isUrdu ? 'سیٹنگز' : 'Settings';
 
   static String profileHelpSupportTitle() =>
       _isUrdu ? 'مدد اور سپورٹ' : 'Help & Support';
 
-  static String profileLogoutTitle() =>
-      _isUrdu ? 'لاگ آؤٹ' : 'Logout';
+  static String profileLogoutTitle() => _isUrdu ? 'لاگ آؤٹ' : 'Logout';
 
   // ----------------------
   // Customer bookings (MyBookings)
   // ----------------------
 
-  static String bookingsAppBarTitle() =>
-      _isUrdu ? 'میری بکنگز' : 'My Bookings';
+  static String bookingsAppBarTitle() => _isUrdu ? 'میری بکنگز' : 'My Bookings';
 
   static String bookingsLoginRequiredMessage() => _isUrdu
       ? 'براہ کرم اپنی بکنگز دیکھنے کے لئے لاگ اِن کریں۔'
       : 'Please log in to view your bookings.';
 
-  static String bookingsLoadError() => _isUrdu
-      ? 'بکنگز لوڈ نہیں ہو سکیں۔'
-      : 'Could not load bookings.';
+  static String bookingsLoadError() =>
+      _isUrdu ? 'بکنگز لوڈ نہیں ہو سکیں۔' : 'Could not load bookings.';
 
-  static String bookingStatusCompleted() =>
-      _isUrdu ? 'مکمل' : 'Completed';
+  static String bookingStatusCompleted() => _isUrdu ? 'مکمل' : 'Completed';
 
-  static String bookingStatusCancelled() =>
-      _isUrdu ? 'منسوخ' : 'Cancelled';
+  static String bookingStatusCancelled() => _isUrdu ? 'منسوخ' : 'Cancelled';
 
   static String bookingStatusInProgress() =>
       _isUrdu ? 'جاری ہے' : 'In progress';
 
-  static String bookingStatusOnTheWay() =>
-      _isUrdu ? 'راستے میں' : 'On the way';
+  static String bookingStatusOnTheWay() => _isUrdu ? 'راستے میں' : 'On the way';
 
-  static String bookingStatusAccepted() =>
-      _isUrdu ? 'طے شدہ' : 'Scheduled';
+  static String bookingStatusAccepted() => _isUrdu ? 'طے شدہ' : 'Scheduled';
 
   static String bookingStatusRequested() =>
       _isUrdu ? 'درخواست شدہ' : 'Requested';
 
-  static String bookingPayNowCta() =>
-      _isUrdu ? 'ابھی ادائیگی کریں' : 'Pay now';
+  static String bookingPayNowCta() => _isUrdu ? 'ابھی ادائیگی کریں' : 'Pay now';
 
-  static String bookingPaidLabel() =>
-      _isUrdu ? 'ادا شدہ' : 'Paid';
+  static String bookingPaidLabel() => _isUrdu ? 'ادا شدہ' : 'Paid';
 
-  static String bookingsEmptyForStatus() => _isUrdu
-      ? 'ابھی تک کوئی بکنگ نہیں۔'
-      : 'No bookings yet.';
+  static String bookingsEmptyForStatus() =>
+      _isUrdu ? 'ابھی تک کوئی بکنگ نہیں۔' : 'No bookings yet.';
 
   // ----------------------
   // Worker jobs & earnings
   // ----------------------
 
-  static String workerJobsAppBarTitle() =>
-      _isUrdu ? 'میری جابز' : 'My jobs';
+  static String workerJobsAppBarTitle() => _isUrdu ? 'میری جابز' : 'My jobs';
 
   static String workerJobsLoginRequiredMessage() => _isUrdu
       ? 'براہ کرم اپنی جابز دیکھنے کے لئے لاگ اِن کریں۔'
       : 'Please log in to view your jobs.';
 
-  static String workerJobsLoadError() => _isUrdu
-      ? 'جابز لوڈ نہیں ہو سکیں۔'
-      : 'Could not load jobs.';
+  static String workerJobsLoadError() =>
+      _isUrdu ? 'جابز لوڈ نہیں ہو سکیں۔' : 'Could not load jobs.';
 
-  static String workerJobsEmptyMessage() => _isUrdu
-      ? 'ابھی تک کوئی جاب اسائن نہیں ہوئی۔'
-      : 'No jobs assigned yet.';
+  static String workerJobsEmptyMessage() =>
+      _isUrdu ? 'ابھی تک کوئی جاب اسائن نہیں ہوئی۔' : 'No jobs assigned yet.';
 
   static String bookingFilterAll() => _isUrdu ? 'سب' : 'All';
 
-  static String workerJobCustomerPrefix() =>
-      _isUrdu ? 'کسٹمر:' : 'Customer:';
+  static String workerJobCustomerPrefix() => _isUrdu ? 'کسٹمر:' : 'Customer:';
 
-  static String workerEarningsAppBarTitle() =>
-      _isUrdu ? 'کمائی' : 'Earnings';
+  static String workerEarningsAppBarTitle() => _isUrdu ? 'کمائی' : 'Earnings';
 
   static String workerEarningsLoginRequiredMessage() => _isUrdu
       ? 'براہ کرم اپنی کمائی دیکھنے کے لئے لاگ اِن کریں۔'
       : 'Please log in to view your earnings.';
 
-  static String workerEarningsLoadError() => _isUrdu
-      ? 'کمائی لوڈ نہیں ہو سکی۔'
-      : 'Could not load earnings.';
+  static String workerEarningsLoadError() =>
+      _isUrdu ? 'کمائی لوڈ نہیں ہو سکی۔' : 'Could not load earnings.';
 
   static String workerEarningsTotalTitle() =>
       _isUrdu ? 'کل کمائی' : 'Total earnings';
@@ -306,9 +272,8 @@ class L10n {
       ? 'ابھی تک کوئی مکمل جاب نہیں۔ مکمل جابز یہاں دکھائی جائیں گی۔'
       : 'No completed jobs yet. Completed jobs will appear here.';
 
-  static String workerEarningsBasedOnJobs() => _isUrdu
-      ? 'مکمل جابز کی بنیاد پر۔'
-      : 'Based on completed jobs.';
+  static String workerEarningsBasedOnJobs() =>
+      _isUrdu ? 'مکمل جابز کی بنیاد پر۔' : 'Based on completed jobs.';
 
   static String workerEarningsNoCompletedList() => _isUrdu
       ? 'دکھانے کے لئے کوئی مکمل جاب نہیں۔'
@@ -318,6 +283,5 @@ class L10n {
   // Generic
   // ----------------------
 
-  static String commonNotSet() =>
-      _isUrdu ? 'سیٹ نہیں' : 'Not set';
+  static String commonNotSet() => _isUrdu ? 'سیٹ نہیں' : 'Not set';
 }

@@ -39,7 +39,9 @@ class WorkerHomeScreen extends StatelessWidget {
               L10n.workerTodayOverviewSubtitle(),
               style: TextStyle(
                 fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 8),
@@ -102,10 +104,7 @@ class WorkerHomeScreen extends StatelessWidget {
               color: const Color(0xFF29B6F6).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
-              Icons.inbox_outlined,
-              color: Color(0xFF29B6F6),
-            ),
+            child: const Icon(Icons.inbox_outlined, color: Color(0xFF29B6F6)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -125,10 +124,9 @@ class WorkerHomeScreen extends StatelessWidget {
                   L10n.workerIncomingRequestsSubtitle(),
                   style: TextStyle(
                     fontSize: 13,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -185,10 +183,9 @@ class WorkerHomeScreen extends StatelessWidget {
                   L10n.workerMyJobsEarningsSubtitle(),
                   style: TextStyle(
                     fontSize: 13,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -245,11 +242,7 @@ class _WorkerDemandHint extends StatelessWidget {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.access_time,
-              size: 18,
-              color: Colors.blueGrey,
-            ),
+            const Icon(Icons.access_time, size: 18, color: Colors.blueGrey),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
@@ -308,7 +301,8 @@ class _WorkerDemandHint extends StatelessWidget {
     if (topDayKeys.length == 1) {
       dayLabel = _weekdayName(topDayKeys[0]);
     } else {
-      dayLabel = '${_weekdayName(topDayKeys[0])} & ${_weekdayName(topDayKeys[1])}';
+      dayLabel =
+          '${_weekdayName(topDayKeys[0])} & ${_weekdayName(topDayKeys[1])}';
     }
 
     final band = topBandEntry.key;
@@ -373,14 +367,17 @@ class _WorkerVerificationBanner extends StatelessWidget {
 
         final theme = Theme.of(context);
         final isDark = theme.brightness == Brightness.dark;
-        final Color bgColor =
-            isDark ? theme.colorScheme.surfaceVariant : const Color(0xFFFFF3E0);
-        final Color iconColor =
-            isDark ? Colors.amberAccent : const Color(0xFFF57C00);
-        final Color titleColor =
-            isDark ? Colors.white : const Color(0xFFBF360C);
-        final Color descColor =
-            isDark ? Colors.white70 : Colors.black87;
+        final Color bgColor = isDark
+            ? theme.colorScheme.surfaceContainerHighest
+            : const Color(0xFFFFF3E0);
+
+        final Color iconColor = isDark
+            ? Colors.amberAccent
+            : const Color(0xFFF57C00);
+        final Color titleColor = isDark
+            ? Colors.white
+            : const Color(0xFFBF360C);
+        final Color descColor = isDark ? Colors.white70 : Colors.black87;
 
         return Container(
           padding: const EdgeInsets.all(12),
@@ -391,10 +388,7 @@ class _WorkerVerificationBanner extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.info_outline,
-                color: iconColor,
-              ),
+              Icon(Icons.info_outline, color: iconColor),
 
               const SizedBox(width: 8),
               Expanded(
@@ -413,10 +407,7 @@ class _WorkerVerificationBanner extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Upload CNIC, live picture, and shop/tools photo so you can start accepting and completing jobs.',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: descColor,
-                      ),
+                      style: TextStyle(fontSize: 12, color: descColor),
                     ),
 
                     const SizedBox(height: 8),

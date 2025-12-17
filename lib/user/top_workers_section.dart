@@ -103,16 +103,16 @@ class TopWorkersSection extends StatelessWidget {
                     );
                   }
 
-                  final topItems =
-                      items.length > 5 ? items.sublist(0, 5) : items;
+                  final topItems = items.length > 5
+                      ? items.sublist(0, 5)
+                      : items;
 
                   // Log impression of top workers for analytics / future ML ranking.
                   try {
                     AnalyticsService.instance.logEvent(
                       'top_workers_impression',
                       <String, dynamic>{
-                        'providerIds':
-                            topItems.map((e) => e.user.id).toList(),
+                        'providerIds': topItems.map((e) => e.user.id).toList(),
                         'count': topItems.length,
                       },
                     );
@@ -120,10 +120,9 @@ class TopWorkersSection extends StatelessWidget {
 
                   return Column(
                     children: topItems.map((item) {
-                      final name =
-                          (item.user.name?.trim().isNotEmpty ?? false)
-                              ? item.user.name!.trim()
-                              : 'Worker';
+                      final name = (item.user.name?.trim().isNotEmpty ?? false)
+                          ? item.user.name!.trim()
+                          : 'Worker';
 
                       String? distanceLabel;
                       if (item.distanceKm != null) {
@@ -131,8 +130,7 @@ class TopWorkersSection extends StatelessWidget {
                         if (d < 1.0) {
                           distanceLabel = '${(d * 1000).round()} m away';
                         } else {
-                          distanceLabel =
-                              '${d.toStringAsFixed(1)} km away';
+                          distanceLabel = '${d.toStringAsFixed(1)} km away';
                         }
                       }
 
@@ -142,20 +140,17 @@ class TopWorkersSection extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 20,
-                              backgroundImage: item.user.profileImageUrl !=
-                                          null &&
+                              backgroundImage:
+                                  item.user.profileImageUrl != null &&
                                       item.user.profileImageUrl!.isNotEmpty
-                                  ? NetworkImage(
-                                      item.user.profileImageUrl!,
-                                    )
+                                  ? NetworkImage(item.user.profileImageUrl!)
                                   : const AssetImage('assets/profile.png')
-                                      as ImageProvider,
+                                        as ImageProvider,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     mainAxisAlignment:
@@ -175,9 +170,7 @@ class TopWorkersSection extends StatelessWidget {
                                         const SizedBox(width: 8),
                                         Text(
                                           distanceLabel,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                          ),
+                                          style: const TextStyle(fontSize: 11),
                                         ),
                                       ],
                                     ],
@@ -192,8 +185,7 @@ class TopWorkersSection extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        item.avgRating
-                                            .toStringAsFixed(1),
+                                        item.avgRating.toStringAsFixed(1),
                                         style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w600,
@@ -202,9 +194,7 @@ class TopWorkersSection extends StatelessWidget {
                                       const SizedBox(width: 4),
                                       Text(
                                         '(${item.reviewCount} reviews)',
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                        ),
+                                        style: const TextStyle(fontSize: 11),
                                       ),
                                     ],
                                   ),
@@ -314,9 +304,8 @@ Future<List<_TopWorkerItem>> _loadTopWorkers(
 
     double avgRating = 0.0;
     if (reviews.isNotEmpty) {
-      avgRating = reviews
-              .map((r) => r.rating.toDouble())
-              .reduce((a, b) => a + b) /
+      avgRating =
+          reviews.map((r) => r.rating.toDouble()).reduce((a, b) => a + b) /
           reviews.length;
     }
 

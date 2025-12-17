@@ -19,9 +19,7 @@ class MyBookingsPage extends StatelessWidget {
 
     if (user == null) {
       return Scaffold(
-        body: Center(
-          child: Text(L10n.bookingsLoginRequiredMessage()),
-        ),
+        body: Center(child: Text(L10n.bookingsLoginRequiredMessage())),
       );
     }
 
@@ -39,9 +37,7 @@ class MyBookingsPage extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(L10n.bookingsLoadError()),
-            );
+            return Center(child: Text(L10n.bookingsLoadError()));
           }
 
           final bookings = snapshot.data ?? [];
@@ -104,9 +100,7 @@ class MyBookingsPage extends StatelessWidget {
                 },
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.cleaning_services_rounded,
-                    ),
+                    const Icon(Icons.cleaning_services_rounded),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -114,18 +108,14 @@ class MyBookingsPage extends StatelessWidget {
                         children: [
                           Text(
                             serviceName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             b.scheduledTime == null
                                 ? 'Time: ${L10n.commonNotSet()}'
                                 : 'Time: ${_formatDateTime(b.scheduledTime)}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ],
                       ),
@@ -140,7 +130,9 @@ class MyBookingsPage extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: statusColor(b.status).withValues(alpha: 0.12),
+                            color: statusColor(
+                              b.status,
+                            ).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -155,9 +147,7 @@ class MyBookingsPage extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           'PKR ${b.price.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 4),
                         if (b.paymentStatus == PaymentStatus.pending)
@@ -243,21 +233,21 @@ class MyBookingsPage extends StatelessWidget {
                                 ),
                               );
                             }
-                            return FutureBuilder<
-                                Map<String, ServiceModel?>>(
-                              future: BookingsController
-                                  .loadServicesForBookings(filtered),
+                            return FutureBuilder<Map<String, ServiceModel?>>(
+                              future:
+                                  BookingsController.loadServicesForBookings(
+                                    filtered,
+                                  ),
                               builder: (context, servicesSnap) {
                                 final servicesById =
                                     servicesSnap.data ??
-                                        <String, ServiceModel?>{};
+                                    <String, ServiceModel?>{};
 
                                 if (servicesSnap.connectionState ==
                                         ConnectionState.waiting &&
                                     servicesById.isEmpty) {
                                   return const Center(
-                                    child:
-                                        CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(),
                                   );
                                 }
 
@@ -269,12 +259,8 @@ class MyBookingsPage extends StatelessWidget {
                                           const SizedBox(height: 12),
                                   itemBuilder: (context, index) {
                                     final b = filtered[index];
-                                    final service =
-                                        servicesById[b.serviceId];
-                                    return buildBookingTile(
-                                      b,
-                                      service,
-                                    );
+                                    final service = servicesById[b.serviceId];
+                                    return buildBookingTile(b, service);
                                   },
                                 );
                               },
@@ -297,10 +283,11 @@ class MyBookingsPage extends StatelessWidget {
 String _formatDateTime(DateTime? dt) {
   if (dt == null) return 'Not set';
   final local = dt.toLocal();
-  final date = '${local.year.toString().padLeft(4, '0')}-'
+  final date =
+      '${local.year.toString().padLeft(4, '0')}-'
       '${local.month.toString().padLeft(2, '0')}-'
       '${local.day.toString().padLeft(2, '0')}';
-  final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+  final time =
+      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   return '$date • $time';
 }
-

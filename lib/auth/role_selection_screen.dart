@@ -103,10 +103,7 @@ class RoleSelectionScreen extends StatelessWidget {
                           ),
                           child: const Text(
                             'I need home services',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
                       ),

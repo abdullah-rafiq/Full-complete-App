@@ -29,7 +29,8 @@ class WorkerVerificationController {
     bool dialogShown = false;
 
     try {
-      final hasPermission = await MediaPermissionService.ensureCameraPermission();
+      final hasPermission =
+          await MediaPermissionService.ensureCameraPermission();
       if (!context.mounted) return null;
       if (!hasPermission) {
         UIHelpers.showSnack(
@@ -144,6 +145,11 @@ class WorkerVerificationController {
           cnicBackUrl: cnicBackUrl,
           expectedName: currentUser?.name,
         );
+        await AiBackendService.instance.verifyFace(
+          cnicImageUrl: cnicFrontUrl,
+          selfieImageUrl: selfieUrl,
+        );
+        await AiBackendService.instance.verifyShop(shopImageUrl: shopUrl);
       } catch (_) {
         // Ignore AI errors here; the manual verification flow should
         // continue even if automatic CNIC parsing fails.

@@ -58,7 +58,8 @@ class FeaturedProvidersSection extends StatelessWidget {
                   ? user.name!.trim()
                   : 'Provider';
 
-              final avatarImage = (user.profileImageUrl != null &&
+              final avatarImage =
+                  (user.profileImageUrl != null &&
                       user.profileImageUrl!.isNotEmpty)
                   ? NetworkImage(user.profileImageUrl!)
                   : const AssetImage('assets/profile.png') as ImageProvider;
@@ -86,10 +87,7 @@ class FeaturedProvidersSection extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 32,
-                          backgroundImage: avatarImage,
-                        ),
+                        CircleAvatar(radius: 32, backgroundImage: avatarImage),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -102,10 +100,7 @@ class FeaturedProvidersSection extends StatelessWidget {
                                   fontSize: 17,
                                   color: isDark
                                       ? Colors.white
-                                      : theme
-                                          .textTheme
-                                          .titleMedium
-                                          ?.color,
+                                      : theme.textTheme.titleMedium?.color,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -124,8 +119,7 @@ class FeaturedProvidersSection extends StatelessWidget {
                                   const SizedBox(width: 6),
                                   Text(
                                     rating.toStringAsFixed(1),
-                                    style:
-                                        TextStyle(color: subtleTextColor),
+                                    style: TextStyle(color: subtleTextColor),
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
@@ -134,8 +128,9 @@ class FeaturedProvidersSection extends StatelessWidget {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color:
-                                          primaryLightBlue.withValues(alpha: 0.12),
+                                      color: primaryLightBlue.withValues(
+                                        alpha: 0.12,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -170,15 +165,12 @@ class FeaturedProvidersSection extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () {
                             AnalyticsService.instance
-                                .logEvent(
-                                  'featured_click',
-                                  <String, dynamic>{
-                                    'providerId': user.id,
-                                    'avgPrice': item.avgPrice,
-                                    'completedJobs': item.completedJobs,
-                                    'avgRating': item.avgRating,
-                                  },
-                                )
+                                .logEvent('featured_click', <String, dynamic>{
+                                  'providerId': user.id,
+                                  'avgPrice': item.avgPrice,
+                                  'completedJobs': item.completedJobs,
+                                  'avgRating': item.avgRating,
+                                })
                                 .catchError((_) {});
 
                             final service = ServiceModel(

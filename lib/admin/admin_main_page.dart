@@ -27,10 +27,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: pages),
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -86,10 +83,7 @@ class _AdminAnalyticsHostState extends State<_AdminAnalyticsHost> {
   Widget build(BuildContext context) {
     if (!_loaded) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Analytics'),
-          elevation: 4,
-        ),
+        appBar: AppBar(title: const Text('Analytics'), elevation: 4),
         body: const Center(child: CircularProgressIndicator()),
       );
     }

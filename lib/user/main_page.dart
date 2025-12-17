@@ -30,7 +30,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  
   final Color primaryLightBlue = const Color(0xFF4FC3F7);
   final Color primaryBlue = const Color(0xFF29B6F6);
   final Color primaryDarkBlue = const Color(0xFF0288D1);
@@ -45,7 +44,7 @@ class _MainPageState extends State<MainPage> {
     'assets/carsoual/3.jpg',
     'assets/carsoual/4.jpg',
   ];
-  
+
   // Speech-to-text
   final PageController _promoController = PageController(viewportFraction: 0.9);
   Timer? _promoAutoScrollTimer;
@@ -56,8 +55,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     _pages = List<Widget?>.filled(5, null);
 
-    _promoAutoScrollTimer =
-        Timer.periodic(const Duration(seconds: 3), (timer) {
+    _promoAutoScrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (!mounted || !_promoController.hasClients) return;
 
       final pageCount = _promoImagePaths.length;
@@ -106,10 +104,7 @@ class _MainPageState extends State<MainPage> {
   Future<void> _useCurrentLocation() async {
     final current = FirebaseAuth.instance.currentUser;
     if (current == null) {
-      UIHelpers.showSnack(
-        context,
-        'You must be logged in to update location.',
-      );
+      UIHelpers.showSnack(context, 'You must be logged in to update location.');
       return;
     }
     final result = await ProfileController.updateLocationFromCurrentPosition(
@@ -216,10 +211,9 @@ class _MainPageState extends State<MainPage> {
                         }
 
                         if (rawName != null && rawName.isNotEmpty) {
-                          final formatted = rawName[0].toUpperCase() +
-                              (rawName.length > 1
-                                  ? rawName.substring(1)
-                                  : '');
+                          final formatted =
+                              rawName[0].toUpperCase() +
+                              (rawName.length > 1 ? rawName.substring(1) : '');
                           effectiveName = formatted;
                         }
 
@@ -267,10 +261,7 @@ class _MainPageState extends State<MainPage> {
                 )
               else
                 IconButton(
-                  icon: const Icon(
-                    Icons.my_location,
-                    color: Colors.white,
-                  ),
+                  icon: const Icon(Icons.my_location, color: Colors.white),
                   onPressed: _useCurrentLocation,
                 ),
               IconButton(
@@ -317,15 +308,11 @@ class _MainPageState extends State<MainPage> {
             final cat = categories[index];
             return ListTile(
               leading: (cat.iconUrl != null && cat.iconUrl!.isNotEmpty)
-                  ? CircleAvatar(
-                      backgroundImage: AssetImage(cat.iconUrl!),
-                    )
+                  ? CircleAvatar(backgroundImage: AssetImage(cat.iconUrl!))
                   : CircleAvatar(
                       backgroundColor: primaryLightBlue.withValues(alpha: 0.2),
                       child: Text(
-                        cat.name.isNotEmpty
-                            ? cat.name[0].toUpperCase()
-                            : '?',
+                        cat.name.isNotEmpty ? cat.name[0].toUpperCase() : '?',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -404,7 +391,9 @@ class _MainPageState extends State<MainPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            primaryLightBlue.withValues(alpha: 0.9 - index * 0.08),
+                            primaryLightBlue.withValues(
+                              alpha: 0.9 - index * 0.08,
+                            ),
                             primaryBlue.withValues(alpha: 0.85 - index * 0.08),
                           ],
                           begin: Alignment.topLeft,
@@ -456,10 +445,10 @@ class _MainPageState extends State<MainPage> {
                     Text(
                       cat.name,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontSize: 13, fontWeight: FontWeight.w500),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -486,10 +475,7 @@ class _MainPageState extends State<MainPage> {
             title: Text('Plumbing - Kitchen sink'),
             subtitle: Text('Tomorrow • 10:00 AM'),
             trailing: Chip(
-              label: Text(
-                'Requested',
-                style: TextStyle(color: Colors.orange),
-              ),
+              label: Text('Requested', style: TextStyle(color: Colors.orange)),
               backgroundColor: Color(0x22FFA726),
             ),
           ),
@@ -501,10 +487,7 @@ class _MainPageState extends State<MainPage> {
             title: Text('Home Cleaning'),
             subtitle: Text('2025-11-25 • 2:00 PM'),
             trailing: Chip(
-              label: Text(
-                'Confirmed',
-                style: TextStyle(color: Colors.green),
-              ),
+              label: Text('Confirmed', style: TextStyle(color: Colors.green)),
               backgroundColor: Color(0x2232CD32),
             ),
           ),
@@ -515,11 +498,12 @@ class _MainPageState extends State<MainPage> {
 
   // Simple shared section header for this page only
   Widget _buildSectionHeader(String title) {
-    final textStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.1,
-            ) ??
+    final textStyle =
+        Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+        ) ??
         const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w600,
@@ -528,10 +512,7 @@ class _MainPageState extends State<MainPage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
-      child: Text(
-        title,
-        style: textStyle,
-      ),
+      child: Text(title, style: textStyle),
     );
   }
 
@@ -595,7 +576,9 @@ class _MainPageState extends State<MainPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 18.0, vertical: 12),
+                  horizontal: 18.0,
+                  vertical: 12,
+                ),
                 child: Text(
                   L10n.mainAllCategoriesTitle(),
                   style: const TextStyle(
@@ -656,10 +639,7 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: pages),
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -726,10 +706,7 @@ class _MessagesIconWithBadge extends StatelessWidget {
             Positioned(
               right: -2,
               top: -2,
-              child: CircleAvatar(
-                radius: 4,
-                backgroundColor: Colors.red,
-              ),
+              child: CircleAvatar(radius: 4, backgroundColor: Colors.red),
             ),
           ],
         );
@@ -737,4 +714,3 @@ class _MessagesIconWithBadge extends StatelessWidget {
     );
   }
 }
-

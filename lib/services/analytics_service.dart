@@ -6,8 +6,9 @@ class AnalyticsService {
 
   static final AnalyticsService instance = AnalyticsService._();
 
-  final CollectionReference<Map<String, dynamic>> _col =
-      FirebaseFirestore.instance.collection('analytics_events');
+  final CollectionReference<Map<String, dynamic>> _col = FirebaseFirestore
+      .instance
+      .collection('analytics_events');
 
   Future<void> logEvent(String type, Map<String, dynamic> data) async {
     final user = FirebaseAuth.instance.currentUser;

@@ -15,9 +15,7 @@ class TrackingPage extends StatelessWidget {
         ),
         title: const Text('Tracking'),
       ),
-      body: const Center(
-        child: Text('Tracking information will appear here.'),
-      ),
+      body: const Center(child: Text('Tracking information will appear here.')),
     );
   }
 }

@@ -78,8 +78,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: Container(
             color: const Color.fromARGB(115, 0, 213, 255),
             child: SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 32.0,
+              ),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 420),
@@ -106,7 +108,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black54
+                            color: Colors.black54,
                           ),
                         ),
                         const SizedBox(height: 8),

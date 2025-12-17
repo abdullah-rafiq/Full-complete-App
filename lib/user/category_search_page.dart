@@ -73,8 +73,9 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
       });
 
       try {
-        final translated = await AiBackendService.instance
-            .translateToEnglish(raw);
+        final translated = await AiBackendService.instance.translateToEnglish(
+          raw,
+        );
         if (!mounted) return;
         final lowered = translated.trim().toLowerCase();
         setState(() {
@@ -159,10 +160,7 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                 children: [
                   const Text(
                     'Filters',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -251,9 +249,7 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                         ),
                       ),
                     IconButton(
-                      icon: Icon(
-                        _isListening ? Icons.mic : Icons.mic_none,
-                      ),
+                      icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
                       onPressed: _toggleListening,
                     ),
                     IconButton(
@@ -284,10 +280,8 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                 if (q.isNotEmpty || aiQ.isNotEmpty) {
                   categories = categories.where((c) {
                     final name = c.name.toLowerCase();
-                    final bool matchesNormal =
-                        q.isNotEmpty && name.contains(q);
-                    final bool matchesAi =
-                        aiQ.isNotEmpty && name.contains(aiQ);
+                    final bool matchesNormal = q.isNotEmpty && name.contains(q);
+                    final bool matchesAi = aiQ.isNotEmpty && name.contains(aiQ);
                     return matchesNormal || matchesAi;
                   }).toList();
                 }
@@ -300,7 +294,8 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                   builder: (context, svcSnapshot) {
                     if (svcSnapshot.hasError) {
                       return const Center(
-                          child: Text('Could not load services'));
+                        child: Text('Could not load services'),
+                      );
                     }
 
                     var services = (svcSnapshot.data?.docs ?? [])
@@ -319,12 +314,14 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                       }).toList();
                     }
 
-                    final hasCategories = _showCategories && categories.isNotEmpty;
+                    final hasCategories =
+                        _showCategories && categories.isNotEmpty;
                     final hasServices = _showServices && services.isNotEmpty;
 
                     if (!hasCategories && !hasServices) {
                       return const Center(
-                          child: Text('No matching categories or services'));
+                        child: Text('No matching categories or services'),
+                      );
                     }
 
                     return ListView(
@@ -332,7 +329,9 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                         if (hasCategories) ...[
                           const Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             child: Text(
                               'Categories',
                               style: TextStyle(
@@ -346,14 +345,15 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                               children: [
                                 ListTile(
                                   leading: CircleAvatar(
-                                    backgroundColor:
-                                        Colors.blueAccent.withValues(alpha: 0.1),
+                                    backgroundColor: Colors.blueAccent
+                                        .withValues(alpha: 0.1),
                                     child: Text(
                                       cat.name.isNotEmpty
                                           ? cat.name[0].toUpperCase()
                                           : '?',
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                   title: Text(cat.name),
@@ -372,9 +372,8 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                                   onTap: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (_) => CategoryServicesPage(
-                                          category: cat,
-                                        ),
+                                        builder: (_) =>
+                                            CategoryServicesPage(category: cat),
                                       ),
                                     );
                                   },
@@ -387,7 +386,9 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                         if (hasServices) ...[
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             child: const Text(
                               'Services',
                               style: TextStyle(
@@ -407,17 +408,14 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
                                   title: Text(svc.name),
                                   subtitle: Text(
                                     'From PKR ${svc.basePrice.toStringAsFixed(0)}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                    ),
+                                    style: const TextStyle(fontSize: 12),
                                   ),
                                   trailing: const Icon(Icons.chevron_right),
                                   onTap: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (_) => ServiceDetailPage(
-                                          service: svc,
-                                        ),
+                                        builder: (_) =>
+                                            ServiceDetailPage(service: svc),
                                       ),
                                     );
                                   },
@@ -439,4 +437,3 @@ class _CategorySearchPageState extends State<CategorySearchPage> {
     );
   }
 }
-

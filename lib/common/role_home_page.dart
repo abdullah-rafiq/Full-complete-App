@@ -7,9 +7,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/services/user_service.dart';
 import 'package:flutter_application_1/controllers/current_user_controller.dart';
-import 'package:flutter_application_1/user/main_page.dart' deferred as user_main;
-import 'package:flutter_application_1/worker/worker_main_page.dart' deferred as worker_main;
-import 'package:flutter_application_1/admin/admin_main_page.dart' deferred as admin_main;
+import 'package:flutter_application_1/user/main_page.dart'
+    deferred as user_main;
+import 'package:flutter_application_1/worker/worker_main_page.dart'
+    deferred as worker_main;
+import 'package:flutter_application_1/admin/admin_main_page.dart'
+    deferred as admin_main;
 
 class RoleHomePage extends StatelessWidget {
   const RoleHomePage({super.key});
@@ -25,9 +28,7 @@ class RoleHomePage extends StatelessWidget {
           context.go('/auth');
         }
       });
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return StreamBuilder<AppUser?>(
@@ -103,9 +104,7 @@ class _UserMainHostState extends State<_UserMainHost> {
   @override
   Widget build(BuildContext context) {
     if (!_loaded) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return user_main.MainPage();
@@ -136,9 +135,7 @@ class _WorkerMainHostState extends State<_WorkerMainHost> {
   @override
   Widget build(BuildContext context) {
     if (!_loaded) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return worker_main.WorkerMainPage();
@@ -169,9 +166,7 @@ class _AdminMainHostState extends State<_AdminMainHost> {
   @override
   Widget build(BuildContext context) {
     if (!_loaded) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return admin_main.AdminMainPage();
@@ -204,9 +199,7 @@ Future<void> _ensureUserLocationAndAddress(AppUser profile) async {
     }
 
     final position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
 
     String? city;

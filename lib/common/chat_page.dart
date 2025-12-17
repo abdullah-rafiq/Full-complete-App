@@ -37,9 +37,7 @@ class _ChatPageState extends State<ChatPage> {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(
-          child: Text('Please log in to chat.'),
-        ),
+        body: Center(child: Text('Please log in to chat.')),
       );
     }
 
@@ -60,10 +58,7 @@ class _ChatPageState extends State<ChatPage> {
         actions: [
           if (widget.otherUser.phone != null &&
               widget.otherUser.phone!.trim().isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.call),
-              onPressed: _callOther,
-            ),
+            IconButton(icon: const Icon(Icons.call), onPressed: _callOther),
         ],
       ),
       body: Column(
@@ -82,9 +77,7 @@ class _ChatPageState extends State<ChatPage> {
                 }
 
                 if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Could not load messages.'),
-                  );
+                  return const Center(child: Text('Could not load messages.'));
                 }
 
                 final docs = snapshot.data?.docs ?? [];
@@ -104,8 +97,9 @@ class _ChatPageState extends State<ChatPage> {
                     final text = msg['text'] as String? ?? '';
 
                     return Align(
-                      alignment:
-                          isMine ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment: isMine
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: Container(
                         margin: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -154,10 +148,8 @@ class _ChatPageState extends State<ChatPage> {
                                 visualDensity: VisualDensity.compact,
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.shrinkWrap,
-                                onPressed: () => _sendQuickReply(
-                                  user.uid,
-                                  text,
-                                ),
+                                onPressed: () =>
+                                    _sendQuickReply(user.uid, text),
                               ),
                             )
                             .toList(),
@@ -206,8 +198,9 @@ class _ChatPageState extends State<ChatPage> {
 
     _controller.clear();
 
-    final chatRef =
-        FirebaseFirestore.instance.collection('chats').doc(widget.chatId);
+    final chatRef = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(widget.chatId);
 
     final message = {
       'senderId': senderId,
@@ -217,21 +210,16 @@ class _ChatPageState extends State<ChatPage> {
 
     await chatRef.collection('messages').add(message);
 
-    await chatRef.set(
-      {
-        'lastMessage': text,
-        'lastMessageSenderId': senderId,
-        'updatedAt': FieldValue.serverTimestamp(),
-      },
-      SetOptions(merge: true),
-    );
+    await chatRef.set({
+      'lastMessage': text,
+      'lastMessageSenderId': senderId,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   Future<void> _callOther() async {
     final rawPhone = widget.otherUser.phone?.trim();
-    final phone = rawPhone == null
-        ? null
-        : rawPhone.replaceAll(RegExp(r'[^0-9+]'), '');
+    final phone = rawPhone?.replaceAll(RegExp(r'[^0-9+]'), '');
     if (phone == null || phone.isEmpty) {
       if (!mounted) return;
       UIHelpers.showSnack(context, 'No phone number available for this user.');

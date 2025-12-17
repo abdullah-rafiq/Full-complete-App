@@ -90,8 +90,9 @@ class WorkerRankingService {
     }
 
     // --- 5) Disputes penalty ---
-    final disputeCount =
-        reviews.where((r) => r.hadDispute != null && r.hadDispute!).length;
+    final disputeCount = reviews
+        .where((r) => r.hadDispute != null && r.hadDispute!)
+        .length;
     final disputeRate = disputeCount / n; // 0..1
 
     // --- 6) Review count factor (more reviews = more trust) ---
@@ -102,9 +103,9 @@ class WorkerRankingService {
         .where((r) => r.createdAt != null)
         .map((r) => r.createdAt!)
         .fold<DateTime?>(null, (prev, d) {
-      if (prev == null) return d;
-      return d.isAfter(prev) ? d : prev;
-    });
+          if (prev == null) return d;
+          return d.isAfter(prev) ? d : prev;
+        });
 
     double recentBoost = 0.0;
     if (latest != null) {
@@ -125,11 +126,13 @@ class WorkerRankingService {
     const wRecent = 0.10;
     const wDisputePenalty = 0.30; // how strongly disputes reduce the score
 
-    final reliabilityScore = (wQuestionnaire * questionnaireScore) +
+    final reliabilityScore =
+        (wQuestionnaire * questionnaireScore) +
         (wRecommend * recommendScore) +
         (wTimeliness * timelinessScore);
 
-    final composite = (wStars * baseRatingScore) +
+    final composite =
+        (wStars * baseRatingScore) +
         reliabilityScore +
         (wCount * countFactor) +
         (wRecent * recentBoost) -
@@ -171,7 +174,8 @@ class WorkerRankingService {
     final dLat = _degToRad(lat2 - lat1);
     final dLon = _degToRad(lon2 - lon1);
 
-    final a = sin(dLat / 2) * sin(dLat / 2) +
+    final a =
+        sin(dLat / 2) * sin(dLat / 2) +
         cos(_degToRad(lat1)) *
             cos(_degToRad(lat2)) *
             sin(dLon / 2) *
