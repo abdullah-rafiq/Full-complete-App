@@ -2,17 +2,37 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/models/booking.dart';
 import 'package:flutter_application_1/services/user_service.dart';
 import 'package:flutter_application_1/services/booking_service.dart';
+import 'package:flutter_application_1/services/payment_gateway_service.dart';
 import 'package:flutter_application_1/common/payment_page.dart';
 import 'package:flutter_application_1/common/ui_helpers.dart';
 import 'package:flutter_application_1/common/section_card.dart';
 
-class WalletPage extends StatelessWidget {
+class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
+
+  @override
+  State<WalletPage> createState() => _WalletPageState();
+}
+
+class _WalletPageState extends State<WalletPage> {
+  Future<void> _linkCard(BuildContext context) async {
+    try {
+      final Uri url = await PaymentGatewayService.instance.createCardLinkUrl();
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        if (!context.mounted) return;
+        UIHelpers.showSnack(context, 'Could not open card linking page.');
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      UIHelpers.showSnack(context, 'Could not link card: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +99,45 @@ class WalletPage extends StatelessWidget {
       );
     }
 
+    Future<void> showAddMoneySheet() async {
+      await showModalBottomSheet<void>(
+        context: context,
+        builder: (sheetContext) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.account_balance_wallet_outlined),
+                  title: const Text('JazzCash'),
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    showTopUpDialog('JazzCash');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.account_balance_wallet),
+                  title: const Text('Easypaisa'),
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    showTopUpDialog('Easypaisa');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.credit_card),
+                  title: const Text('Card'),
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    showTopUpDialog('Card');
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -113,11 +172,14 @@ class WalletPage extends StatelessWidget {
                 SectionCard(
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(0.4),
+                    color:
+                        Theme.of(context).dividerColor.withValues(alpha: 0.4),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).shadowColor.withOpacity(0.08),
+                      color: Theme.of(context)
+                          .shadowColor
+                          .withValues(alpha: 0.08),
                       blurRadius: 18,
                       offset: const Offset(0, 10),
                     ),
@@ -150,7 +212,7 @@ class WalletPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () => showTopUpDialog('Top-up'),
+                        onPressed: () => showAddMoneySheet(),
                         icon: const Icon(Icons.add_circle_outline),
                         label: const Text('Add money'),
                       ),
@@ -159,10 +221,7 @@ class WalletPage extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          UIHelpers.showSnack(
-                            context,
-                            'Link card is a placeholder. Integrate real gateway later.',
-                          );
+                          _linkCard(context);
                         },
                         icon: const Icon(Icons.credit_card),
                         label: const Text('Link card'),
@@ -220,7 +279,7 @@ class WalletPage extends StatelessWidget {
                               BoxShadow(
                                 color: Theme.of(
                                   context,
-                                ).shadowColor.withOpacity(0.08),
+                                ).shadowColor.withValues(alpha: 0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),

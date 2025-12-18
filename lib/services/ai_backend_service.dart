@@ -10,7 +10,10 @@ class AiBackendService {
   static final AiBackendService instance = AiBackendService._();
 
   // Keep this in sync with the backend deployment used by SupportService.
-  static const String _baseUrl = 'https://ai-backend-aoab.onrender.com';
+  static const String _baseUrl = String.fromEnvironment(
+    'AI_BACKEND_URL',
+    defaultValue: 'https://ai-backend-aoab.onrender.com',
+  );
 
   Future<Map<String, dynamic>> _postAuthedJson(
     String path,
@@ -51,8 +54,15 @@ class AiBackendService {
     }
 
     if (response.statusCode != 200) {
+      final body = response.body;
+      if (response.statusCode == 404) {
+        throw Exception(
+          'AI backend error (404) for $uri: endpoint not found. '
+          'Backend must implement POST $path. Response: $body',
+        );
+      }
       throw Exception(
-        'AI backend error (${response.statusCode}): ${response.body}',
+        'AI backend error (${response.statusCode}) for $uri: $body',
       );
     }
 
@@ -102,6 +112,34 @@ class AiBackendService {
     return _postAuthedJson('/api/vision/verify-cnic', payload);
   }
 
+  Future<Map<String, dynamic>> verifyCnicFromBytes({
+    required Uint8List cnicFrontBytes,
+    required Uint8List cnicBackBytes,
+    String? expectedName,
+    String? expectedFatherName,
+    String? expectedDob,
+  }) async {
+    final String frontBase64 = base64Encode(cnicFrontBytes);
+    final String backBase64 = base64Encode(cnicBackBytes);
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'cnicFrontBase64': frontBase64,
+      'cnicBackBase64': backBase64,
+    };
+
+    if (expectedName != null && expectedName.isNotEmpty) {
+      payload['expectedName'] = expectedName;
+    }
+    if (expectedFatherName != null && expectedFatherName.isNotEmpty) {
+      payload['expectedFatherName'] = expectedFatherName;
+    }
+    if (expectedDob != null && expectedDob.isNotEmpty) {
+      payload['expectedDob'] = expectedDob;
+    }
+
+    return _postAuthedJson('/api/vision/verify-cnic', payload);
+  }
+
   Future<Map<String, dynamic>> verifyFace({
     required String cnicImageUrl,
     required String selfieImageUrl,
@@ -127,6 +165,21 @@ class AiBackendService {
     return _postAuthedJson('/api/kyc/face', payload);
   }
 
+  Future<Map<String, dynamic>> verifyFaceFromBytes({
+    required Uint8List cnicImageBytes,
+    required Uint8List selfieImageBytes,
+  }) {
+    final String cnicBase64 = base64Encode(cnicImageBytes);
+    final String selfieBase64 = base64Encode(selfieImageBytes);
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'cnicImage': cnicBase64,
+      'selfieImage': selfieBase64,
+    };
+
+    return _postAuthedJson('/api/kyc/face', payload);
+  }
+
   Future<Map<String, dynamic>> verifyShop({
     required String shopImageUrl,
   }) async {
@@ -136,6 +189,18 @@ class AiBackendService {
     }
 
     final String shopBase64 = base64Encode(shopResp.bodyBytes);
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'shopImage': shopBase64,
+    };
+
+    return _postAuthedJson('/api/kyc/shop', payload);
+  }
+
+  Future<Map<String, dynamic>> verifyShopFromBytes({
+    required Uint8List shopImageBytes,
+  }) {
+    final String shopBase64 = base64Encode(shopImageBytes);
 
     final Map<String, dynamic> payload = <String, dynamic>{
       'shopImage': shopBase64,

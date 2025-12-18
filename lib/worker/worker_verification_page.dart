@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_application_1/controllers/worker_verification_controller.dart';
 import 'package:flutter_application_1/common/ui_helpers.dart';
+
+const bool _showDebugTokenButton =
+    bool.fromEnvironment('SHOW_DEBUG_TOKEN', defaultValue: false);
+const bool _logIdToken = bool.fromEnvironment('LOG_ID_TOKEN', defaultValue: false);
 
 class WorkerVerificationPage extends StatefulWidget {
   const WorkerVerificationPage({super.key});
@@ -33,10 +39,130 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
     _loadExistingVerification();
   }
 
+  Future<void> _showDebugToken() async {
+    final token = await WorkerVerificationController.getIdTokenForDebug(
+      forceRefresh: true,
+    );
+
+    if (!mounted) return;
+
+    if (token == null || token.isEmpty) {
+      UIHelpers.showSnack(context, 'Could not get token (not logged in).');
+      return;
+    }
+
+    if (_logIdToken) {
+      debugPrint('FIREBASE_ID_TOKEN=$token');
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Firebase ID Token'),
+          content: SizedBox(
+            width: 520,
+            child: SelectableText(token),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await Clipboard.setData(ClipboardData(text: token));
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+                if (mounted) {
+                  UIHelpers.showSnack(context, 'Token copied to clipboard.');
+                }
+              },
+              child: const Text('Copy'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _showImagePreview({
+    required String title,
+    required String url,
+  }) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.9),
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: InteractiveViewer(
+                    minScale: 1,
+                    maxScale: 5,
+                    child: Center(
+                      child: Image.network(
+                        url,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Text(
+                              'Failed to load image',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  right: 56,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _loadExistingVerification() async {
@@ -51,17 +177,63 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
       final data = doc.data();
       if (data == null) return;
 
+      final String? cnicFrontUrl = data['cnicFrontImageUrl'] as String?;
+      final String? cnicBackUrl = data['cnicBackImageUrl'] as String?;
+      final String? selfieUrl = data['selfieImageUrl'] as String?;
+      final String? shopUrl = data['shopImageUrl'] as String?;
+
+      final Map<String, dynamic>? verification =
+          data['verification'] as Map<String, dynamic>?;
+      final Timestamp? verificationUpdatedAt =
+          verification?['updatedAt'] as Timestamp?;
+      final Map<String, dynamic>? verificationInputs =
+          verification?['inputs'] as Map<String, dynamic>?;
+
       setState(() {
-        _cnicFrontUrl = data['cnicFrontImageUrl'] as String?;
-        _cnicBackUrl = data['cnicBackImageUrl'] as String?;
-        _selfieUrl = data['selfieImageUrl'] as String?;
-        _shopUrl = data['shopImageUrl'] as String?;
+        _cnicFrontUrl = cnicFrontUrl;
+        _cnicBackUrl = cnicBackUrl;
+        _selfieUrl = selfieUrl;
+        _shopUrl = shopUrl;
         _cnicFrontStatus = (data['cnicFrontStatus'] as String?) ?? 'none';
         _cnicBackStatus = (data['cnicBackStatus'] as String?) ?? 'none';
         _selfieStatus = (data['selfieStatus'] as String?) ?? 'none';
         _shopStatus = (data['shopStatus'] as String?) ?? 'none';
         _overallStatus = (data['verificationStatus'] as String?) ?? 'none';
       });
+
+      final bool hasAnyImage =
+          cnicFrontUrl != null || cnicBackUrl != null || selfieUrl != null || shopUrl != null;
+
+      bool inputsChanged() {
+        if (verificationInputs == null) return true;
+        if ((verificationInputs['cnicFrontImageUrl'] as String?) != cnicFrontUrl) {
+          return true;
+        }
+        if ((verificationInputs['cnicBackImageUrl'] as String?) != cnicBackUrl) {
+          return true;
+        }
+        if ((verificationInputs['selfieImageUrl'] as String?) != selfieUrl) {
+          return true;
+        }
+        if ((verificationInputs['shopImageUrl'] as String?) != shopUrl) {
+          return true;
+        }
+        return false;
+      }
+
+      final bool missingCnicResult =
+          cnicFrontUrl != null && cnicBackUrl != null && verification?['cnic'] == null;
+      final bool missingFaceResult =
+          cnicFrontUrl != null && selfieUrl != null && verification?['face'] == null;
+      final bool missingShopResult =
+          shopUrl != null && verification?['shop'] == null;
+
+      final bool shouldRunAi = hasAnyImage &&
+          (verificationUpdatedAt == null || inputsChanged() || missingCnicResult || missingFaceResult || missingShopResult);
+
+      if (shouldRunAi && mounted) {
+        await WorkerVerificationController.ensureAiVerificationForCurrentUser();
+      }
     } catch (e) {
       if (!mounted) return;
       UIHelpers.showSnack(context, 'Could not load existing verification: $e');
@@ -169,18 +341,45 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
         ? Colors.white70
         : theme.colorScheme.onSurface.withValues(alpha: 0.7);
     const totalSteps = 4;
-    final completedSteps =
-        (_cnicFrontUrl != null ? 1 : 0) +
-        (_cnicBackUrl != null ? 1 : 0) +
-        (_selfieUrl != null ? 1 : 0) +
-        (_shopUrl != null ? 1 : 0);
-    final progress = completedSteps / totalSteps;
-    final currentStep = completedSteps < totalSteps
-        ? completedSteps + 1
+    final bool cnicFrontOk =
+        _cnicFrontUrl != null && _cnicFrontStatus != 'rejected';
+    final bool cnicBackOk = _cnicBackUrl != null && _cnicBackStatus != 'rejected';
+    final bool selfieOk = _selfieUrl != null && _selfieStatus != 'rejected';
+    final bool shopOk = _shopUrl != null && _shopStatus != 'rejected';
+
+    // Compute progress in the expected sequence. If an earlier step is rejected,
+    // later steps shouldn't count toward progress/current step.
+    var sequentialCompletedSteps = 0;
+    if (cnicFrontOk) {
+      sequentialCompletedSteps = 1;
+      if (cnicBackOk) {
+        sequentialCompletedSteps = 2;
+        if (selfieOk) {
+          sequentialCompletedSteps = 3;
+          if (shopOk) {
+            sequentialCompletedSteps = 4;
+          }
+        }
+      }
+    }
+
+    final progress = sequentialCompletedSteps / totalSteps;
+    final currentStep = sequentialCompletedSteps < totalSteps
+        ? sequentialCompletedSteps + 1
         : totalSteps;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Worker verification')),
+      appBar: AppBar(
+        title: const Text('Worker verification'),
+        actions: [
+          if (kDebugMode || _showDebugTokenButton)
+            IconButton(
+              tooltip: 'Debug: Copy token',
+              icon: const Icon(Icons.vpn_key_outlined),
+              onPressed: _showDebugToken,
+            ),
+        ],
+      ),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -277,10 +476,7 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                 controller: _pageController,
                 onPageChanged: (index) {
                   // Prevent swiping ahead of the current completed step.
-                  int maxStep = 0;
-                  if (_cnicFrontUrl != null) maxStep = 1;
-                  if (_cnicBackUrl != null) maxStep = 2;
-                  if (_selfieUrl != null) maxStep = 3;
+                  final int maxStep = sequentialCompletedSteps.clamp(0, 3);
 
                   if (index > maxStep) {
                     _pageController.animateToPage(
@@ -296,38 +492,66 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
                     description:
                         'Take a clear picture of the front of your CNIC.',
                     uploaded: _cnicFrontUrl != null,
+                    imageUrl: _cnicFrontUrl,
                     status: _cnicFrontStatus,
                     overallStatus: _overallStatus,
                     onTap: () => _pickAndUpload('cnicFrontImageUrl'),
+                    onView: _cnicFrontUrl == null
+                        ? null
+                        : () => _showImagePreview(
+                              title: 'CNIC front picture',
+                              url: _cnicFrontUrl!,
+                            ),
                   ),
                   _VerificationTile(
                     title: 'CNIC back picture',
                     description:
                         'Take a clear picture of the back side of your CNIC.',
                     uploaded: _cnicBackUrl != null,
-                    enabled: _cnicFrontUrl != null,
+                    enabled: cnicFrontOk,
+                    imageUrl: _cnicBackUrl,
                     status: _cnicBackStatus,
                     overallStatus: _overallStatus,
                     onTap: () => _pickAndUpload('cnicBackImageUrl'),
+                    onView: _cnicBackUrl == null
+                        ? null
+                        : () => _showImagePreview(
+                              title: 'CNIC back picture',
+                              url: _cnicBackUrl!,
+                            ),
                   ),
                   _VerificationTile(
                     title: 'Live picture',
                     description:
                         'Take a live picture of yourself matching your CNIC.',
                     uploaded: _selfieUrl != null,
-                    enabled: _cnicFrontUrl != null && _cnicBackUrl != null,
+                    enabled: cnicFrontOk && cnicBackOk,
+                    imageUrl: _selfieUrl,
                     status: _selfieStatus,
                     overallStatus: _overallStatus,
                     onTap: () => _pickAndUpload('selfieImageUrl'),
+                    onView: _selfieUrl == null
+                        ? null
+                        : () => _showImagePreview(
+                              title: 'Live picture',
+                              url: _selfieUrl!,
+                            ),
                   ),
                   _VerificationTile(
                     title: 'Shop / tools picture',
                     description: 'Take a picture of your shop or tools.',
                     uploaded: _shopUrl != null,
-                    enabled: _selfieUrl != null,
+                    enabled: cnicFrontOk && cnicBackOk && selfieOk,
+                    imageUrl: _shopUrl,
                     status: _shopStatus,
                     overallStatus: _overallStatus,
                     onTap: () => _pickAndUpload('shopImageUrl'),
+                    onView: _shopUrl == null
+                        ? null
+                        : () => _showImagePreview(
+                              title: 'Shop / tools picture',
+                              url: _shopUrl!,
+                            ),
                   ),
                 ],
               ),
@@ -347,6 +571,8 @@ class _VerificationTile extends StatelessWidget {
   final String status;
   final String overallStatus;
   final VoidCallback onTap;
+  final String? imageUrl;
+  final VoidCallback? onView;
 
   const _VerificationTile({
     required this.title,
@@ -355,6 +581,8 @@ class _VerificationTile extends StatelessWidget {
     required this.status,
     required this.overallStatus,
     required this.onTap,
+    this.imageUrl,
+    this.onView,
     this.enabled = true,
   });
 
@@ -400,6 +628,8 @@ class _VerificationTile extends StatelessWidget {
         ((overallStatus == 'none' || overallStatus == 'pending')
             ? true
             : status == 'rejected');
+
+    final bool canView = uploaded && imageUrl != null && onView != null;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -466,7 +696,9 @@ class _VerificationTile extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton(
-                    onPressed: canTap ? onTap : null,
+                    onPressed: uploaded
+                        ? (status == 'rejected' ? (canTap ? onTap : null) : (canView ? onView : null))
+                        : (canTap ? onTap : null),
                     child: Text(
                       uploaded
                           ? (status == 'rejected'

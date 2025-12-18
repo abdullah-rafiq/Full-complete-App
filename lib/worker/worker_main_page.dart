@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/common/messages_page.dart';
 import 'package:flutter_application_1/common/profile_page.dart';
 import 'package:flutter_application_1/common/app_bottom_nav.dart';
+import 'package:flutter_application_1/controllers/worker_verification_controller.dart';
 import 'package:flutter_application_1/localized_strings.dart';
 import 'worker_home_screen.dart';
 import 'worker_jobs_page.dart';
@@ -28,6 +29,9 @@ class _WorkerMainPageState extends State<WorkerMainPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+
+      WorkerVerificationController.maybeRunAiVerificationForCurrentUser();
+
       setState(() {
         _pages[1] ??= const WorkerJobsPage();
         _pages[2] ??= const WorkerEarningsPage();

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +41,89 @@ class AdminWorkerDetailPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  String _prettyJson(Object? value) {
+    if (value == null) return '';
+    try {
+      const encoder = JsonEncoder.withIndent('  ');
+      return encoder.convert(value);
+    } catch (_) {
+      return value.toString();
+    }
+  }
+
+  void _showImagePreview(
+    BuildContext context, {
+    required String title,
+    required String url,
+  }) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.9),
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: InteractiveViewer(
+                    minScale: 1,
+                    maxScale: 5,
+                    child: Center(
+                      child: Image.network(
+                        url,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Text(
+                              'Failed to load image',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  right: 56,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -143,6 +228,13 @@ class AdminWorkerDetailPage extends StatelessWidget {
         final Map<String, dynamic>? addressUrdu =
             cnicExtracted?['addressUrdu'] as Map<String, dynamic>?;
 
+        final Timestamp? verificationUpdatedAt =
+            verification?['updatedAt'] as Timestamp?;
+        final String? verificationLastError = verification?['lastError'] as String?;
+        final String? cnicError = verification?['cnicError'] as String?;
+        final String? faceError = verification?['faceError'] as String?;
+        final String? shopError = verification?['shopError'] as String?;
+
         final bool hasAnyImage =
             cnicFrontUrl != null ||
             cnicBackUrl != null ||
@@ -231,9 +323,40 @@ class AdminWorkerDetailPage extends StatelessWidget {
               const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.network(url, fit: BoxFit.cover),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => _showImagePreview(
+                      context,
+                      title: title,
+                      url: url,
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(url, fit: BoxFit.cover),
+                          Positioned(
+                            bottom: 8,
+                            right: 8,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.45),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: const Icon(
+                                Icons.zoom_in,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -243,15 +366,17 @@ class AdminWorkerDetailPage extends StatelessWidget {
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.check),
                       label: const Text('Pass'),
-                      onPressed: () async {
-                        await AdminWorkerController.updateDocumentStatus(
-                          context,
-                          workerId: worker.id,
-                          currentData: data,
-                          statusField: fieldStatusKey,
-                          newStatus: 'approved',
-                        );
-                      },
+                      onPressed: status == 'rejected'
+                          ? null
+                          : () async {
+                              await AdminWorkerController.updateDocumentStatus(
+                                context,
+                                workerId: worker.id,
+                                currentData: data,
+                                statusField: fieldStatusKey,
+                                newStatus: 'approved',
+                              );
+                            },
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -283,6 +408,60 @@ class AdminWorkerDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (verificationUpdatedAt != null ||
+                  (verificationLastError != null &&
+                      verificationLastError.trim().isNotEmpty) ||
+                  (cnicError != null && cnicError.trim().isNotEmpty) ||
+                  (faceError != null && faceError.trim().isNotEmpty) ||
+                  (shopError != null && shopError.trim().isNotEmpty)) ...[
+                Text(
+                  'AI status',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                if (verificationUpdatedAt != null)
+                  Text(
+                    'Last run: ${verificationUpdatedAt.toDate().toLocal()}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                if (verificationLastError != null &&
+                    verificationLastError.trim().isNotEmpty)
+                  Text(
+                    'Error: $verificationLastError',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.redAccent),
+                  ),
+                if (cnicError != null && cnicError.trim().isNotEmpty)
+                  Text(
+                    'CNIC error: $cnicError',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.redAccent),
+                  ),
+                if (faceError != null && faceError.trim().isNotEmpty)
+                  Text(
+                    'Face error: $faceError',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.redAccent),
+                  ),
+                if (shopError != null && shopError.trim().isNotEmpty)
+                  Text(
+                    'Shop error: $shopError',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.redAccent),
+                  ),
+                const SizedBox(height: 12),
+              ],
               buildDocRow(
                 title: 'CNIC front picture',
                 fieldStatusKey: 'cnicFrontStatus',
@@ -371,6 +550,60 @@ class AdminWorkerDetailPage extends StatelessWidget {
                         ?.toStringAsFixed(2),
                   ),
                 ],
+              ],
+
+              if (cnicExtracted == null && cnicVerification != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'AI CNIC verification (raw)',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _prettyJson(cnicVerification),
+                  maxLines: 10,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+
+              if ((verification?['face'] as Map<String, dynamic>?) != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'AI face verification',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _prettyJson(verification?['face']),
+                  maxLines: 10,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+
+              if ((verification?['shop'] as Map<String, dynamic>?) != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'AI shop/tools verification',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _prettyJson(verification?['shop']),
+                  maxLines: 10,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             ],
           ),

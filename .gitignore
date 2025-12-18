@@ -17,7 +17,7 @@ pubspec.lock
 # Build outputs (except web if you want to deploy it)
 build/
 !build/web/
-
+ai-backedn/
 # Platform folders (optional to ignore if only targeting web)
 android/
 ios/
