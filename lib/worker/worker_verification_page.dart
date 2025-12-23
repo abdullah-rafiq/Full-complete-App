@@ -69,12 +69,16 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
             TextButton(
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: token));
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-                if (mounted) {
-                  UIHelpers.showSnack(context, 'Token copied to clipboard.');
-                }
+                if (!mounted) return;
+
+                final navigator = Navigator.of(context);
+                navigator.pop();
+
+                if (!mounted) return;
+                UIHelpers.showSnack(
+                  this.context,
+                  'Token copied to clipboard.',
+                );
               },
               child: const Text('Copy'),
             ),

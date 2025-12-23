@@ -65,7 +65,7 @@ class AppRouter {
         return '/role';
       }
 
-      final AppUser currentProfile = p!;
+      final AppUser currentProfile = p;
 
       final String homeForRole = switch (currentProfile.role) {
         UserRole.customer => '/home',
@@ -227,7 +227,7 @@ class _RouterSession extends ChangeNotifier {
         _profileTimeout = null;
         notifyListeners();
       },
-      onError: (Object _, StackTrace __) {
+      onError: (Object _, StackTrace stackTrace) {
         profileLoaded = true;
         _profileTimeout?.cancel();
         _profileTimeout = null;
