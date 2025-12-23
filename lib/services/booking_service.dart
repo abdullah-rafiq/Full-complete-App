@@ -51,16 +51,18 @@ class BookingService {
     String providerId, {
     String? status,
   }) {
-    Query<Map<String, dynamic>> query = _col.where(
+    final Query<Map<String, dynamic>> query = _col.where(
       'providerId',
       isEqualTo: providerId,
     );
-    if (status != null) {
-      query = query.where('status', isEqualTo: status);
-    }
-    return query.snapshots().map(
-      (snap) =>
-          snap.docs.map((d) => BookingModel.fromMap(d.id, d.data())).toList(),
-    );
+
+    return query.snapshots().map((snap) {
+      final all = snap.docs
+          .map((d) => BookingModel.fromMap(d.id, d.data()))
+          .toList();
+
+      if (status == null) return all;
+      return all.where((b) => b.status == status).toList();
+    });
   }
 }

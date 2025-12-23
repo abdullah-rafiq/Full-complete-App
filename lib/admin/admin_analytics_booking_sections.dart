@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:assist/services/admin_analytics_service.dart';
+
 import 'package:assist/models/booking.dart';
 import 'package:assist/admin/admin_analytics_widgets.dart';
 

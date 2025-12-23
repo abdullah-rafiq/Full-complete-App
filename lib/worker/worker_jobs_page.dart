@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -41,50 +43,48 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: StreamBuilder<List<BookingModel>>(
-        stream: BookingService.instance.watchProviderBookings(
-          user.uid,
-          status: _statusFilter,
+        stream: _withInitialTimeout(
+          BookingService.instance.watchProviderBookings(
+            user.uid,
+            status: _statusFilter,
+          ),
+          const Duration(seconds: 15),
+          debugName: 'providerBookings',
         ),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                L10n.workerJobsLoadError(),
-                style: TextStyle(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.8),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  '${L10n.workerJobsLoadError()}\n${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.8),
+                  ),
                 ),
               ),
             );
           }
 
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           final bookings = snapshot.data ?? [];
 
           if (bookings.isEmpty) {
-            // Show a subtle animated "searching for work" state instead of a flat empty screen
             return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: 72,
-                    height: 72,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: const [
-                        CircularProgressIndicator(strokeWidth: 3),
-                        Icon(
-                          Icons.work_outline,
-                          size: 30,
-                          color: Colors.blueAccent,
-                        ),
-                      ],
-                    ),
+                  const Icon(
+                    Icons.work_outline,
+                    size: 56,
+                    color: Colors.blueAccent,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -341,6 +341,51 @@ class _WorkerJobsPageState extends State<WorkerJobsPage> {
       },
     );
   }
+}
+
+Stream<T> _withInitialTimeout<T>(
+  Stream<T> source,
+  Duration timeout, {
+  String? debugName,
+}) {
+  late final StreamController<T> controller;
+  StreamSubscription<T>? sub;
+  Timer? timer;
+  var gotFirst = false;
+
+  controller = StreamController<T>(
+    onListen: () {
+      timer = Timer(timeout, () {
+        if (gotFirst || controller.isClosed) return;
+        controller.addError(
+          TimeoutException(
+            'Timed out waiting for initial data${debugName == null ? '' : ' ($debugName)'}',
+          ),
+        );
+      });
+
+      sub = source.listen(
+        (event) {
+          if (!gotFirst) {
+            gotFirst = true;
+            timer?.cancel();
+          }
+          controller.add(event);
+        },
+        onError: controller.addError,
+        onDone: () {
+          timer?.cancel();
+          controller.close();
+        },
+      );
+    },
+    onCancel: () async {
+      timer?.cancel();
+      await sub?.cancel();
+    },
+  );
+
+  return controller.stream;
 }
 
 String _formatDateTime(DateTime? dt) {

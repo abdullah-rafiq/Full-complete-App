@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,7 +22,7 @@ class MessagesPage extends StatelessWidget {
             Icon(
               Icons.chat_bubble_outline,
               size: 48,
-              color: theme.colorScheme.primary.withOpacity(0.8),
+              color: theme.colorScheme.primary.withAlpha(204),
             ),
             const SizedBox(height: 12),
             Text(
@@ -61,22 +61,40 @@ class MessagesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Messages')),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: FirebaseFirestore.instance
-            .collection('chats')
-            .where('participants', arrayContains: user.uid)
-            .orderBy('updatedAt', descending: true)
-            .snapshots(),
+        stream: _withInitialTimeout(
+          FirebaseFirestore.instance
+              .collection('chats')
+              .where('participants', arrayContains: user.uid)
+              .snapshots(),
+          const Duration(seconds: 15),
+          debugName: 'chats',
+        ),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Could not load messages: ${snapshot.error}',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
           if (snapshot.connectionState == ConnectionState.waiting &&
               !snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.hasError) {
-            return _buildEmptyState(context);
-          }
-
-          final docs = snapshot.data?.docs ?? [];
+          final docs = (snapshot.data?.docs ?? []).toList()
+            ..sort((a, b) {
+              final aTs = a.data()['updatedAt'] as Timestamp?;
+              final bTs = b.data()['updatedAt'] as Timestamp?;
+              final aMs = aTs?.millisecondsSinceEpoch ?? 0;
+              final bMs = bTs?.millisecondsSinceEpoch ?? 0;
+              return bMs.compareTo(aMs);
+            });
 
           if (docs.isEmpty) {
             return _buildEmptyState(context);
@@ -90,7 +108,8 @@ class MessagesPage extends StatelessWidget {
               final chatDoc = docs[index];
               final data = chatDoc.data();
               final participants =
-                  (data['participants'] as List<dynamic>? ?? []).cast<String>();
+                  (data['participants'] as List?)?.whereType<String>().toList() ??
+                  const <String>[];
               final otherId = participants.firstWhere(
                 (id) => id != user.uid,
                 orElse: () => user.uid,
@@ -140,4 +159,49 @@ class MessagesPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Stream<T> _withInitialTimeout<T>(
+  Stream<T> source,
+  Duration timeout, {
+  String? debugName,
+}) {
+  late final StreamController<T> controller;
+  StreamSubscription<T>? sub;
+  Timer? timer;
+  var gotFirst = false;
+
+  controller = StreamController<T>(
+    onListen: () {
+      timer = Timer(timeout, () {
+        if (gotFirst || controller.isClosed) return;
+        controller.addError(
+          TimeoutException(
+            'Timed out waiting for initial data${debugName == null ? '' : ' ($debugName)'}',
+          ),
+        );
+      });
+
+      sub = source.listen(
+        (event) {
+          if (!gotFirst) {
+            gotFirst = true;
+            timer?.cancel();
+          }
+          controller.add(event);
+        },
+        onError: controller.addError,
+        onDone: () {
+          timer?.cancel();
+          controller.close();
+        },
+      );
+    },
+    onCancel: () async {
+      timer?.cancel();
+      await sub?.cancel();
+    },
+  );
+
+  return controller.stream;
 }

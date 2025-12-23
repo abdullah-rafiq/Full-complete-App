@@ -1,99 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:assist/common/messages_page.dart';
-import 'package:assist/common/profile_page.dart';
 import 'package:assist/common/app_bottom_nav.dart';
 import 'package:assist/controllers/worker_verification_controller.dart';
 import 'package:assist/localized_strings.dart';
-import 'worker_home_screen.dart';
-import 'worker_jobs_page.dart';
-import 'worker_earnings_page.dart';
 
-class WorkerMainPage extends StatefulWidget {
-  const WorkerMainPage({super.key});
+class WorkerShellPage extends StatefulWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const WorkerShellPage({super.key, required this.navigationShell});
 
   @override
-  State<WorkerMainPage> createState() => _WorkerMainPageState();
+  State<WorkerShellPage> createState() => _WorkerShellPageState();
 }
 
-class _WorkerMainPageState extends State<WorkerMainPage> {
-  int _currentIndex = 0;
-  late final List<Widget?> _pages;
-
+class _WorkerShellPageState extends State<WorkerShellPage> {
   @override
   void initState() {
     super.initState();
-    _pages = List<Widget?>.filled(5, null);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
       WorkerVerificationController.maybeRunAiVerificationForCurrentUser();
-
-      setState(() {
-        _pages[1] ??= const WorkerJobsPage();
-        _pages[2] ??= const WorkerEarningsPage();
-        _pages[3] ??= const MessagesPage();
-      });
     });
+  }
+
+  void _onTap(int index) {
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buildPages() {
-      final children = <Widget>[];
-      for (var i = 0; i < _pages.length; i++) {
-        final cached = _pages[i];
-        if (cached != null) {
-          children.add(cached);
-          continue;
-        }
-        if (i != _currentIndex) {
-          children.add(const SizedBox.shrink());
-          continue;
-        }
-
-        Widget page;
-        switch (i) {
-          case 0:
-            page = const WorkerHomeScreen();
-            break;
-          case 1:
-            page = const WorkerJobsPage();
-            break;
-          case 2:
-            page = const WorkerEarningsPage();
-            break;
-          case 3:
-            page = const MessagesPage();
-            break;
-          case 4:
-            page = const ProfilePage();
-            break;
-          default:
-            page = const SizedBox.shrink();
-        }
-
-        _pages[i] = page;
-        children.add(page);
-      }
-      return children;
-    }
-
-    final pages = buildPages();
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(index: _currentIndex, children: pages),
+      body: widget.navigationShell,
       bottomNavigationBar: AppBottomNav(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        currentIndex: widget.navigationShell.currentIndex,
+        onTap: _onTap,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.home_outlined),

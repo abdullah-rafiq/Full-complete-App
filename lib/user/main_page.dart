@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:assist/models/app_user.dart';
 import 'package:assist/models/category.dart';
@@ -12,11 +11,7 @@ import 'package:assist/controllers/current_user_controller.dart';
 import 'package:assist/common/section_card.dart';
 import 'package:assist/common/ui_helpers.dart';
 import 'package:assist/user/category_services_page.dart';
-import 'package:assist/user/my_bookings_page.dart';
-import 'package:assist/common/profile_page.dart';
-import 'package:assist/common/messages_page.dart';
 import 'package:assist/common/notifications_page.dart';
-import 'package:assist/common/app_bottom_nav.dart';
 import 'package:assist/user/top_workers_section.dart';
 import 'package:assist/user/featured_providers_section.dart';
 import 'package:assist/user/voice_search_card.dart';
@@ -34,10 +29,8 @@ class _MainPageState extends State<MainPage> {
   final Color primaryBlue = const Color(0xFF29B6F6);
   final Color primaryDarkBlue = const Color(0xFF0288D1);
   late final Color surfaceWhite = Colors.white.withValues(alpha: 0.95);
-  int _currentIndex = 0;
   String? _displayName;
   String? _currentCity;
-  late final List<Widget?> _pages;
   static const List<String> _promoImagePaths = [
     'assets/carsoual/1.jpg',
     'assets/carsoual/2.jpg',
@@ -53,8 +46,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    _pages = List<Widget?>.filled(5, null);
-
     _promoAutoScrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (!mounted || !_promoController.hasClients) return;
 
@@ -67,17 +58,6 @@ class _MainPageState extends State<MainPage> {
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeOut,
       );
-    });
-
-    // After the first home frame, warm up other tabs so their Firestore
-    // streams start in the background before the user taps them.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      setState(() {
-        _pages[1] ??= Builder(builder: (context) => _buildCategoriesTab(context));
-        _pages[2] ??= const MyBookingsPage();
-        _pages[3] ??= const MessagesPage();
-      });
     });
   }
 
@@ -281,65 +261,6 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCategoriesList() {
-    return StreamBuilder<List<CategoryModel>>(
-      stream: ServiceCatalogService.instance.watchCategories(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return const Center(child: Text('Could not load categories.'));
-        }
-
-        final categories = snapshot.data ?? [];
-
-        if (categories.isEmpty) {
-          return const Center(child: Text('No categories available.'));
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemBuilder: (context, index) {
-            final cat = categories[index];
-            return ListTile(
-              leading: (cat.iconUrl != null && cat.iconUrl!.isNotEmpty)
-                  ? CircleAvatar(backgroundImage: AssetImage(cat.iconUrl!))
-                  : CircleAvatar(
-                      backgroundColor: primaryLightBlue.withValues(alpha: 0.2),
-                      child: Text(
-                        cat.name.isNotEmpty ? cat.name[0].toUpperCase() : '?',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-              title: Text(cat.name),
-              subtitle: Text(
-                cat.isActive
-                    ? L10n.statusAvailable()
-                    : L10n.statusUnavailable(),
-                style: TextStyle(
-                  color: cat.isActive ? Colors.green : Colors.redAccent,
-                  fontSize: 12,
-                ),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => CategoryServicesPage(category: cat),
-                  ),
-                );
-              },
-            );
-          },
-          separatorBuilder: (_, index) => const Divider(height: 1),
-          itemCount: categories.length,
-        );
-      },
     );
   }
 
@@ -548,169 +469,11 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _buildCategoriesTab(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
-        elevation: 4,
-        title: Text(L10n.mainCategoriesTitle()),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: primaryDarkBlue.withValues(alpha: 0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18.0,
-                  vertical: 12,
-                ),
-                child: Text(
-                  L10n.mainAllCategoriesTitle(),
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.1,
-                  ),
-                ),
-              ),
-              const Divider(height: 1),
-              Expanded(child: _buildCategoriesList()),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _createPageForIndex(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        return _buildHomeTab(context);
-      case 1:
-        return Builder(builder: (context) => _buildCategoriesTab(context));
-      case 2:
-        return const MyBookingsPage();
-      case 3:
-        return const MessagesPage();
-      case 4:
-        return const ProfilePage();
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  List<Widget> _buildIndexedStackChildren(BuildContext context) {
-    final children = <Widget>[];
-    for (var i = 0; i < _pages.length; i++) {
-      final cached = _pages[i];
-      if (cached != null) {
-        children.add(cached);
-        continue;
-      }
-      if (i != _currentIndex) {
-        children.add(const SizedBox.shrink());
-        continue;
-      }
-      final page = _createPageForIndex(context, i);
-      _pages[i] = page;
-      children.add(page);
-    }
-    return children;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final pages = _buildIndexedStackChildren(context);
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(index: _currentIndex, children: pages),
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_outlined),
-            label: L10n.customerNavHome(),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.category_outlined),
-            label: L10n.customerNavCategories(),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_today_outlined),
-            label: L10n.customerNavBookings(),
-          ),
-          BottomNavigationBarItem(
-            icon: _MessagesIconWithBadge(),
-            label: L10n.customerNavMessages(),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person_outline),
-            label: L10n.customerNavProfile(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MessagesIconWithBadge extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return const Icon(Icons.message_outlined);
-    }
-
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection('chats')
-          .where('participants', arrayContains: user.uid)
-          .snapshots(),
-      builder: (context, snapshot) {
-        final docs = snapshot.data?.docs ?? [];
-        final hasUnread = docs.any((doc) {
-          final data = doc.data();
-          final lastSender = data['lastMessageSenderId'] as String?;
-          return lastSender != null && lastSender != user.uid;
-        });
-
-        if (!hasUnread) {
-          return const Icon(Icons.message_outlined);
-        }
-
-        return Stack(
-          clipBehavior: Clip.none,
-          children: const [
-            Icon(Icons.message_outlined),
-            Positioned(
-              right: -2,
-              top: -2,
-              child: CircleAvatar(radius: 4, backgroundColor: Colors.red),
-            ),
-          ],
-        );
-      },
+      body: _buildHomeTab(context),
     );
   }
 }

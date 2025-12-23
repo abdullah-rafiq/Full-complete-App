@@ -34,7 +34,7 @@ class AiBackendService {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode(body),
-      );
+      ).timeout(const Duration(seconds: 20));
     }
 
     String? token = await user.getIdToken();

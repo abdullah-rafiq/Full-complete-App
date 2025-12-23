@@ -81,7 +81,10 @@ class ServiceCatalogService {
     final cached = _serviceCache[id];
     if (cached != null) return cached;
 
-    final doc = await _servicesCol.doc(id).get();
+    final doc = await _servicesCol
+        .doc(id)
+        .get()
+        .timeout(const Duration(seconds: 15));
     if (!doc.exists) return null;
     final service = ServiceModel.fromMap(doc.id, doc.data()!);
     _serviceCache[id] = service;
@@ -111,7 +114,8 @@ class ServiceCatalogService {
       final chunk = missing.sublist(i, min(i + chunkSize, missing.length));
       final snap = await _servicesCol
           .where(FieldPath.documentId, whereIn: chunk)
-          .get();
+          .get()
+          .timeout(const Duration(seconds: 15));
       for (final doc in snap.docs) {
         final service = ServiceModel.fromMap(doc.id, doc.data());
         _serviceCache[doc.id] = service;

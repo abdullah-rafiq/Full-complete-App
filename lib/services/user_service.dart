@@ -17,7 +17,7 @@ class UserService {
   CollectionReference<Map<String, dynamic>> get _col => _db.collection('users');
 
   Future<AppUser?> getById(String id) async {
-    final doc = await _col.doc(id).get();
+    final doc = await _col.doc(id).get().timeout(const Duration(seconds: 15));
     if (!doc.exists) return null;
     final user = AppUser.fromMap(doc.id, doc.data()!);
     _userCache[id] = user;
@@ -81,7 +81,10 @@ class UserService {
     const chunkSize = 10;
     for (var i = 0; i < missing.length; i += chunkSize) {
       final chunk = missing.sublist(i, min(i + chunkSize, missing.length));
-      final snap = await _col.where(FieldPath.documentId, whereIn: chunk).get();
+      final snap = await _col
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get()
+          .timeout(const Duration(seconds: 15));
       for (final doc in snap.docs) {
         final user = AppUser.fromMap(doc.id, doc.data());
         _userCache[doc.id] = user;
