@@ -228,6 +228,24 @@ class AdminWorkerDetailPage extends StatelessWidget {
         final Map<String, dynamic>? addressUrdu =
             cnicExtracted?['addressUrdu'] as Map<String, dynamic>?;
 
+        final String? addressUrduText = _joinNonEmpty([
+          addressUrdu?['line1'] as String?,
+          addressUrdu?['line2'] as String?,
+          addressUrdu?['district'] as String?,
+          addressUrdu?['tehsil'] as String?,
+        ]);
+
+        final bool hasAnyCnicDetails = cnicExtracted != null &&
+            <String?>[
+              cnicExtracted['fullName'] as String?,
+              cnicExtracted['fatherName'] as String?,
+              cnicExtracted['cnicNumber'] as String?,
+              cnicExtracted['dateOfBirth'] as String?,
+              cnicExtracted['dateOfIssue'] as String?,
+              cnicExtracted['dateOfExpiry'] as String?,
+              addressUrduText,
+            ].any((v) => v != null && v.trim().isNotEmpty);
+
         final Timestamp? verificationUpdatedAt =
             verification?['updatedAt'] as Timestamp?;
         final String? verificationLastError = verification?['lastError'] as String?;
@@ -486,7 +504,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 status: shopStatus,
                 url: shopUrl,
               ),
-              if (cnicExtracted != null) ...[
+              if (hasAnyCnicDetails) ...[
                 const SizedBox(height: 8),
                 Text(
                   'Smart CNIC details',
@@ -521,12 +539,7 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 ),
                 _buildCnicDetailsRow(
                   label: 'Address (Urdu)',
-                  value: _joinNonEmpty([
-                    addressUrdu?['line1'] as String?,
-                    addressUrdu?['line2'] as String?,
-                    addressUrdu?['district'] as String?,
-                    addressUrdu?['tehsil'] as String?,
-                  ]),
+                  value: addressUrduText,
                 ),
                 if (expectedMatches != null) ...[
                   const SizedBox(height: 8),
@@ -552,7 +565,23 @@ class AdminWorkerDetailPage extends StatelessWidget {
                 ],
               ],
 
-              if (cnicExtracted == null && cnicVerification != null) ...[
+              if (!hasAnyCnicDetails && cnicVerification != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Smart CNIC details',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'No CNIC details extracted yet. Below is the raw OCR payload.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+
+              if (cnicVerification != null && !hasAnyCnicDetails) ...[
                 const SizedBox(height: 12),
                 Text(
                   'AI CNIC verification (raw)',

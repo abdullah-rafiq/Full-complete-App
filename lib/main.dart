@@ -3,21 +3,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_application_1/auth/login_screen.dart';
-import 'splash screen/splash_screen.dart';
 import 'firebase_options.dart';
-import 'auth/role_selection_screen.dart';
-import 'common/profile_page.dart';
-import 'user/my_bookings_page.dart';
-import 'common/settings_screen.dart';
-import 'common/faq_page.dart';
-import 'common/contact_us_page.dart';
-import 'common/terms_and_conditions_page.dart';
-import 'common/privacy_policy_page.dart';
-import 'common/role_home_page.dart';
 import 'theme_mode_notifier.dart';
 import 'app_locale.dart';
+import 'routing/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,77 +23,6 @@ Future<void> main() async {
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
-  static final _router = GoRouter(
-    initialLocation: '/',
-    routes: [
-      GoRoute(
-        path: '/',
-        name: 'splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
-      GoRoute(
-        path: '/auth',
-        name: 'auth',
-        builder: (context, state) => const AuthScreen(),
-      ),
-      GoRoute(
-        path: '/role',
-        name: 'role',
-        builder: (context, state) => const RoleSelectionScreen(),
-      ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const RoleHomePage(),
-      ),
-      GoRoute(
-        path: '/profile',
-        name: 'profile',
-        builder: (context, state) => const ProfilePage(),
-      ),
-      GoRoute(
-        path: '/bookings',
-        name: 'bookings',
-        builder: (context, state) => const MyBookingsPage(),
-      ),
-      GoRoute(
-        path: '/settings',
-        name: 'settings',
-        builder: (context, state) => const SettingsScreen(),
-      ),
-      GoRoute(
-        path: '/faq',
-        name: 'faq',
-        builder: (context, state) => const FaqPage(),
-      ),
-      GoRoute(
-        path: '/contact',
-        name: 'contact',
-        builder: (context, state) => const ContactUsPage(),
-      ),
-      GoRoute(
-        path: '/terms',
-        name: 'terms',
-        builder: (context, state) => const TermsAndConditionsPage(),
-      ),
-      GoRoute(
-        path: '/privacy',
-        name: 'privacy',
-        builder: (context, state) => const PrivacyPolicyPage(),
-      ),
-      GoRoute(
-        path: '/worker',
-        name: 'workerHome',
-        builder: (context, state) => const RoleHomePage(),
-      ),
-      GoRoute(
-        path: '/admin',
-        name: 'adminHome',
-        builder: (context, state) => const RoleHomePage(),
-      ),
-    ],
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +78,7 @@ class MainApp extends StatelessWidget {
                 ),
                 cardColor: const Color(0xFF1E1E1E),
               ),
-              routerConfig: _router,
+              routerConfig: AppRouter.router,
             );
           },
         );

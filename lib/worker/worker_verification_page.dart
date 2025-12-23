@@ -21,6 +21,7 @@ class WorkerVerificationPage extends StatefulWidget {
 class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
   // ignore: unused_field
   bool _submitting = false;
+  
   String? _cnicFrontUrl;
   String? _cnicBackUrl;
   String? _selfieUrl;
@@ -43,7 +44,7 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
     final token = await WorkerVerificationController.getIdTokenForDebug(
       forceRefresh: true,
     );
-
+    debugPrint('DEBUG TOKEN: $token');
     if (!mounted) return;
 
     if (token == null || token.isEmpty) {
@@ -221,15 +222,32 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
         return false;
       }
 
-      final bool missingCnicResult =
-          cnicFrontUrl != null && cnicBackUrl != null && verification?['cnic'] == null;
+      bool cnicUrduAddressMissing() {
+        final dynamic cnic = verification?['cnic'];
+        if (cnic is! Map<String, dynamic>) return true;
+        final dynamic extracted = cnic['extracted'];
+        if (extracted is! Map<String, dynamic>) return true;
+        final dynamic addressUrdu = extracted['addressUrdu'];
+        if (addressUrdu is! Map<String, dynamic>) return true;
+        final dynamic line1 = addressUrdu['line1'];
+        final String line = (line1 ?? '').toString().trim();
+        return line.isEmpty;
+      }
+
+      final bool missingCnicResult = cnicFrontUrl != null &&
+          cnicBackUrl != null &&
+          (verification?['cnic'] == null || cnicUrduAddressMissing());
       final bool missingFaceResult =
           cnicFrontUrl != null && selfieUrl != null && verification?['face'] == null;
       final bool missingShopResult =
           shopUrl != null && verification?['shop'] == null;
 
       final bool shouldRunAi = hasAnyImage &&
-          (verificationUpdatedAt == null || inputsChanged() || missingCnicResult || missingFaceResult || missingShopResult);
+          (verificationUpdatedAt == null ||
+              inputsChanged() ||
+              missingCnicResult ||
+              missingFaceResult ||
+              missingShopResult);
 
       if (shouldRunAi && mounted) {
         await WorkerVerificationController.ensureAiVerificationForCurrentUser();
@@ -371,15 +389,18 @@ class _WorkerVerificationPageState extends State<WorkerVerificationPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Worker verification'),
+        
         actions: [
           if (kDebugMode || _showDebugTokenButton)
             IconButton(
               tooltip: 'Debug: Copy token',
               icon: const Icon(Icons.vpn_key_outlined),
               onPressed: _showDebugToken,
+              
             ),
         ],
       ),
+      
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -597,6 +618,77 @@ class _VerificationTile extends StatelessWidget {
         ? Colors.white70
         : theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
+    void showPreview() {
+      final url = imageUrl;
+      if (url == null) return;
+      showDialog<void>(
+        context: context,
+        barrierColor: Colors.black.withValues(alpha: 0.9),
+        builder: (context) {
+          return Dialog(
+            insetPadding: EdgeInsets.zero,
+            backgroundColor: Colors.black,
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: InteractiveViewer(
+                      minScale: 1,
+                      maxScale: 5,
+                      child: Center(
+                        child: Image.network(
+                          url,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Text(
+                                'Failed to load image',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    right: 56,
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     Color statusColor(String s) {
       switch (s) {
         case 'approved':
@@ -629,7 +721,19 @@ class _VerificationTile extends StatelessWidget {
             ? true
             : status == 'rejected');
 
-    final bool canView = uploaded && imageUrl != null && onView != null;
+    final bool canView = uploaded && imageUrl != null;
+
+    VoidCallback? resolveAction() {
+      if (uploaded) {
+        if (status == 'rejected') {
+          return canTap ? onTap : null;
+        }
+        if (!canView) return null;
+        return onView ?? showPreview;
+      }
+
+      return canTap ? onTap : null;
+    }
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -696,9 +800,7 @@ class _VerificationTile extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton(
-                    onPressed: uploaded
-                        ? (status == 'rejected' ? (canTap ? onTap : null) : (canView ? onView : null))
-                        : (canTap ? onTap : null),
+                    onPressed: resolveAction(),
                     child: Text(
                       uploaded
                           ? (status == 'rejected'

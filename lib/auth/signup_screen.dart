@@ -112,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (!mounted) return;
 
-      context.go('/role');
+      context.go('/');
     } on FirebaseAuthException catch (e) {
       String message = 'Sign up failed';
       if (e.code == 'email-already-in-use') {

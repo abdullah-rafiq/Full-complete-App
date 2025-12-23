@@ -85,7 +85,7 @@ class RoleSelectionScreen extends StatelessWidget {
 
                               if (!context.mounted) return;
 
-                              context.go('/home');
+                              context.go('/');
                             } catch (e) {
                               if (!context.mounted) return;
                               UIHelpers.showSnack(
@@ -129,7 +129,7 @@ class RoleSelectionScreen extends StatelessWidget {
 
                               if (!context.mounted) return;
 
-                              context.go('/worker');
+                              context.go('/');
                             } catch (e) {
                               if (!context.mounted) return;
                               UIHelpers.showSnack(

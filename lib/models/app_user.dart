@@ -8,6 +8,7 @@ class AppUser {
   final String? phone;
   final String? email;
   final UserRole role;
+  final bool hasRole;
   final String status; // Active | Suspended
   final String? profileImageUrl;
   final bool verified;
@@ -27,6 +28,7 @@ class AppUser {
     this.phone,
     this.email,
     required this.role,
+    this.hasRole = true,
     this.status = 'Active',
     this.profileImageUrl,
     this.verified = false,
@@ -42,6 +44,10 @@ class AppUser {
   });
 
   factory AppUser.fromMap(String id, Map<String, dynamic> data) {
+    final dynamic roleRaw = data['role'];
+    final String? roleString = roleRaw is String ? roleRaw.trim() : null;
+    final bool hasRole = roleString != null && roleString.isNotEmpty;
+
     final dynamic phoneRaw =
         data['phone'] ?? data['phoneNumber'] ?? data['mobile'];
     String? phone;
@@ -58,7 +64,8 @@ class AppUser {
       name: data['name'] as String?,
       phone: phone,
       email: data['email'] as String?,
-      role: _roleFromString(data['role'] as String?),
+      role: _roleFromString(roleString),
+      hasRole: hasRole,
       status: data['status'] as String? ?? 'Active',
       profileImageUrl: data['profileImageUrl'] as String?,
       verified: (data['verified'] as bool?) ?? false,

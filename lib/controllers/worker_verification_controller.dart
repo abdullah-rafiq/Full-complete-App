@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,9 +102,21 @@ class WorkerVerificationController {
         return false;
       }
 
+      bool cnicUrduAddressMissing() {
+        final dynamic cnic = verification?['cnic'];
+        if (cnic is! Map<String, dynamic>) return true;
+        final dynamic extracted = cnic['extracted'];
+        if (extracted is! Map<String, dynamic>) return true;
+        final dynamic addressUrdu = extracted['addressUrdu'];
+        if (addressUrdu is! Map<String, dynamic>) return true;
+        final dynamic line1 = addressUrdu['line1'];
+        final String line = (line1 ?? '').toString().trim();
+        return line.isEmpty;
+      }
+
       final bool missingCnicResult = cnicFrontUrl != null &&
           cnicBackUrl != null &&
-          verification?['cnic'] == null;
+          (verification?['cnic'] == null || cnicUrduAddressMissing());
       final bool missingFaceResult = cnicFrontUrl != null &&
           selfieUrl != null &&
           verification?['face'] == null;
@@ -161,7 +174,12 @@ class WorkerVerificationController {
       }
 
       final picker = ImagePicker();
-      final picked = await picker.pickImage(source: ImageSource.camera);
+      final picked = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        imageQuality: 85,
+      );
       if (picked == null) return null;
       final bytes = await picked.readAsBytes();
       final fileName = picked.name;
@@ -210,28 +228,35 @@ class WorkerVerificationController {
 
       await UserService.instance.updateUser(user.uid, updateData);
 
-      try {
-        await _runAiVerification(user.uid);
-      } catch (e) {
-        try {
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set(
-            <String, dynamic>{
-              'verification': <String, dynamic>{
-                'lastError': e.toString(),
-                'updatedAt': FieldValue.serverTimestamp(),
-              },
-            },
-            SetOptions(merge: true),
-          );
-        } catch (_) {}
-      }
-
       if (!context.mounted) return null;
       if (dialogShown) {
         Navigator.of(context, rootNavigator: true).pop();
       }
 
       UIHelpers.showSnack(context, 'Image uploaded successfully.');
+
+      unawaited(
+        () async {
+          try {
+            await _runAiVerification(user.uid);
+          } catch (e) {
+            try {
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .set(
+                <String, dynamic>{
+                  'verification': <String, dynamic>{
+                    'lastError': e.toString(),
+                    'updatedAt': FieldValue.serverTimestamp(),
+                  },
+                },
+                SetOptions(merge: true),
+              );
+            } catch (_) {}
+          }
+        }(),
+      );
 
       return url;
     } catch (e) {

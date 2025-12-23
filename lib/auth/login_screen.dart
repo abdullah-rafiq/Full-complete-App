@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
 import 'package:flutter_application_1/controllers/current_user_controller.dart';
 import 'package:flutter_application_1/services/auth_service.dart';
 import 'package:flutter_application_1/localized_strings.dart';
@@ -41,29 +40,10 @@ class _AuthScreenState extends State<AuthScreen> {
     return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
   }
 
-  void _navigateByRole(AppUser? profile) {
+  void _navigateToRouterBootstrap() {
     // Hide keyboard before navigation to reduce transition jank
     FocusScope.of(context).unfocus();
-
-    if (profile == null) {
-      context.go('/role');
-      return;
-    }
-
-    switch (profile.role) {
-      case UserRole.customer:
-        context.go('/home');
-        break;
-      case UserRole.provider:
-        context.go('/worker');
-        break;
-      case UserRole.admin:
-        context.go('/admin');
-        break;
-      // ignore: unreachable_switch_default
-      default:
-        context.go('/home');
-    }
+    context.go('/');
   }
 
   Future<void> _login() async {
@@ -106,18 +86,9 @@ class _AuthScreenState extends State<AuthScreen> {
         await AuthService.instance.ensureAdminUser(cred.user!);
       }
 
-      final profile = await AuthService.instance.getCurrentUserProfile();
-
       if (!mounted) return;
 
-      final url = profile?.profileImageUrl;
-      if (url != null && url.isNotEmpty) {
-        try {
-          precacheImage(NetworkImage(url), context);
-        } catch (_) {}
-      }
-
-      _navigateByRole(profile);
+      _navigateToRouterBootstrap();
     } on FirebaseAuthException catch (e) {
       debugPrint('LOGIN_EMAIL_ERROR code=${e.code} message=${e.message}');
       String message = L10n.authLoginFailed();
@@ -171,23 +142,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
       CurrentUserController.reset();
 
-      final profile = await AuthService.instance.getCurrentUserProfile();
-
       if (!mounted) return;
 
-      if (profile == null) {
-        context.go('/role');
-        return;
-      }
-
-      final url = profile.profileImageUrl;
-      if (url != null && url.isNotEmpty) {
-        try {
-          precacheImage(NetworkImage(url), context);
-        } catch (_) {}
-      }
-
-      _navigateByRole(profile);
+      _navigateToRouterBootstrap();
     } on FirebaseAuthException catch (e) {
       debugPrint('LOGIN_GOOGLE_ERROR code=${e.code} message=${e.message}');
       UIHelpers.showSnack(context, e.message ?? L10n.authGoogleFailed());
