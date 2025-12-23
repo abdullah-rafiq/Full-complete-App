@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/category.dart';
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/services/service_catalog_service.dart';
-import 'package:flutter_application_1/services/worker_ranking_service.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/category.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/services/service_catalog_service.dart';
+import 'package:assist/services/worker_ranking_service.dart';
 
 import 'service_detail_page.dart';
 

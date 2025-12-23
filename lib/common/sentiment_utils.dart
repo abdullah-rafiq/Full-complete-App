@@ -1,5 +1,5 @@
-import 'package:flutter_application_1/models/review.dart';
-import 'package:flutter_application_1/services/ai_backend_service.dart';
+import 'package:assist/models/review.dart';
+import 'package:assist/services/ai_backend_service.dart';
 
 class SentimentStats {
   final double avgScore; // -1.0 (very negative) .. +1.0 (very positive)

@@ -6,11 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/services/user_service.dart';
-import 'package:flutter_application_1/controllers/profile_controller.dart';
-import 'package:flutter_application_1/controllers/current_user_controller.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/services/user_service.dart';
+import 'package:assist/controllers/profile_controller.dart';
+import 'package:assist/controllers/current_user_controller.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 import 'wallet_page.dart';
 import 'section_card.dart';

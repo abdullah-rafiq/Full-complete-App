@@ -6,11 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:flutter_application_1/common/ui_helpers.dart';
-import 'package:flutter_application_1/services/ai_backend_service.dart';
-import 'package:flutter_application_1/services/cloudinary_service.dart';
-import 'package:flutter_application_1/services/media_permission_service.dart';
-import 'package:flutter_application_1/services/user_service.dart';
+import 'package:assist/common/ui_helpers.dart';
+import 'package:assist/services/ai_backend_service.dart';
+import 'package:assist/services/cloudinary_service.dart';
+import 'package:assist/services/media_permission_service.dart';
+import 'package:assist/services/user_service.dart';
 
 class WorkerVerificationController {
   const WorkerVerificationController._();

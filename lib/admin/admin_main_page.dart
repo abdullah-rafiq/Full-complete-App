@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'admin_workers_page.dart';
 import 'admin_notifications_page.dart';
 import 'admin_analytics_page.dart' deferred as admin_analytics;
-import 'package:flutter_application_1/common/profile_page.dart';
-import 'package:flutter_application_1/common/app_bottom_nav.dart';
+import 'package:assist/common/profile_page.dart';
+import 'package:assist/common/app_bottom_nav.dart';
 
 class AdminMainPage extends StatefulWidget {
   const AdminMainPage({super.key});

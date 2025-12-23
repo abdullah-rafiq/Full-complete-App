@@ -1,8 +1,8 @@
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/services/service_catalog_service.dart';
-import 'package:flutter_application_1/services/user_service.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/services/service_catalog_service.dart';
+import 'package:assist/services/user_service.dart';
 
 class BookingsController {
   const BookingsController._();

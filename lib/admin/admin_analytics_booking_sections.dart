@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import 'package:flutter_application_1/services/admin_analytics_service.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/admin/admin_analytics_widgets.dart';
+import 'package:assist/services/admin_analytics_service.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/admin/admin_analytics_widgets.dart';
 
 String _bookingRangeLabel(int? days) {
   if (days == null) {

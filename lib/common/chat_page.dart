@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 class ChatPage extends StatefulWidget {
   final String chatId;

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/review.dart';
-import 'package:flutter_application_1/controllers/home_controller.dart';
-import 'package:flutter_application_1/services/worker_ranking_service.dart';
-import 'package:flutter_application_1/services/analytics_service.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/review.dart';
+import 'package:assist/controllers/home_controller.dart';
+import 'package:assist/services/worker_ranking_service.dart';
+import 'package:assist/services/analytics_service.dart';
 
 class TopWorkersSection extends StatelessWidget {
   const TopWorkersSection({super.key});

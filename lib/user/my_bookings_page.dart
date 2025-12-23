@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/controllers/bookings_controller.dart';
-import 'package:flutter_application_1/common/payment_page.dart';
-import 'package:flutter_application_1/user/booking_detail_page.dart';
-import 'package:flutter_application_1/common/section_card.dart';
-import 'package:flutter_application_1/localized_strings.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/controllers/bookings_controller.dart';
+import 'package:assist/common/payment_page.dart';
+import 'package:assist/user/booking_detail_page.dart';
+import 'package:assist/common/section_card.dart';
+import 'package:assist/localized_strings.dart';
 
 class MyBookingsPage extends StatelessWidget {
   const MyBookingsPage({super.key});

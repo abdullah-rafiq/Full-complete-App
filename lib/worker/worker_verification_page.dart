@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_application_1/controllers/worker_verification_controller.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/controllers/worker_verification_controller.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 const bool _showDebugTokenButton =
     bool.fromEnvironment('SHOW_DEBUG_TOKEN', defaultValue: false);

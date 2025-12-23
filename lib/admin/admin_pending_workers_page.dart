@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/controllers/admin_worker_controller.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/controllers/admin_worker_controller.dart';
 
 class AdminPendingWorkersPage extends StatelessWidget {
   const AdminPendingWorkersPage({super.key});

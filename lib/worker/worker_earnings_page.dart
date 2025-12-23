@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/localized_strings.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/localized_strings.dart';
 
 class WorkerEarningsPage extends StatelessWidget {
   const WorkerEarningsPage({super.key});

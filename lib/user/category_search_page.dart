@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-import 'package:flutter_application_1/models/category.dart';
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/services/service_catalog_service.dart';
-import 'package:flutter_application_1/services/ai_backend_service.dart';
+import 'package:assist/models/category.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/services/service_catalog_service.dart';
+import 'package:assist/services/ai_backend_service.dart';
 import 'category_services_page.dart';
 import 'service_detail_page.dart';
 

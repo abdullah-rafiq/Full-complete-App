@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/services/user_service.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/services/user_service.dart';
 
 class CurrentUserController {
   const CurrentUserController._();

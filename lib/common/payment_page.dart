@@ -1,10 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
-import 'package:flutter_application_1/common/section_card.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/common/ui_helpers.dart';
+import 'package:assist/common/section_card.dart';
 
 class PaymentPage extends StatelessWidget {
   final BookingModel booking;

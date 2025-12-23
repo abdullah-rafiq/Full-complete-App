@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/services/user_service.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/services/payment_gateway_service.dart';
-import 'package:flutter_application_1/common/payment_page.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
-import 'package:flutter_application_1/common/section_card.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/services/user_service.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/services/payment_gateway_service.dart';
+import 'package:assist/common/payment_page.dart';
+import 'package:assist/common/ui_helpers.dart';
+import 'package:assist/common/section_card.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({super.key});

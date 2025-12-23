@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/controllers/bookings_controller.dart';
-import 'package:flutter_application_1/localized_strings.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/controllers/bookings_controller.dart';
+import 'package:assist/localized_strings.dart';
 import 'worker_job_detail_page.dart';
 
 class WorkerJobsPage extends StatefulWidget {

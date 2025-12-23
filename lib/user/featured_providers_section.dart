@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/user/service_detail_page.dart';
-import 'package:flutter_application_1/controllers/featured_providers_controller.dart';
-import 'package:flutter_application_1/services/analytics_service.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/user/service_detail_page.dart';
+import 'package:assist/controllers/featured_providers_controller.dart';
+import 'package:assist/services/analytics_service.dart';
 
 const Color primaryLightBlue = Color(0xFF4FC3F7);
 const Color primaryBlue = Color(0xFF29B6F6);

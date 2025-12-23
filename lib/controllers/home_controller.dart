@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/category.dart';
-import 'package:flutter_application_1/controllers/current_user_controller.dart';
-import 'package:flutter_application_1/services/service_catalog_service.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/category.dart';
+import 'package:assist/controllers/current_user_controller.dart';
+import 'package:assist/services/service_catalog_service.dart';
 
 class HomeController {
   const HomeController._();

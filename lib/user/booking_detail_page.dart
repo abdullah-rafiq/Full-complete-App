@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/services/user_service.dart';
-import 'package:flutter_application_1/common/payment_page.dart' as payment_page;
-import 'package:flutter_application_1/common/chat_page.dart' as chat_page;
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/services/user_service.dart';
+import 'package:assist/common/payment_page.dart' as payment_page;
+import 'package:assist/common/chat_page.dart' as chat_page;
+import 'package:assist/common/ui_helpers.dart';
 
 class BookingDetailPage extends StatelessWidget {
   final BookingModel booking;

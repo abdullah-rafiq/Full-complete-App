@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/models/review.dart';
-import 'package:flutter_application_1/common/sentiment_utils.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/models/review.dart';
+import 'package:assist/common/sentiment_utils.dart';
 
 class AdminAnalyticsService {
   const AdminAnalyticsService._();

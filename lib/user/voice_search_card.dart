@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/user/category_search_page.dart';
+import 'package:assist/user/category_search_page.dart';
 
 class VoiceSearchCard extends StatefulWidget {
   final Color primaryLightBlue;

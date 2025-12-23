@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/controllers/current_user_controller.dart';
-import 'package:flutter_application_1/common/profile_page.dart';
-import 'package:flutter_application_1/localized_strings.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/controllers/current_user_controller.dart';
+import 'package:assist/common/profile_page.dart';
+import 'package:assist/localized_strings.dart';
 import 'worker_jobs_page.dart';
 import 'worker_earnings_page.dart';
 

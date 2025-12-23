@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/models/service.dart';
-import 'package:flutter_application_1/services/booking_service.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/models/service.dart';
+import 'package:assist/services/booking_service.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 class ServiceDetailPage extends StatefulWidget {
   final ServiceModel service;

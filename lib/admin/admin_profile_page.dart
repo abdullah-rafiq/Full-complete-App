@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/services/user_service.dart';
-import 'package:flutter_application_1/controllers/current_user_controller.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/services/user_service.dart';
+import 'package:assist/controllers/current_user_controller.dart';
 
 class AdminProfilePage extends StatelessWidget {
   const AdminProfilePage({super.key});

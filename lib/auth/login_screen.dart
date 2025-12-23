@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_application_1/controllers/current_user_controller.dart';
-import 'package:flutter_application_1/services/auth_service.dart';
-import 'package:flutter_application_1/localized_strings.dart';
-import 'package:flutter_application_1/app_locale.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/controllers/current_user_controller.dart';
+import 'package:assist/services/auth_service.dart';
+import 'package:assist/localized_strings.dart';
+import 'package:assist/app_locale.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';

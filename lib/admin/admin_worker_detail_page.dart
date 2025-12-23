@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/models/review.dart';
-import 'package:flutter_application_1/common/sentiment_utils.dart';
-import 'package:flutter_application_1/controllers/admin_worker_controller.dart';
-import 'package:flutter_application_1/common/section_card.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/models/review.dart';
+import 'package:assist/common/sentiment_utils.dart';
+import 'package:assist/controllers/admin_worker_controller.dart';
+import 'package:assist/common/section_card.dart';
 
 class AdminWorkerDetailPage extends StatelessWidget {
   final AppUser worker;

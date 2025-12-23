@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:flutter_application_1/common/messages_page.dart';
-import 'package:flutter_application_1/common/profile_page.dart';
-import 'package:flutter_application_1/common/app_bottom_nav.dart';
-import 'package:flutter_application_1/controllers/worker_verification_controller.dart';
-import 'package:flutter_application_1/localized_strings.dart';
+import 'package:assist/common/messages_page.dart';
+import 'package:assist/common/profile_page.dart';
+import 'package:assist/common/app_bottom_nav.dart';
+import 'package:assist/controllers/worker_verification_controller.dart';
+import 'package:assist/localized_strings.dart';
 import 'worker_home_screen.dart';
 import 'worker_jobs_page.dart';
 import 'worker_earnings_page.dart';

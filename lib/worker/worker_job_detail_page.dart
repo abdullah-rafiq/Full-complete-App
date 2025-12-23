@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/booking.dart';
-import 'package:flutter_application_1/services/user_service.dart';
-import 'package:flutter_application_1/common/section_card.dart';
-import 'package:flutter_application_1/controllers/worker_job_controller.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/booking.dart';
+import 'package:assist/services/user_service.dart';
+import 'package:assist/common/section_card.dart';
+import 'package:assist/controllers/worker_job_controller.dart';
 
 class WorkerJobDetailPage extends StatelessWidget {
   final BookingModel booking;

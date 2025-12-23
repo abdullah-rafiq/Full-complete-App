@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter_application_1/models/review.dart';
+import 'package:assist/models/review.dart';
 
 class WorkerRankingService {
   const WorkerRankingService._();

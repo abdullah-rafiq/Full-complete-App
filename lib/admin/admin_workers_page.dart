@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/models/review.dart';
-import 'package:flutter_application_1/services/worker_ranking_service.dart';
-import 'package:flutter_application_1/admin/admin_worker_detail_page.dart';
-import 'package:flutter_application_1/controllers/admin_worker_controller.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/models/review.dart';
+import 'package:assist/services/worker_ranking_service.dart';
+import 'package:assist/admin/admin_worker_detail_page.dart';
+import 'package:assist/controllers/admin_worker_controller.dart';
 
 class AdminWorkersPage extends StatelessWidget {
   const AdminWorkersPage({super.key});

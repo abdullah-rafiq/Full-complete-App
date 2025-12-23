@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 class AdminWorkerController {
   const AdminWorkerController._();

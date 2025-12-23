@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_application_1/models/app_user.dart';
-import 'package:flutter_application_1/services/auth_service.dart';
-import 'package:flutter_application_1/common/ui_helpers.dart';
+import 'package:assist/models/app_user.dart';
+import 'package:assist/services/auth_service.dart';
+import 'package:assist/common/ui_helpers.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
