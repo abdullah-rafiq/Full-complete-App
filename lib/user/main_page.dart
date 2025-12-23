@@ -74,7 +74,7 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() {
-        _pages[1] ??= _buildCategoriesTab(context);
+        _pages[1] ??= Builder(builder: (context) => _buildCategoriesTab(context));
         _pages[2] ??= const MyBookingsPage();
         _pages[3] ??= const MessagesPage();
       });
@@ -602,7 +602,7 @@ class _MainPageState extends State<MainPage> {
       case 0:
         return _buildHomeTab(context);
       case 1:
-        return _buildCategoriesTab(context);
+        return Builder(builder: (context) => _buildCategoriesTab(context));
       case 2:
         return const MyBookingsPage();
       case 3:

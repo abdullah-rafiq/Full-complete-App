@@ -3,10 +3,26 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'theme_mode_notifier.dart';
 import 'app_locale.dart';
 import 'routing/app_router.dart';
+
+TextTheme _interWithPoppinsHeadings(TextTheme base) {
+  final inter = GoogleFonts.interTextTheme(base);
+  return inter.copyWith(
+    displayLarge: GoogleFonts.poppins(textStyle: inter.displayLarge),
+    displayMedium: GoogleFonts.poppins(textStyle: inter.displayMedium),
+    displaySmall: GoogleFonts.poppins(textStyle: inter.displaySmall),
+    headlineLarge: GoogleFonts.poppins(textStyle: inter.headlineLarge),
+    headlineMedium: GoogleFonts.poppins(textStyle: inter.headlineMedium),
+    headlineSmall: GoogleFonts.poppins(textStyle: inter.headlineSmall),
+    titleLarge: GoogleFonts.poppins(textStyle: inter.titleLarge),
+    titleMedium: GoogleFonts.poppins(textStyle: inter.titleMedium),
+    titleSmall: GoogleFonts.poppins(textStyle: inter.titleSmall),
+  );
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +70,12 @@ class MainApp extends StatelessWidget {
                   seedColor: Colors.blue,
                   brightness: Brightness.light,
                 ),
+                textTheme: _interWithPoppinsHeadings(
+                  ThemeData(brightness: Brightness.light).textTheme,
+                ),
+                primaryTextTheme: _interWithPoppinsHeadings(
+                  ThemeData(brightness: Brightness.light).textTheme,
+                ),
                 scaffoldBackgroundColor: const Color(0xFFF6FBFF),
                 appBarTheme: const AppBarTheme(
                   elevation: 4,
@@ -66,6 +88,12 @@ class MainApp extends StatelessWidget {
                 colorScheme: ColorScheme.fromSeed(
                   seedColor: Colors.blue,
                   brightness: Brightness.dark,
+                ),
+                textTheme: _interWithPoppinsHeadings(
+                  ThemeData(brightness: Brightness.dark).textTheme,
+                ),
+                primaryTextTheme: _interWithPoppinsHeadings(
+                  ThemeData(brightness: Brightness.dark).textTheme,
                 ),
                 scaffoldBackgroundColor: const Color(0xFF121212),
                 appBarTheme: AppBarTheme(
