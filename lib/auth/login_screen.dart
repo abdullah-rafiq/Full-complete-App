@@ -43,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void _navigateToRouterBootstrap() {
     // Hide keyboard before navigation to reduce transition jank
     FocusScope.of(context).unfocus();
-    context.go('/');
+    context.go('/auth');
   }
 
   Future<void> _login() async {

@@ -85,7 +85,7 @@ class RoleSelectionScreen extends StatelessWidget {
 
                               if (!context.mounted) return;
 
-                              context.go('/');
+                              context.go('/auth');
                             } catch (e) {
                               if (!context.mounted) return;
                               UIHelpers.showSnack(
@@ -129,7 +129,7 @@ class RoleSelectionScreen extends StatelessWidget {
 
                               if (!context.mounted) return;
 
-                              context.go('/');
+                              context.go('/auth');
                             } catch (e) {
                               if (!context.mounted) return;
                               UIHelpers.showSnack(

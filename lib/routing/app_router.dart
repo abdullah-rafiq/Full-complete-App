@@ -58,6 +58,10 @@ class AppRouter {
 
       final bool isLoggedIn = user != null;
 
+      if (isSplashRoute && !_session.splashDelayDone) {
+        return null;
+      }
+
       if (!isLoggedIn) {
         if (isSplashRoute) return '/auth';
         if (isPublicRoute) return null;
@@ -66,6 +70,7 @@ class AppRouter {
 
       if (!_session.profileLoaded) {
         if (isSplashRoute) return null;
+        if (isAuthRoute || isRoleRoute || isInfoRoute) return null;
         return '/';
       }
 
@@ -315,8 +320,40 @@ class _BootstrapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF4FC3F7), Color(0xFF0288D1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(
+              Icons.cleaning_services_rounded,
+              color: Colors.white,
+              size: 80,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Assist',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 40),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -326,13 +363,20 @@ class _RouterSession extends ChangeNotifier {
   AppUser? profile;
   bool profileLoaded = false;
 
+  bool splashDelayDone = false;
+
   String? _locationAttemptedForUserId;
 
   StreamSubscription<User?>? _authSub;
   StreamSubscription<AppUser?>? _profileSub;
   Timer? _profileTimeout;
+  Timer? _splashTimer;
 
   _RouterSession() {
+    _splashTimer = Timer(const Duration(milliseconds: 500), () {
+      splashDelayDone = true;
+      notifyListeners();
+    });
     _authSub = FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
     _onAuthChanged(FirebaseAuth.instance.currentUser);
   }
@@ -389,6 +433,7 @@ class _RouterSession extends ChangeNotifier {
     _authSub?.cancel();
     _profileSub?.cancel();
     _profileTimeout?.cancel();
+    _splashTimer?.cancel();
     super.dispose();
   }
 

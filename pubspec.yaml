@@ -43,13 +43,6 @@ flutter_icons:
   adaptive_icon_background: "#0288D1"
   adaptive_icon_foreground: "assets/app_icon.png"
 
-flutter_native_splash:
-  color: "#4FC3F7"
-  image: assets/assist_logo.png
-  android_12:
-    color: "#4FC3F7"
-    image: assets/assist_logo.png
-
 flutter:
   uses-material-design: true
   assets:

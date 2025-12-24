@@ -6,6 +6,8 @@
 .build/
 pubspec.lock
 
+**/node_modules/
+
 # IDE / OS files
 .idea/
 .vscode/
@@ -28,6 +30,7 @@ windows/
 # Firebase / Secrets
 .env
 firebase_service_account.json
+**/serviceAccountKey.json
 google-services.json
 GoogleService-Info.plist
 # Misc
